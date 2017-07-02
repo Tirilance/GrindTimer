@@ -3,15 +3,16 @@ GrindTimer = {}
 GrindTimer.Name = "GrindTimer"
 GrindTimer.RecentExpEvents = {}
 GrindTimer.RecentEventTimeWindow = 600 -- Only remember events from the last 10 minutes of exp gains.
-GrindTimer.Version = "1.4.1"
+GrindTimer.Version = "1.5.0"
 
 GrindTimer.AccountDefaults =
 {
     Opacity = 1,
     OutlineText = false,
+    TextColor = {R = 0.65, G = 0.65, B = 0.65},
     Locked = false,
-    OffsetX = 0,
-    OffsetY = 0,
+    OffsetX = 400,
+    OffsetY = 100,
     FirstLabelType = 1,
     SecondLabelType = 2
 }
@@ -40,7 +41,7 @@ function GrindTimer.Initialize(eventCode, addonName)
     EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, GrindTimer.OnExpGained)
     GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.Version, "Character", GrindTimer.Defaults)
     GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.Version, "Account", GrindTimer.AccountDefaults)
-    GrindTimer.InitializeControls()
+    GrindTimer.InitializeUI()
 end
 
 function GrindTimer.Reset()

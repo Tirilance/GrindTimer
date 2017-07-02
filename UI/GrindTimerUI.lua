@@ -1,7 +1,7 @@
 local extendedControls = {} -- Controls affected by using the extender button to show or hide more UI options
 local optionsExtended = false
 
-function GrindTimer.InitializeControls()
+function GrindTimer.InitializeUI()
     GrindTimerWindow:ClearAnchors()
     GrindTimerWindow:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, GrindTimer.AccountSavedVariables.OffsetX, GrindTimer.AccountSavedVariables.OffsetY)
 
@@ -51,7 +51,7 @@ function GrindTimer.ToggleWindowLock(lockButton)
         lockButton:SetState(BSTATE_PRESSED)
     end
 
-    lockButton:SetMovable(locked)
+    GrindTimerWindow:SetMovable(not GrindTimer.AccountSavedVariables.Locked)
 end
 
 function GrindTimer.UpdateButtons()

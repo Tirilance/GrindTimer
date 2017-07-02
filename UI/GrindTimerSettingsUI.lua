@@ -1,10 +1,14 @@
 local fontControls = {}
 
 function GrindTimer.InitializeSettingsMenu()
-    GrindTimer.UpdateSettingWindowButtons()
-    GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)
+    local r = GrindTimer.AccountSavedVariables.TextColor.R
+    local g = GrindTimer.AccountSavedVariables.TextColor.G
+    local b = GrindTimer.AccountSavedVariables.TextColor.B
     local OutlineTextChecked = (GrindTimer.AccountSavedVariables.OutlineText) and BSTATE_PRESSED or BSTATE_NORMAL
+    GrindTimer.UpdateSettingWindowButtons()
+    GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)    
     GrindTimerSettingsWindowFontCheckBox:SetState(OutlineTextChecked)
+    GrindTimerSettingsWindowColorSelectButtonColorPickerTexture:SetColor(r, g, b, 1)
     GrindTimer.UpdateFonts()
 end
 
@@ -22,6 +26,7 @@ function GrindTimer.FirstLabelDropdownClick()
     GrindTimerSettingsWindowCloseButton:SetHidden(false)
     GrindTimerSettingsWindowFontCheckBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
 
     if isMenuClosed then
         firstDropDownMenu:SetHidden(false)
@@ -44,7 +49,8 @@ function GrindTimer.FirstLabelDropdownOptionClicked(option)
     local secondDropDownButton = GrindTimerSettingsWindowSecondLabelDropdownButton
     secondDropDownButton:SetHidden(false)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(false)
-    GrindTimerSettingsWindowFontCheckBox:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
+    GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
 
     GrindTimer.UpdateSettingWindowButtons()
 end
@@ -58,6 +64,7 @@ function GrindTimer.SecondLabelDropdownClick()
     GrindTimerSettingsWindowCloseButton:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowFontCheckBox:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
 end
 
 function GrindTimer.SecondLabelDropdownOptionClicked(option)
@@ -72,6 +79,7 @@ function GrindTimer.SecondLabelDropdownOptionClicked(option)
     closeButton:SetHidden(false)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(false)
     GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
+    GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
 
     GrindTimer.UpdateSettingWindowButtons()
 end
@@ -131,17 +139,50 @@ end
 function GrindTimer.UpdateFonts()
     local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
     local outlineFont = "$(BOLD_FONT)|$(KB_18)|outline"
+    local r = GrindTimer.AccountSavedVariables.TextColor.R
+    local g = GrindTimer.AccountSavedVariables.TextColor.G
+    local b = GrindTimer.AccountSavedVariables.TextColor.B
 
-    -- Apply chosen font style to all main window controls.
-    if GrindTimer.AccountSavedVariables.OutlineText then
-        for key, control in pairs(fontControls) do
-            control:SetFont(outlineFont)
+    for key, control in pairs(fontControls) do
+        -- Apply color to font controls
+        if control:GetType() == CT_BUTTON then
+            control:SetNormalFontColor(r, g, b, 1)
+        else
+            control:SetColor(r, g, b, 1)
         end
-    else
-        for key, control in pairs(fontControls) do
+
+        -- Apply font to font controls
+        if GrindTimer.AccountSavedVariables.OutlineText then
+            control:SetFont(outlineFont)
+        else
             control:SetFont(normalFont)
         end
     end
+end
+
+function GrindTimer.ColorPickerOpen(texture)
+
+    local function ColorSelected(r, g, b)
+        texture:SetColor(r, g, b, 1)
+
+        for key, control in pairs(fontControls) do
+            if control:GetType() == CT_BUTTON then
+                control:SetNormalFontColor(r, g, b, 1)
+            else
+                control:SetColor(r, g, b, 1)
+            end
+        end
+
+        GrindTimer.AccountSavedVariables.TextColor.R = r
+        GrindTimer.AccountSavedVariables.TextColor.G = g
+        GrindTimer.AccountSavedVariables.TextColor.B = b
+    end
+
+    local currentR = GrindTimer.AccountSavedVariables.TextColor.R
+    local currentG = GrindTimer.AccountSavedVariables.TextColor.G
+    local currentB = GrindTimer.AccountSavedVariables.TextColor.B
+
+    COLOR_PICKER:Show(ColorSelected, currentR, currentG, currentB)
 end
 
 function GrindTimer.SettingsClosed()
@@ -155,6 +196,7 @@ function GrindTimer.SettingsClosed()
     GrindTimerSettingsWindowSecondLabelDropdownButton:SetHidden(false)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(false)
     GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
+    GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
     GrindTimerSettingsWindow:SetHidden(true)
 end
 
