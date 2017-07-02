@@ -1,0 +1,212 @@
+<GuiXml>
+    <Font name="ZoFontGameShadow" font="$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"/>
+    <Controls>
+        <TopLevelControl name="GrindTimerWindow" hidden="false" inheritAlpha="false" mouseEnabled="true" movable="true" clampedToScreen="true" layer="0">
+            <Dimensions x="345" y="70"/>
+            <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+            <OnMoveStop>
+                GrindTimer.SaveWindowPosition(self)
+            </OnMoveStop>
+            <OnShow>
+                GrindTimer.OnWindowShown()
+            </OnShow>
+
+            <Controls>
+                <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
+
+                <Button name="$(parent)LockButton" width="20" height="20" inheritAlpha="false">
+                    <Dimensions x="20" y="20"/>
+                    <Anchor pont="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-18" offsetY="53"/>
+                    <Textures normal="esoui/art/miscellaneous/unlocked_up.dds" mouseOver="esoui/art/miscellaneous/unlocked_over.dds" pressed="esoui/art/miscellaneous/locked_up.dds" pressedMouseOver="esoui/art/miscellaneous/locked_over.dds"/>
+                    <OnClicked>
+                        GrindTimer.ToggleWindowLock(self)
+                    </OnClicked>
+                </Button>
+
+                <Label name="$(parent)FirstOptionLabel" width="325" height="25" inheritAlpha="false" font="ZoFontGameShadow" color="A8A8A8" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="0 Hours 0 Minutes estimated until level up">
+                    <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP"/>
+                    <OnInitialized>
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Label>
+
+                <Label name="$(parent)SecondOptionLabel" width="325" height="25" inheritAlpha="false" font="ZoFontGameShadow" color="A8A8A8" wrapMode="TRUNCATE" verticalAlignment="BOTTOM" horizontalAlignment="CENTER" text="0 Experience needed until level 0">
+                    <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="25"/>
+                    <OnInitialized>
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Label>
+
+                <Texture name="$(parent)Divider1" inheritAlpha="false" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+                    <Dimensions x="500" y="4"/>
+                    <Anchor point="TOP" relativeTo="$(parent)" offsetY="49"/>
+                </Texture>
+
+                <!-- Mode Controls -->
+                <Label name="$(parent)ModeLabel" width="25" height="25" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="A8A8A8" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Mode">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT"  offsetX="10" offsetY="50"/>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Label>
+
+                <Button name="$(parent)NextModeButton" height="25" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="808080" verticalAlignment="TOP" horizontalAlignment="LEFT" inherits="ZO_ButtonBehaviorClickSound" buttonState="BSTATE_PRESSED" text="Next Level">
+                    <Dimensions x="100" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="75"/>
+                    <FontColors disabledColor="808080" mouseOverColor="B0B0B0" pressedColor="1E90FF" normalColor="808080"/>
+                    <OnClicked>
+                        GrindTimer.NextModeButtonClicked(self)
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Button>
+
+                <Button name="$(parent)TargetModeButton" height="25" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" inherits="ZO_ButtonBehaviorClickSound" color="808080" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Target Level">
+                    <Dimensions x="100" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="100"/>
+                    <FontColors disabledColor="808080" mouseOverColor="B0B0B0" pressedColor="1E90FF" normalColor="808080"/>
+                    <OnClicked>
+                        GrindTimer.TargetModeButtonClicked(self)
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Button>
+
+                <!-- Level Type Controls -->
+                <Label name="$(parent)LevelTypeLabel" width="25" height="25" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="A8A8A8" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Level Type">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="120" offsetY="50"/>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Label>
+
+                <Button name="$(parent)NormalTypeButton" height="25" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" inherits="ZO_ButtonBehaviorClickSound" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Normal">
+                    <Dimensions x="100" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="120" offsetY="75"/>
+                    <FontColors disabledColor="808080" mouseOverColor="B0B0B0" pressedColor="1E90FF" normalColor="808080"/>
+                    <OnClicked>
+                        GrindTimer.NormalTypeButtonClicked(self)
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Button>
+
+                <Button name="$(parent)ChampionTypeButton" height="25" inheritAlpha="false" hidden="true" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" color="808080" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Champion">
+                    <Dimensions x="100" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="120" offsetY="100"/>
+                    <FontColors disabledColor="808080" mouseOverColor="B0B0B0" pressedColor="1E90FF" normalColor="808080"/>
+                    <OnClicked>
+                        GrindTimer.ChampionTypeButtonClicked(self)
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Button>
+                
+                <!-- Level Entry Controls -->
+                <Label name="$(parent)LevelEntryLabel" inheritAlpha="false" hidden="true" height="25" font="ZoFontGameShadow" color="A8A8A8" text="Level">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="235" offsetY="80"/>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Label>
+
+                <EditBox name="$(parent)LevelEntryBox" inheritAlpha="false" hidden="true" width="50" height="30" font="ZoFontGameShadow" color="1E90FF" editEnabled="true" horizontalAlignment="2" verticalAlignment="2" maxInputCharacters="3" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText">
+                    <Dimensions x="50" y="30"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="285" offsetY="80"/>
+                    <OnMouseDown>
+                        self:TakeFocus()
+                    </OnMouseDown>
+                    <OnEnter>
+                        self:LoseFocus()
+                        GrindTimer.LevelEntryTextSubmitted(self)
+                    </OnEnter>
+                    <OnEscape>
+                        self:LoseFocus()
+                        GrindTimer.LevelEntryTextSubmitted(self)
+                    </OnEscape>
+                    <OnFocusLost>
+                        GrindTimer.LevelEntryTextSubmitted(self)
+                    </OnFocusLost>
+                    <OnTextChanged>
+                        GrindTimer.LevelEntryTextChanged(self)
+                    </OnTextChanged>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                    <Controls>
+                        <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
+                            <Dimensions x="50" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="-5" offsetY="-2"/>
+                        </Backdrop>
+                    </Controls>
+                </EditBox>
+
+                <Texture name="$(parent)Divider2" inheritAlpha="false" hidden="true" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
+                    <Dimensions x="500" y="4"/>
+                    <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="125"/>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                    </OnInitialized>
+                </Texture>
+
+                <Button name="$(parent)ExtendButton" inheritAlpha="false" inherits="ZO_ButtonBehaviorClickSound">
+                    <Dimensions x="25" y="25"/>
+                    <Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="BOTTOM" offsetY="5"/>
+                    <Textures normal="esoui/art/buttons/gamepad/gp_downarrow.dds" pressed="esoui/art/buttons/gamepad/gp_uparrow.dds"/>
+                    <OnClicked>
+                        GrindTimer.OptionExtenderButtonClicked(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnClicked>
+                </Button>
+
+                <Button name="$(parent)SettingsButton" inheritAlpha="false" hidden="true" height="25" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Options">
+                    <Dimensions x="65" y="25"/>
+                    <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="-10"/>
+                    <FontColors disabledColor="700000" mouseOverColor="C0C0C0" pressedColor="909090" normalColor="A8A8A8"/>
+                    <Controls>
+                        <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
+                            <Dimensions x="65" y="25"/>
+                        </Backdrop>
+                    </Controls>
+                    <OnClicked>
+                        GrindTimer.SettingsButtonClicked()
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Button>
+
+                <Button name="$(parent)ResetButton" inheritAlpha="false" hidden="true" height="25" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Reset">
+                    <Dimensions x="65" y="25"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-10" offsetY="-10"/>
+                    <FontColors disabledColor="700000" mouseOverColor="C0C0C0" pressedColor="909090" normalColor="A8A8A8"/>
+                    <Controls>
+                        <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
+                            <Dimensions x="65" y="25"/>
+                        </Backdrop>
+                    </Controls>
+                    <OnClicked>
+                        GrindTimer.ResetButtonClicked()
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddToFontControlsArray(self)
+                    </OnInitialized>
+                </Button>
+            </Controls>
+        </TopLevelControl>
+    </Controls>
+</GuiXml>
