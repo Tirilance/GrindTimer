@@ -81,7 +81,7 @@
                                 GrindTimer.FirstLabelDropdownOptionClicked(5)
                             </OnClicked>
                         </Button>
-                        <Button name="$(parent)Option6" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills in last 10 minutes" horizontalAlignment="LEFT">
+                        <Button name="$(parent)Option6" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills in last 15 minutes" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="185"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
@@ -149,7 +149,7 @@
                                 GrindTimer.SecondLabelDropdownOptionClicked(5)
                             </OnClicked>
                         </Button>
-                        <Button name="$(parent)Option6" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills in last 10 minutes" horizontalAlignment="LEFT">
+                        <Button name="$(parent)Option6" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills in last 15 minutes" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="185"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>

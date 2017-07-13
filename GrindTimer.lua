@@ -1,15 +1,15 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.RecentExpEvents = {}
-GrindTimer.RecentEventTimeWindow = 600 -- Only remember events from the last 10 minutes of exp gains.
-GrindTimer.Version = "1.5.0"
+GrindTimer.ExpEvents = {}
+GrindTimer.ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
+GrindTimer.Version = "1.6.0"
 
 GrindTimer.AccountDefaults =
 {
     Opacity = 1,
     OutlineText = false,
-    TextColor = {R = 0.65, G = 0.65, B = 0.65},
+    TextColor = {0.65, 0.65, 0.65},
     Locked = false,
     OffsetX = 400,
     OffsetY = 100,
@@ -25,7 +25,7 @@ GrindTimer.Defaults =
     TargetExpRemaining = IsUnitChampion("player") and GetNumChampionXPInChampionPoint(GetPlayerChampionPointsEarned()) - GetPlayerChampionXP() or GetUnitXPMax("player") - GetUnitXP("player"),
     KillsNeeded = 0,
     LevelsPerHour = 0,
-    AverageExpPerHour = 0,
+    ExpPerHour = 0,
     RecentKills = 0,
     TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1,
     TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal"
@@ -38,7 +38,7 @@ end
 
 function GrindTimer.Initialize(eventCode, addonName)
     ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
-    EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, GrindTimer.OnExpGained)
+    EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, GrindTimer.Update)
     GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.Version, "Character", GrindTimer.Defaults)
     GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.Version, "Account", GrindTimer.AccountDefaults)
     GrindTimer.InitializeUI()
@@ -46,254 +46,213 @@ end
 
 function GrindTimer.Reset()
     local isChamp = IsUnitChampion("player")
-    local championPoints = isChamp and GetPlayerChampionPointsEarned() or nil
-    local targetLevel = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
 
+    GrindTimer.ExpEvents = {}
+    GrindTimer.SavedVariables.Mode = "Next"
+    GrindTimer.SavedVariables.TargetLevel = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    GrindTimer.SavedVariables.TargetLevelType = isChamp and "Champion" or "Normal"
     GrindTimer.SavedVariables.TargetHours = 0
     GrindTimer.SavedVariables.TargetMinutes = 0
-    GrindTimer.SavedVariables.TargetExpRemaining = GrindTimer.GetTargetLevelEXP(GetUnitLevel("player"), targetLevel, isChamp and 3 or 1, GetPlayerChampionPointsEarned())
     GrindTimer.SavedVariables.KillsNeeded = 0
     GrindTimer.SavedVariables.LevelsPerHour = 0
-    GrindTimer.SavedVariables.AverageExpPerHour = 0
+    GrindTimer.SavedVariables.ExpPerHour = 0
     GrindTimer.SavedVariables.RecentKills = 0
-    GrindTimer.SavedVariables.Mode = "Next"
-    GrindTimer.SavedVariables.TargetLevel = isChamp and championPoints+1 or GetUnitLevel("player")+1
-    GrindTimer.SavedVariables.TargetLevelType = isChamp and "Champion" or "Normal"
-    GrindTimer.RecentExpEvents = {}
+    GrindTimer.SavedVariables.TargetExpRemaining = GrindTimer.GetExpNeeded()
 end
 
-function GrindTimer.AddEventToArray(newExpEvent)
-    table.insert(GrindTimer.RecentExpEvents, newExpEvent)
+-- ExpEvents used to track exp gains.
+function GrindTimer.NewExpEvent(timestamp, expGained, reason)
+    local expEvent = {}
+    expEvent.Timestamp = timestamp
+    expEvent.ExpGained = expGained
+    expEvent.Reason = reason
+
+    expEvent.IsExpired = function(self)
+        return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > GrindTimer.ExpEventTimeWindow
+    end
+    return expEvent
+end
+
+function GrindTimer.CreateExpEvent(timestamp, expGained, reason)
+    local newExpEvent = GrindTimer.NewExpEvent(timestamp, expGained, reason)
+    table.insert(GrindTimer.ExpEvents, newExpEvent)
     GrindTimer.CleanupExpiredEvents()
 end
 
 function GrindTimer.CleanupExpiredEvents()
-    for key, recentExpEvent in pairs(GrindTimer.RecentExpEvents) do
-        if recentExpEvent:IsExpired() then
-            GrindTimer.RecentExpEvents[key] = nil;
+    for key, expEvent in pairs(GrindTimer.ExpEvents) do
+        if expEvent:IsExpired() then
+            GrindTimer.ExpEvents[key] = nil;
         end
     end
 end
 
-function GrindTimer.OnExpGained(eventCode, reason, level, playerPreviousExp, playerCurrentExp, championPoints)
-    local timestamp = GetTimeStamp()
-    local playerExpGained = playerCurrentExp - playerPreviousExp
+function GrindTimer.Update(eventCode, reason, level, previousExp, currentExp, championPoints)
+    local expGained = currentExp - previousExp
+    GrindTimer.CreateExpEvent(GetTimeStamp(), expGained, reason)
 
-    -- Create ExpEvent object for tracking recent experience gains.
-    local newExpEvent = GrindTimerExpEvent:New(timestamp, playerExpGained, reason)
-    GrindTimer.AddEventToArray(newExpEvent)
+    local expNeeded = GrindTimer.GetExpNeeded()
+    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
+    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, expNeeded)
+    local averageExpPerKill, recentKills = GrindTimer.GetKillInfo()
+    local killsNeeded = math.ceil(expNeeded / averageExpPerKill)
+    local expGainPerHour = math.floor(expGainPerMinute*60)
+    local levelsPerHour = GrindTimer.GetLevelsPerHour(expGainPerHour)
+
+    GrindTimer.SaveVars(hours, minutes, expNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
+    GrindTimer.UpdateUIControls()
+end
+
+function GrindTimer.GetExpNeeded()
+    local isChamp = IsUnitChampion("player")
+    local level = GetUnitLevel("player")
+    local championPoints = GetPlayerChampionPointsEarned()
+    local currentExp = isChamp and GetPlayerChampionXP() or GetUnitXP("player")
+    local maxExp = isChamp and GetNumChampionXPInChampionPoint(championPoints) or GetUnitXPMax("player")
+    local expNeeded = 0
 
     if GrindTimer.SavedVariables.Mode == "Next" then
-        GrindTimer.NextLevelUpdate(timestamp, level, playerPreviousExp, playerCurrentExp, championPoints)
-    elseif GrindTimer.SavedVariables.Mode == "Target" then
-        GrindTimer.TargetLevelUpdate(timestamp, level, playerPreviousExp, playerCurrentExp, championPoints)
+        expNeeded = maxExp - currentExp
+    else
+        expNeeded = GrindTimer.GetTargetLevelExp(level, championPoints, isChamp)
     end
+    return expNeeded
 end
 
-function GrindTimer.NextLevelUpdate(timestamp, level, playerPreviousExp, playerCurrentExp, championPoints)
-    local isChamp = IsUnitChampion("player")
-    local playerCurrentMaxExp = isChamp and GetNumChampionXPInChampionPoint(championPoints) or GetUnitXPMax("player")
-
-    local playerExpNeeded = playerCurrentMaxExp - playerCurrentExp
-    local leveledUp = playerExpNeeded < 0
-
-    if leveledUp and not isChamp then
-        level = level + 1
-        playerExpNeeded = GetUnitXPMax("player") + playerExpNeeded
-    elseif leveledUp and isChamp then
-        championPoints = (GetPlayerChampionPointsEarned() > 0) and championPoints + 1 or 0
-        playerExpNeeded = GetNumChampionXPInChampionPoint(championPoints) + playerExpNeeded
-    end
-
-    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
-    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, playerExpNeeded)
-    local averageExpPerKill, recentKills = GrindTimer.GetAverageExpPerKill()
-    local killsNeeded = math.ceil(playerExpNeeded / averageExpPerKill)
-    local expGainPerHour = math.floor(expGainPerMinute*60)
-    local levelsPerHour = GrindTimer.GetLevelsPerHour()
-
-    GrindTimer.SaveVars(hours, minutes, playerExpNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
-    GrindTimer.UpdateLabels()
-end
-
-function GrindTimer.TargetLevelUpdate(timestamp, level, playerPreviousExp, playerCurrentExp, championPoints)
+function GrindTimer.GetTargetLevelExp(level, championPoints, isChamp)
     local targetLevel = GrindTimer.SavedVariables.TargetLevel
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
-    local isChamp = IsUnitChampion("player")
-    local playerExpNeeded = 0
+    local totalExpRequired = 0
 
     if not isChamp and targetLevelType == "Normal" then
-        playerExpNeeded = GrindTimer.GetTargetLevelEXP(level, targetLevel, 1, championPoints)
-    elseif not isChamp and targetLevelType == "Champion" then
-        playerExpNeeded = GrindTimer.GetTargetLevelEXP(level, targetLevel, 2, championPoints)
-    elseif isChamp then
-        playerExpNeeded = GrindTimer.GetTargetLevelEXP(level, targetLevel, 3, championPoints)
-    end
-
-    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
-    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, playerExpNeeded)
-    local averageExpPerKill, recentKills = GrindTimer.GetAverageExpPerKill()
-    local killsNeeded = math.ceil(playerExpNeeded / averageExpPerKill)
-    local expGainPerHour = math.floor(expGainPerMinute*60)
-    local levelsPerHour = GrindTimer.GetLevelsPerHour()
-
-    GrindTimer.SaveVars(hours, minutes, playerExpNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
-    GrindTimer.UpdateLabels()
-end
-
-function GrindTimer.GetTargetLevelEXP(level, targetLevel, mode, championPoints)
-    --[[
-    mode 1 = Both player and target level are not champion.
-    mode 2 = player is not champion, but target level is. Does not currently work.
-    mode 3 = player is champion, therefore target level also is.
-    ]]
-
-    local totalExpRequired = 0    
-
-    if mode == 1 then
-        targetLevel = (tonumber(targetLevel) == 50) and 49 or targetLevel
         for i = level, targetLevel-1 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
         end
+        totalExpRequired = totalExpRequired - GetUnitXP("player")
 
-    --[[
-    elseif mode == 2 then
-        -- Normal Levels.
-        for i = level, 50 do
+    elseif not isChamp and targetLevelType == "Champion" then
+        for i = level, 49 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
         end
-
-        -- Champion Levels.
-        --if championPoints then
-        for i = (championPoints) and championPoints or 0, targetLevel do
-            local champLevelExp = GetNumChampionXPInChampionPoint(i)
-            totalExpRequired = totalExpRequired + levelExp
-        end
-    ]]
-
-    elseif mode == 3 then
         for i = championPoints, targetLevel-1 do
-            local champLevelExp = GetNumChampionXPInChampionPoint(i)
-            totalExpRequired = totalExpRequired + champLevelExp
+            local championPointExp = GetNumChampionXPInChampionPoint(i)
+            totalExpRequired = totalExpRequired + championPointExp
         end
+        totalExpRequired = totalExpRequired - GetPlayerChampionXP() - GetUnitXP("player")
+        
+    elseif isChamp then
+        for i = championPoints, targetLevel-1 do
+            local championPointExp = GetNumChampionXPInChampionPoint(i)
+            totalExpRequired = totalExpRequired + championPointExp
+        end
+        totalExpRequired = totalExpRequired - GetPlayerChampionXP()
     end
-
-    totalExpRequired = IsUnitChampion("player") and totalExpRequired - GetPlayerChampionXP() or totalExpRequired - GetUnitXP("player")
+    
     return totalExpRequired
 end
 
-function GrindTimer.GetExpGainPerMinute()
+function GrindTimer.SetNewTargetLevel(targetLevel)
+    GrindTimer.SavedVariables.TargetLevel = targetLevel
 
+    local expNeeded = GrindTimer.GetExpNeeded()
+    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
+    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, expNeeded)
+    local averageExpPerKill, recentKills = GrindTimer.GetKillInfo()
+    local killsNeeded = math.ceil(expNeeded / averageExpPerKill)
+    local expGainPerHour = math.floor(expGainPerMinute*60)
+    local levelsPerHour = GrindTimer.GetLevelsPerHour(expGainPerHour)
+
+    GrindTimer.SaveVars(hours, minutes, expNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
+end
+
+function GrindTimer.GetExpGainPerMinute()
     local totalExpGained = 0
     local firstRememberedEvent = 0
     local iteration = 0
 
-    for key, recentExpEvent in pairs(GrindTimer.RecentExpEvents) do
+    for key, expEvent in pairs(GrindTimer.ExpEvents) do
         if iteration == 0 then
-            firstRememberedEvent = recentExpEvent.Timestamp
+            firstRememberedEvent = expEvent.Timestamp
         end
 
-        totalExpGained = totalExpGained + recentExpEvent.ExpGained
+        totalExpGained = totalExpGained + expEvent.ExpGained
         iteration = iteration + 1
     end
 
     local timeDiff = GetDiffBetweenTimeStamps(GetTimeStamp(), firstRememberedEvent)
-
-    if timeDiff == 0 then
-        timeDiff = 1
-    end
+    timeDiff = (timeDiff == 0) and 1 or timeDiff
 
     local expGainPerMinute = totalExpGained / (timeDiff/60)
-
     return expGainPerMinute
 end
 
-function GrindTimer.GetLevelsPerHour()
-    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
-    local expGainPerHour = (expGainPerMinute ~= 0) and math.floor(expGainPerMinute*60) or 0
+function GrindTimer.GetLevelsPerHour(expGainPerHour)
     if expGainPerHour == 0 then
         return 0
     end
     local isChamp = IsUnitChampion("player")
-    local expNeededToLevelUp = 0
     local playerLevel = isChamp and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
     local levelsPerHour = 0
 
     if isChamp then
-        -- Champion leels gained in the next hour.
-        for i = playerLevel, playerLevel+100 do
+        -- Champion levels gained in the next hour.
+        for i = playerLevel, 1000 do
             local expInLevel = GetNumChampionXPInChampionPoint(i)
-            if levelsPerHour == 0 then
-                expNeededToLevelUp = expInLevel - GetPlayerChampionXP()
-                expGainPerHour = expGainPerHour - expNeededToLevelUp
-                if expGainPerHour >= 0 then
-                    levelsPerHour = levelsPerHour + 1
-                else
-                    break
-                end
+            if i == playerLevel then
+                expNeeded = expInLevel - GetPlayerChampionXP()
+                expGainPerHour = expGainPerHour - expNeeded
             else
                 expGainPerHour = expGainPerHour - expInLevel
-                if expGainPerHour >= 0 then
-                    levelsPerHour = levelsPerHour + 1
-                else
-                    break
-                end
+            end
+            if expGainPerHour >= 0 then
+                levelsPerHour = levelsPerHour + 1
+            else
+                break
             end
         end
     else
         -- Normal levels in the next hour, up to level 50.
-        local levelsTil50 = 50-playerLevel
-        local normalLoopBroken = false
+        local levelsTil50 = (50-playerLevel-1) + playerLevel
 
-        for i = playerLevel, playerLevel+levelsTil50 do
-            local expInLevel = GetNumExperiencePointsInLevel(playerLevel)
-            if levelsPerHour == 0 then
-                expNeededToLevelUp = expInLevel - GetUnitXP("player")
-                expGainPerHour = expGainPerHour - expNeededToLevelUp
-                if expGainPerHour >= 0 then
-                    levelsPerHour = levelsPerHour + 1
-                else
-                    normalLoopBroken = true
-                    break
-                end
+        for i = playerLevel, levelsTil50 do
+            local expInLevel = GetNumExperiencePointsInLevel(i)
+            if i == playerLevel then
+                expNeeded = expInLevel - GetUnitXP("player")
+                expGainPerHour = expGainPerHour - expNeeded
             else
                 expGainPerHour = expGainPerHour - expInLevel
+            end
+            if expGainPerHour >= 0 then
+                levelsPerHour = levelsPerHour + 1
+            else
+                break
+            end
+        end
+        if expGainPerHour >= 0 then
+            for i = 0, 1000 do
+                local expInLevel = GetNumChampionXPInChampionPoint(i)
+                expGainPerHour = expGainPerHour - expInLevel
+
                 if expGainPerHour >= 0 then
                     levelsPerHour = levelsPerHour + 1
                 else
-                    normalLoopBroken = true
                     break
                 end
             end
         end
-
-        -- If player will pass normal level 50 in the next hour, calculate champion levels gained as well.
-        --[[ Returns nil if player isn't champion...
-        if not normalLoopBroken then
-            for i = 0, 100-levelsTil50 do
-                local expInLevel = GetNumChampionXPInChampionPoint(i)
-                expGainPerHour = expGainPerHour - expInLevel
-                if expGainPerHour >= 0 then
-                    levelsPerHour = levelsPerHour + 1
-                else
-                    break
-                end
-            end
-        end     
-        ]]   
     end
     return levelsPerHour
 end
 
-function GrindTimer.GetAverageExpPerKill()
+function GrindTimer.GetKillInfo()
     local totalExpGained = 0
     local kills = 0
 
-    for key, recentExpEvent in pairs(GrindTimer.RecentExpEvents) do
-        if recentExpEvent.Reason == 0 then
-            totalExpGained = totalExpGained + recentExpEvent.ExpGained
+    for key, expEvent in pairs(GrindTimer.ExpEvents) do
+        if expEvent.Reason == 0 then
+            totalExpGained = totalExpGained + expEvent.ExpGained
             kills = kills + 1
         end
     end
@@ -303,27 +262,34 @@ function GrindTimer.GetAverageExpPerKill()
 end
 
 function GrindTimer.GetLevelTimeRemaining(expGainPerMinute, expRemaining)
-    local actualMinutesToLevel = math.ceil(expRemaining / expGainPerMinute)
+    local rawMinutesToLevel = math.ceil(expRemaining / expGainPerMinute)
     local minutesToLevel = 0
     local hoursToLevel = 0
 
-    if actualMinutesToLevel > 60 then
-        hoursToLevel = math.floor(actualMinutesToLevel / 60)
-        minutesToLevel = actualMinutesToLevel - math.floor(actualMinutesToLevel/60) * 60
+    if rawMinutesToLevel > 60 then
+        hoursToLevel = math.floor(rawMinutesToLevel / 60)
+        minutesToLevel = rawMinutesToLevel - math.floor(rawMinutesToLevel/60) * 60
     else
-        minutesToLevel = actualMinutesToLevel
+        minutesToLevel = rawMinutesToLevel
     end
 
     return hoursToLevel, minutesToLevel
 end
 
-function GrindTimer.SaveVars(hours, minutes, playerExpNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
+function GrindTimer.SaveVars(hours, minutes, expNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
+    -- Check for INF / IND
+    hours = (hours == math.huge or hours == -math.huge) and 0 or hours
+    minutes = (minutes ~= minutes or minutes == math.huge or minutes == -math.huge) and 0 or minutes
+    averageExpPerKill = (averageExpPerKill ~= averageExpPerKill) and 0 or averageExpPerKill
+    killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
+    expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
+
     GrindTimer.SavedVariables.TargetHours = hours
     GrindTimer.SavedVariables.TargetMinutes = minutes
-    GrindTimer.SavedVariables.TargetExpRemaining = playerExpNeeded
+    GrindTimer.SavedVariables.TargetExpRemaining = expNeeded
     GrindTimer.SavedVariables.RecentKills = recentKills
     GrindTimer.SavedVariables.KillsNeeded = killsNeeded
-    GrindTimer.SavedVariables.AverageExpPerHour = expGainPerHour
+    GrindTimer.SavedVariables.ExpPerHour = expGainPerHour
     GrindTimer.SavedVariables.LevelsPerHour = levelsPerHour
 end
 

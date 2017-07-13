@@ -1,9 +1,7 @@
 local fontControls = {}
 
 function GrindTimer.InitializeSettingsMenu()
-    local r = GrindTimer.AccountSavedVariables.TextColor.R
-    local g = GrindTimer.AccountSavedVariables.TextColor.G
-    local b = GrindTimer.AccountSavedVariables.TextColor.B
+    local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
     local OutlineTextChecked = (GrindTimer.AccountSavedVariables.OutlineText) and BSTATE_PRESSED or BSTATE_NORMAL
     GrindTimer.UpdateSettingWindowButtons()
     GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)    
@@ -34,7 +32,7 @@ function GrindTimer.FirstLabelDropdownClick()
         secondDropDownMenu:SetHidden(true)
     else
         firstDropDownMenu:SetHidden(true)
-        secondDropDownButton:SetHidden(false)        
+        secondDropDownButton:SetHidden(false)
     end
 end
 
@@ -139,9 +137,7 @@ end
 function GrindTimer.UpdateFonts()
     local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
     local outlineFont = "$(BOLD_FONT)|$(KB_18)|outline"
-    local r = GrindTimer.AccountSavedVariables.TextColor.R
-    local g = GrindTimer.AccountSavedVariables.TextColor.G
-    local b = GrindTimer.AccountSavedVariables.TextColor.B
+    local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
 
     for key, control in pairs(fontControls) do
         -- Apply color to font controls
@@ -173,15 +169,10 @@ function GrindTimer.ColorPickerOpen(texture)
             end
         end
 
-        GrindTimer.AccountSavedVariables.TextColor.R = r
-        GrindTimer.AccountSavedVariables.TextColor.G = g
-        GrindTimer.AccountSavedVariables.TextColor.B = b
+        GrindTimer.AccountSavedVariables.TextColor = {r, g, b}
     end
 
-    local currentR = GrindTimer.AccountSavedVariables.TextColor.R
-    local currentG = GrindTimer.AccountSavedVariables.TextColor.G
-    local currentB = GrindTimer.AccountSavedVariables.TextColor.B
-
+    local currentR, currentG, currentB = unpack(GrindTimer.AccountSavedVariables.TextColor)
     COLOR_PICKER:Show(ColorSelected, currentR, currentG, currentB)
 end
 
@@ -217,7 +208,7 @@ function GrindTimer.UpdateSettingWindowButtons()
     elseif firstLabelType == 5 then
         firstComboButton:SetText("Levels per hour")
     elseif firstLabelType == 6 then
-        firstComboButton:SetText("Kills in last 10 minutes")
+        firstComboButton:SetText("Kills in last 15 minutes")
     end
 
     if secondLabelType == 1 then
@@ -231,6 +222,6 @@ function GrindTimer.UpdateSettingWindowButtons()
     elseif secondLabelType == 5 then
         secondComboButton:SetText("Levels per hour")
     elseif secondLabelType == 6 then
-        secondComboButton:SetText("Kills in last 10 minutes")
+        secondComboButton:SetText("Kills in last 15 minutes")
     end
 end

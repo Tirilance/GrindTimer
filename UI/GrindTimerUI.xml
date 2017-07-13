@@ -166,7 +166,7 @@
                     <Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="BOTTOM" offsetY="5"/>
                     <Textures normal="esoui/art/buttons/gamepad/gp_downarrow.dds" pressed="esoui/art/buttons/gamepad/gp_uparrow.dds"/>
                     <OnClicked>
-                        GrindTimer.OptionExtenderButtonClicked(self)
+                        GrindTimer.ExtendButtonClicked(self)
                         GrindTimer.AddToFontControlsArray(self)
                     </OnClicked>
                 </Button>

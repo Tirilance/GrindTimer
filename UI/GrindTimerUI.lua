@@ -1,5 +1,6 @@
 local extendedControls = {} -- Controls affected by using the extender button to show or hide more UI options
-local optionsExtended = false
+local controlsExtended = false
+local labelsInitialized = false
 
 function GrindTimer.InitializeUI()
     GrindTimerWindow:ClearAnchors()
@@ -9,15 +10,7 @@ function GrindTimer.InitializeUI()
     SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerFragment)
     SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerFragment)
 
-    local mode = GrindTimer.SavedVariables.Mode
-    local locked = GrindTimer.AccountSavedVariables.Locked
-    local lockedState = locked and BSTATE_PRESSED or BSTATE_NORMAL
-
-    GrindTimerWindow:SetMovable(not locked)
-    GrindTimerWindowLockButton:SetState(lockedState)
-    GrindTimer.UpdateUIOpacity()
-    GrindTimer.UpdateLabels()
-    GrindTimer.InitializeSettingsMenu()
+    GrindTimer.InitializeUIControls()
 end
 
 function GrindTimer.AddToExtendedControlsArray(control)
@@ -25,11 +18,12 @@ function GrindTimer.AddToExtendedControlsArray(control)
 end
 
 function GrindTimer.OnWindowShown()
-    local opacity = GrindTimer.AccountSavedVariables.Opacity
-    GrindTimerWindow:SetAlpha(opacity)
-    GrindTimerWindowSettingsButtonBackdrop:SetAlpha(opacity)
-    GrindTimerWindowResetButtonBackdrop:SetAlpha(opacity)
-    GrindTimerWindowLevelEntryBoxBackdrop:SetAlpha(opacity)
+    GrindTimer.UpdateUIOpacity()
+end
+
+function GrindTimer.SaveWindowPosition(window)
+    GrindTimer.AccountSavedVariables.OffsetX = window:GetLeft()
+    GrindTimer.AccountSavedVariables.OffsetY = window:GetTop()
 end
 
 function GrindTimer.UpdateUIOpacity()
@@ -54,14 +48,118 @@ function GrindTimer.ToggleWindowLock(lockButton)
     GrindTimerWindow:SetMovable(not GrindTimer.AccountSavedVariables.Locked)
 end
 
+function GrindTimer.InitializeUIControls()
+    for key, control in pairs(extendedControls) do
+        control:SetHidden(true)
+    end
+    GrindTimerWindow:SetDimensions(345, 70)
+
+    local locked = GrindTimer.AccountSavedVariables.Locked
+    local lockButtonState = locked and BSTATE_PRESSED or BSTATE_NORMAL
+    GrindTimerWindow:SetMovable(not locked)
+    GrindTimerWindowLockButton:SetState(lockButtonState)
+
+    GrindTimer.UpdateUIControls()
+    GrindTimer.UpdateUIOpacity()
+    GrindTimer.InitializeSettingsMenu()
+end
+
+function GrindTimer.UpdateUIControls()
+    GrindTimer.UpdateLabels()
+    GrindTimer.UpdateButtons()
+    GrindTimer.UpdateLevelEntryBox()
+end
+
+function GrindTimer.UpdateLabels()
+    GrindTimerWindowLevelTypeLabel:SetHidden(not controlsExtended or mode == "Next" and true or false)
+
+    local firstLabelString, secondLabelString = GrindTimer.GetLabelStrings()
+    GrindTimerWindowFirstOptionLabel:SetText(firstLabelString)
+    GrindTimerWindowSecondOptionLabel:SetText(secondLabelString)
+end
+
+function GrindTimer.GetLabelStrings()
+    local hours = GrindTimer.SavedVariables.TargetHours
+    local minutes = GrindTimer.SavedVariables.TargetMinutes
+    local expNeeded = GrindTimer.SavedVariables.TargetExpRemaining
+    local targetLevel = GrindTimer.SavedVariables.TargetLevel
+    local firstLabelType = GrindTimer.AccountSavedVariables.FirstLabelType
+    local secondLabelType = GrindTimer.AccountSavedVariables.SecondLabelType
+    local recentKills = GrindTimer.SavedVariables.RecentKills
+    local killsNeeded = GrindTimer.SavedVariables.KillsNeeded
+    local averageExpPerHour = GrindTimer.SavedVariables.ExpPerHour
+    local levelsPerHour = GrindTimer.SavedVariables.LevelsPerHour
+
+    local firstLabelString = ""
+    local secondLabelString = ""
+
+    local mode = GrindTimer.SavedVariables.Mode
+
+    -- Mode dependant strings.
+    if mode == "Next" then
+        local nextLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+
+        if firstLabelType == 1 then
+            firstLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, nextLevel)
+        elseif firstLabelType == 2 then
+            firstLabelString = string.format("%s Experience needed until level %s", expNeeded, nextLevel)
+        elseif firstLabelType == 3 then
+            firstLabelString = string.format("%s Kills needed until level %s", killsNeeded, nextLevel)
+        end
+
+        if secondLabelType == 1 then
+            secondLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, nextLevel)
+        elseif secondLabelType == 2 then
+            secondLabelString = string.format("%s Experience needed until level %s", expNeeded, nextLevel)
+        elseif secondLabelType == 3 then
+            secondLabelString = string.format("%s Kills needed until level %s", killsNeeded, nextLevel)
+        end
+
+    elseif mode == "Target" then
+        if firstLabelType == 1 then
+            firstLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
+        elseif firstLabelType == 2 then
+            firstLabelString = string.format("%s Experience needed until level %s", expNeeded, targetLevel)
+        elseif firstLabelType == 3 then
+            firstLabelString = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
+        end
+
+        if secondLabelType == 1 then
+            secondLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
+        elseif secondLabelType == 2 then
+            secondLabelString = string.format("%s Experience needed until level %s", expNeeded, targetLevel)
+        elseif secondLabelType == 3 then
+            secondLabelString = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
+        end
+    end
+
+    -- Mode independent strings.
+    if firstLabelType == 4 then
+        firstLabelString = string.format("%s Experience gained per hour", averageExpPerHour)
+    elseif firstLabelType == 5 then
+        firstLabelString = string.format("%s Levels gained per hour", levelsPerHour)
+    elseif firstLabelType == 6 then
+        firstLabelString = string.format("%s Kills in last 15 minutes", recentKills)
+    end
+
+    if secondLabelType == 4 then
+        secondLabelString = string.format("%s Experience gained per hour", averageExpPerHour)
+    elseif secondLabelType == 5 then
+        secondLabelString = string.format("%s Levels gained per hour", levelsPerHour)
+    elseif secondLabelType == 6 then
+        secondLabelString = string.format("%s Kills in last 15 minutes", recentKills)
+    end
+
+    return firstLabelString, secondLabelString
+end
+
 function GrindTimer.UpdateButtons()
     local mode = GrindTimer.SavedVariables.Mode
-    local targetType = GrindTimer.SavedVariables.TargetLevelType
+    local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
 
     if mode == "Next" then
         GrindTimerWindowNextModeButton:SetState(BSTATE_PRESSED)
         GrindTimerWindowTargetModeButton:SetState(BSTATE_NORMAL)
-
         GrindTimerWindowNormalTypeButton:SetState(BSTATE_PRESSED)
         GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
         GrindTimerWindowNormalTypeButton:SetHidden(true)
@@ -71,17 +169,23 @@ function GrindTimer.UpdateButtons()
         GrindTimerWindowNextModeButton:SetState(BSTATE_NORMAL)
         GrindTimerWindowTargetModeButton:SetState(BSTATE_PRESSED)
 
-        if targetType == "Normal" then
+        if targetLevelType == "Normal" and controlsExtended then
             GrindTimerWindowNormalTypeButton:SetState(BSTATE_PRESSED)
             GrindTimerWindowNormalTypeButton:SetHidden(false)
-            GrindTimerWindowChampionTypeButton:SetState(BSTATE_DISABLED)
-            GrindTimerWindowChampionTypeButton:SetHidden(true)
+            GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
+            GrindTimerWindowChampionTypeButton:SetHidden(false)
 
-        elseif targetType == "Champion" then
-            GrindTimerWindowNormalTypeButton:SetState(BSTATE_DISABLED)
-            GrindTimerWindowNormalTypeButton:SetHidden(true)
+        elseif targetLevelType == "Champion" and controlsExtended then            
             GrindTimerWindowChampionTypeButton:SetState(BSTATE_PRESSED)
             GrindTimerWindowChampionTypeButton:SetHidden(false)
+
+            if IsUnitChampion("player") then
+                GrindTimerWindowNormalTypeButton:SetState(BSTATE_DISABLED)
+                GrindTimerWindowNormalTypeButton:SetHidden(true)
+            else
+                GrindTimerWindowNormalTypeButton:SetState(BSTATE_NORMAL)
+                GrindTimerWindowNormalTypeButton:SetHidden(false)
+            end
         end
     end
 end
@@ -92,7 +196,7 @@ function GrindTimer.UpdateLevelEntryBox()
     if mode == "Next" then
         GrindTimerWindowLevelEntryBox:SetHidden(true)
         GrindTimerWindowLevelEntryLabel:SetHidden(true)
-    elseif mode == "Target" then
+    elseif mode == "Target" and controlsExtended then
         GrindTimerWindowLevelEntryBox:SetHidden(false)
         GrindTimerWindowLevelEntryLabel:SetHidden(false)
         GrindTimerWindowLevelEntryBox:SetText(GrindTimer.SavedVariables.TargetLevel)
@@ -104,115 +208,28 @@ function GrindTimer.ToggleDisplay()
 end
 
 -- Hides or shows the options normally hidden by the collapsed extender button.
-function GrindTimer.OptionExtenderButtonClicked(button)
-    if optionsExtended then
+function GrindTimer.UpdateExtendedControls()
+    if controlsExtended then
         for key, control in pairs(extendedControls) do
             control:SetHidden(true)
         end
 
         GrindTimerWindow:SetDimensions(345, 70)
-        button:SetState(BSTATE_NORMAL)
-        optionsExtended = false
+        controlsExtended = false
     else
         for key, control in pairs(extendedControls) do
             control:SetHidden(false)
         end
 
         GrindTimerWindow:SetDimensions(345, 175)
-        button:SetState(BSTATE_PRESSED)
-        optionsExtended = true
-
-        GrindTimer.UpdateLabels()
-        GrindTimer.UpdateButtons()
-        GrindTimer.UpdateLevelEntryBox()
+        controlsExtended = true
+        GrindTimer.UpdateUIControls()
     end
 end
 
-function GrindTimer.SaveWindowPosition(window)
-    GrindTimer.AccountSavedVariables.OffsetX = window:GetLeft()
-    GrindTimer.AccountSavedVariables.OffsetY = window:GetTop()
-end
-
-function GrindTimer.UpdateLabels()
-    local hours = GrindTimer.SavedVariables.TargetHours
-    local minutes = GrindTimer.SavedVariables.TargetMinutes
-    local playerExpNeeded = GrindTimer.SavedVariables.TargetExpRemaining
-    local targetLevel = GrindTimer.SavedVariables.TargetLevel
-    local firstLabel = GrindTimer.AccountSavedVariables.FirstLabelType
-    local secondLabel = GrindTimer.AccountSavedVariables.SecondLabelType
-    local recentKills = GrindTimer.SavedVariables.RecentKills
-    local killsNeeded = GrindTimer.SavedVariables.KillsNeeded
-    local averageExpPerHour = GrindTimer.SavedVariables.AverageExpPerHour
-    local levelsPerHour = GrindTimer.SavedVariables.LevelsPerHour
-
-    local firstLabelString = ""
-    local secondLabelString = ""
-
-    local mode = GrindTimer.SavedVariables.Mode
-    local nextLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
-
-    if not optionsExtended or mode == "Next" then
-        GrindTimerWindowLevelTypeLabel:SetHidden(true)
-    else
-        GrindTimerWindowLevelTypeLabel:SetHidden(false)
-    end
-
-    -- Mode dependant strings.
-    if mode == "Next" then
-
-        if firstLabel == 1 then
-            firstLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, nextLevel)
-        elseif firstLabel == 2 then
-            firstLabelString = string.format("%s Experience needed until level %s", playerExpNeeded, nextLevel)
-        elseif firstLabel == 3 then
-            firstLabelString = string.format("%s Kills needed until level %s", killsNeeded, nextLevel)
-        end
-
-        if secondLabel == 1 then
-            secondLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, nextLevel)
-        elseif secondLabel == 2 then
-            secondLabelString = string.format("%s Experience needed until level %s", playerExpNeeded, nextLevel)
-        elseif secondLabel == 3 then
-            secondLabelString = string.format("%s Kills needed until level %s", killsNeeded, nextLevel)
-        end
-
-    elseif mode == "Target" then
-        if firstLabel == 1 then
-            firstLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
-        elseif firstLabel == 2 then
-            firstLabelString = string.format("%s Experience needed until level %s", playerExpNeeded, targetLevel)
-        elseif firstLabel == 3 then
-            firstLabelString = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
-        end
-
-        if secondLabel == 1 then
-            secondLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
-        elseif secondLabel == 2 then
-            secondLabelString = string.format("%s Experience needed until level %s", playerExpNeeded, targetLevel)
-        elseif secondLabel == 3 then
-            secondLabelString = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
-        end
-    end
-
-    -- Mode independent strings.
-    if firstLabel == 4 then
-        firstLabelString = string.format("%s Experience gained per hour", averageExpPerHour)
-    elseif firstLabel == 5 then
-        firstLabelString = string.format("%s Levels gained per hour", levelsPerHour)
-    elseif firstLabel == 6 then
-        firstLabelString = string.format("%s Kills in last 10 minutes", recentKills)
-    end
-
-    if secondLabel == 4 then
-        secondLabelString = string.format("%s Experience gained per hour", averageExpPerHour)
-    elseif secondLabel == 5 then
-        secondLabelString = string.format("%s Levels gained per hour", levelsPerHour)
-    elseif secondLabel == 6 then
-        secondLabelString = string.format("%s Kills in last 10 minutes", recentKills)
-    end
-
-    GrindTimerWindowFirstOptionLabel:SetText(firstLabelString)
-    GrindTimerWindowSecondOptionLabel:SetText(secondLabelString)
+function GrindTimer.ExtendButtonClicked(button)
+    GrindTimer.UpdateExtendedControls()
+    button:SetState(controlsExtended and BSTATE_PRESSED or BSTATE_NORMAL)
 end
 
 function GrindTimer.LevelEntryTextChanged(textBox)
@@ -226,8 +243,7 @@ function GrindTimer.LevelEntryTextChanged(textBox)
         return
     end
 
-    local targetType = GrindTimer.SavedVariables.TargetLevelType
-    if targetType == "Normal" and currentNumber > 50 then
+    if GrindTimer.SavedVariables.TargetLevelType == "Normal" and currentNumber > 50 then
         textBox:SetText("50")
     end
 end
@@ -241,77 +257,35 @@ function GrindTimer.LevelEntryTextSubmitted(textBox)
     if currentText ~= nil and currentText ~= "" then
         -- Player level is lower than target normal level.
         if targetLevelType == "Normal" and not isChamp and currentNumber <= GetUnitLevel("player") then
-            GrindTimer.UpdateNewTargetLevel(GetUnitLevel("player")+1)
+            GrindTimer.SetNewTargetLevel(GetUnitLevel("player")+1)
 
-        -- Player is champion and target level is not.
-        --[[elseif isChamp and targetLevelType == "Normal" and isChamp then
-            GrindTimer.UpdateNewTargetLevel(GetPlayerChampionPointsEarned()+1)]]
-
-        -- If target champion level is lower than current champion level.
-        elseif targetLevelType == "Champion" and currentNumber <= GetPlayerChampionPointsEarned() then            
-            GrindTimer.UpdateNewTargetLevel(GetPlayerChampionPointsEarned()+1)
+        -- Target champion level is lower than current champion level.
+        elseif targetLevelType == "Champion" and currentNumber <= GetPlayerChampionPointsEarned() then
+            GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned()+1)
         else
-            GrindTimer.UpdateNewTargetLevel(currentText)
+            GrindTimer.SetNewTargetLevel(currentText)
         end
 
         textBox:SetText(GrindTimer.SavedVariables.TargetLevel)
-        GrindTimer.UpdateLabels()
     else
         -- If text is somehow invalid after LevelEntryTextChanged checks or just empty, reset target level and set it again.
         local newTarget = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+        GrindTimer.SetNewTargetLevel(newTarget)
         textBox:SetText(newTarget)
-
-        GrindTimer.SavedVariables.TargetLevel = newTarget
-        GrindTimer.UpdateLabels()
     end
-end
 
-function GrindTimer.UpdateNewTargetLevel(targetLevel)
-    local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
-    local isChamp = IsUnitChampion("player")
-    local mode = isChamp and 3 or 1
-    --[[
-    local mode = 0    
-    if isChamp then
-        mode = 3
-    else
-        mode = (targetLevelType == "Normal") and 1 or 2
-    end
-    ]]
-    local playerExpNeeded = GrindTimer.GetTargetLevelEXP(GetUnitLevel("player"), targetLevel, mode, GetPlayerChampionPointsEarned())
-    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
-    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, playerExpNeeded)
-    local averageExpPerKill, recentKills = GrindTimer.GetAverageExpPerKill()
-    local killsNeeded = math.ceil(playerExpNeeded / averageExpPerKill)
-    local levelsPerHour = GrindTimer.GetLevelsPerHour()
-    local expGainPerHour = 0
-
-    -- Check for INF / IND
-    hours = (hours == math.huge or hours == -math.huge) and 0 or hours
-    minutes = (minutes ~= minutes or minutes == math.huge or minutes == -math.huge) and 0 or minutes
-    averageExpPerKill = (averageExpPerKill ~= averageExpPerKill) and 0 or averageExpPerKill
-    killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
-    expGainPerHour = (expGainPerMinute ~= 0) and math.floor(expGainPerMinute*60) or 0
-
-    GrindTimer.SavedVariables.TargetLevel = targetLevel
-    GrindTimer.SaveVars(hours, minutes, playerExpNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.NextModeButtonClicked(button)
-    button:SetState(BSTATE_PRESSED)    
+    button:SetState(BSTATE_PRESSED)
     GrindTimerWindowTargetModeButton:SetState(BSTATE_NORMAL)
 
     GrindTimer.SavedVariables.Mode = "Next"
-    local isChamp = IsUnitChampion("player")
-    local targetLevel = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    local targetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
 
-    GrindTimer.SavedVariables.TargetLevelType = isChamp and "Champion" or "Normal"
-    GrindTimer.SavedVariables.TargetLevel = targetLevel
-
-    GrindTimer.UpdateNewTargetLevel(targetLevel)
-    GrindTimer.UpdateButtons()
-    GrindTimer.UpdateLabels()
-    GrindTimer.UpdateLevelEntryBox()
+    GrindTimer.SetNewTargetLevel(targetLevel)
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.TargetModeButtonClicked(button)
@@ -319,70 +293,58 @@ function GrindTimer.TargetModeButtonClicked(button)
     GrindTimerWindowNextModeButton:SetState(BSTATE_NORMAL)
 
     GrindTimer.SavedVariables.Mode = "Target"
-    local isChamp = IsUnitChampion("player")
-    local targetLevel = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
-    local targetType = isChamp and "Champion" or "Normal"
+    local targetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
 
-    GrindTimer.SavedVariables.TargetLevelType = targetType
     GrindTimerWindowLevelEntryBox:SetText(targetLevel)
-
-    if isChamp then
-        GrindTimerWindowNormalTypeButton:SetState(BSTATE_DISABLED)
-        GrindTimerWindowChampionTypeButton:SetState(BSTATE_PRESSED)
-    else
-        GrindTimerWindowNormalTypeButton:SetState(BSTATE_PRESSED)
-        GrindTimerWindowChampionTypeButton:SetState(BSTATE_DISABLED)
-    end
-
-    GrindTimer.UpdateButtons()
-    GrindTimer.UpdateLabels()
-    GrindTimer.UpdateLevelEntryBox()
+    GrindTimer.SavedVariables.TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal"
+    GrindTimer.SetNewTargetLevel(targetLevel)
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.NormalTypeButtonClicked(button)
+    if IsUnitChampion("player") then return end
     button:SetState(BSTATE_PRESSED)
-    GrindTimerWindowChampionTypeButton:SetState(IsUnitChampion("player") and BSTATE_NORMAL or BSTATE_DISABLED)  
+    GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
 
-    GrindTimer.SavedVariables.TargetLevelType = "Normal"
     local currentText = GrindTimerWindowLevelEntryBox:GetText()
     local currentNumber = tonumber(currentText)
 
     if currentNumber ~= nil and currentNumber > 50 then
         GrindTimerWindowLevelEntryBox:SetText("50")
-    elseif currentText == "" then
-        local newTargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    elseif currentText == "" or currentNumber < GetUnitLevel("player") then
+        local newTargetLevel = GetUnitLevel("player")+1
         GrindTimerWindowLevelEntryBox:SetText(newTargetLevel)
     end
 
-    GrindTimer.SavedVariables.TargetLevel = GrindTimerWindowLevelEntryBox:GetText()
+    local targetLevel = GrindTimerWindowLevelEntryBox:GetText()
+
+    GrindTimer.SavedVariables.TargetLevelType = "Normal"
+    GrindTimer.SetNewTargetLevel(targetLevel)
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.ChampionTypeButtonClicked(button)
     button:SetState(BSTATE_PRESSED)
-
-    if IsUnitChampion("player") then
-        GrindTimerWindowNormalTypeButton:SetState(BSTATE_DISABLED)        
-    else
-        GrindTimerWindowNormalTypeButton:SetState(BSTATE_NORMAL)
-    end
+    GrindTimerWindowNormalTypeButton:SetState(BSTATE_NORMAL)
+    
+    local currentText = GrindTimerWindowLevelEntryBox:GetText()
+    local currentNumber = tonumber(currentText)
 
     GrindTimer.SavedVariables.TargetLevelType = "Champion"
 
-    local currentText = GrindTimerWindowLevelEntryBox:GetText()
-    local currentNumber = tonumber(currentText)
-    local nextLevel = GetPlayerChampionPointsEarned()+1
-
-    if currentNumber ~= nil and currentNumber < nextLevel then
-        GrindTimerWindowLevelEntryBox:SetText(nextLevel)
+    if currentNumber ~= nil and currentNumber <= GetPlayerChampionPointsEarned() then
+        GrindTimerWindowLevelEntryBox:SetText(GetPlayerChampionPointsEarned()+1)
+        GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned()+1)
+    elseif currentNumber ~= nil then
+        GrindTimer.SetNewTargetLevel(currentText)
     end
+
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.ResetButtonClicked()
     GrindTimer.Reset()
-    GrindTimer.UpdateNewTargetLevel(IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1)
-    GrindTimer.UpdateLabels()
-    GrindTimer.UpdateButtons()
-    GrindTimer.UpdateLevelEntryBox()
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.SettingsButtonClicked()

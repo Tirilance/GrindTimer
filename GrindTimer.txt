@@ -1,12 +1,11 @@
 ## Title: Grind Timer
 ## APIVersion: 100019
 ## Author: Tirilance
-## Version: 1.5.0
-## Description: An addon for visualization on your leveling goals.
+## Version: 1.6.0
+## Description: Visualize your leveling goals.
 ## SavedVariables: GrindTimerVars
 
 GrindTimer.lua
-GrindTimerExpEvent.lua
 UI/GrindTimerUI.lua
 UI/GrindTimerSettingsUI.lua
 UI/GrindTimerUI.xml
