@@ -3,7 +3,7 @@ GrindTimer = {}
 GrindTimer.Name = "GrindTimer"
 GrindTimer.ExpEvents = {}
 GrindTimer.ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
-GrindTimer.Version = "1.6.0"
+GrindTimer.Version = "1.6.1"
 
 GrindTimer.AccountDefaults =
 {
