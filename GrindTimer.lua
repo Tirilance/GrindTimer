@@ -64,7 +64,7 @@ end
 function GrindTimer.NewExpEvent(timestamp, expGained)
     local expEvent = {}
     expEvent.Timestamp = timestamp
-    expEvent.ExpGained = expGaine
+    expEvent.ExpGained = expGained
 
     expEvent.IsExpired = function(self)
         return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > GrindTimer.ExpEventTimeWindow
