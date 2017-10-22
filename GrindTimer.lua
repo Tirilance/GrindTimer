@@ -3,7 +3,7 @@ GrindTimer = {}
 GrindTimer.Name = "GrindTimer"
 GrindTimer.ExpEvents = {}
 GrindTimer.ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
-GrindTimer.Version = "1.6.1"
+GrindTimer.Version = "1.6.2"
 
 GrindTimer.AccountDefaults =
 {
@@ -61,11 +61,10 @@ function GrindTimer.Reset()
 end
 
 -- ExpEvents used to track exp gains.
-function GrindTimer.NewExpEvent(timestamp, expGained, reason)
+function GrindTimer.NewExpEvent(timestamp, expGained)
     local expEvent = {}
     expEvent.Timestamp = timestamp
-    expEvent.ExpGained = expGained
-    expEvent.Reason = reason
+    expEvent.ExpGained = expGaine
 
     expEvent.IsExpired = function(self)
         return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > GrindTimer.ExpEventTimeWindow
@@ -73,10 +72,9 @@ function GrindTimer.NewExpEvent(timestamp, expGained, reason)
     return expEvent
 end
 
-function GrindTimer.CreateExpEvent(timestamp, expGained, reason)
-    local newExpEvent = GrindTimer.NewExpEvent(timestamp, expGained, reason)
+function GrindTimer.CreateExpEvent(timestamp, expGained)
+    local newExpEvent = GrindTimer.NewExpEvent(timestamp, expGained)
     table.insert(GrindTimer.ExpEvents, newExpEvent)
-    GrindTimer.CleanupExpiredEvents()
 end
 
 function GrindTimer.CleanupExpiredEvents()
@@ -88,19 +86,21 @@ function GrindTimer.CleanupExpiredEvents()
 end
 
 function GrindTimer.Update(eventCode, reason, level, previousExp, currentExp, championPoints)
-    local expGained = currentExp - previousExp
-    GrindTimer.CreateExpEvent(GetTimeStamp(), expGained, reason)
 
-    local expNeeded = GrindTimer.GetExpNeeded()
-    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
-    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, expNeeded)
-    local averageExpPerKill, recentKills = GrindTimer.GetKillInfo()
-    local killsNeeded = math.ceil(expNeeded / averageExpPerKill)
-    local expGainPerHour = math.floor(expGainPerMinute*60)
-    local levelsPerHour = GrindTimer.GetLevelsPerHour(expGainPerHour)
+    GrindTimer.CleanupExpiredEvents()
 
-    GrindTimer.SaveVars(hours, minutes, expNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
+    if reason == 0 or reason == 24 or reason == 26 then
+        local expGained = currentExp - previousExp
+        GrindTimer.CreateExpEvent(GetTimeStamp(), expGained)
+    end
+
+    GrindTimer.UpdateVars()
     GrindTimer.UpdateUIControls()
+end
+
+function GrindTimer.SetNewTargetLevel(targetLevel)
+    GrindTimer.SavedVariables.TargetLevel = targetLevel
+    GrindTimer.UpdateVars()
 end
 
 function GrindTimer.GetExpNeeded()
@@ -153,32 +153,18 @@ function GrindTimer.GetTargetLevelExp(level, championPoints, isChamp)
     return totalExpRequired
 end
 
-function GrindTimer.SetNewTargetLevel(targetLevel)
-    GrindTimer.SavedVariables.TargetLevel = targetLevel
-
-    local expNeeded = GrindTimer.GetExpNeeded()
-    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
-    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, expNeeded)
-    local averageExpPerKill, recentKills = GrindTimer.GetKillInfo()
-    local killsNeeded = math.ceil(expNeeded / averageExpPerKill)
-    local expGainPerHour = math.floor(expGainPerMinute*60)
-    local levelsPerHour = GrindTimer.GetLevelsPerHour(expGainPerHour)
-
-    GrindTimer.SaveVars(hours, minutes, expNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
-end
-
 function GrindTimer.GetExpGainPerMinute()
     local totalExpGained = 0
     local firstRememberedEvent = 0
-    local iteration = 0
+    local count = 0
 
     for key, expEvent in pairs(GrindTimer.ExpEvents) do
-        if iteration == 0 then
+        if count == 0 then
             firstRememberedEvent = expEvent.Timestamp
         end
 
         totalExpGained = totalExpGained + expEvent.ExpGained
-        iteration = iteration + 1
+        count = count + 1
     end
 
     local timeDiff = GetDiffBetweenTimeStamps(GetTimeStamp(), firstRememberedEvent)
@@ -251,10 +237,8 @@ function GrindTimer.GetKillInfo()
     local kills = 0
 
     for key, expEvent in pairs(GrindTimer.ExpEvents) do
-        if expEvent.Reason == 0 then
-            totalExpGained = totalExpGained + expEvent.ExpGained
-            kills = kills + 1
-        end
+        totalExpGained = totalExpGained + expEvent.ExpGained
+        kills = kills + 1
     end
 
     local average = totalExpGained / kills
@@ -276,7 +260,15 @@ function GrindTimer.GetLevelTimeRemaining(expGainPerMinute, expRemaining)
     return hoursToLevel, minutesToLevel
 end
 
-function GrindTimer.SaveVars(hours, minutes, expNeeded, recentKills, killsNeeded, expGainPerHour, levelsPerHour)
+function GrindTimer.UpdateVars()
+    local expNeeded = GrindTimer.GetExpNeeded()
+    local expGainPerMinute = GrindTimer.GetExpGainPerMinute()
+    local expGainPerHour = math.floor(expGainPerMinute*60)
+    local levelsPerHour = GrindTimer.GetLevelsPerHour(expGainPerHour)
+    local hours, minutes = GrindTimer.GetLevelTimeRemaining(expGainPerMinute, expNeeded)
+    local averageExpPerKill, recentKills = GrindTimer.GetKillInfo()
+    local killsNeeded = math.ceil(expNeeded / averageExpPerKill)
+
     -- Check for INF / IND
     hours = (hours == math.huge or hours == -math.huge) and 0 or hours
     minutes = (minutes ~= minutes or minutes == math.huge or minutes == -math.huge) and 0 or minutes
