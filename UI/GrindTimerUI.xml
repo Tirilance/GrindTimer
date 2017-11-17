@@ -10,6 +10,9 @@
             <OnShow>
                 GrindTimer.OnWindowShown()
             </OnShow>
+            <OnUpdate>
+                GrindTimer.TimedUpdate()
+            </OnUpdate>
 
             <Controls>
                 <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>

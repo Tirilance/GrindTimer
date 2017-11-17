@@ -3,6 +3,8 @@ GrindTimer = {}
 GrindTimer.Name = "GrindTimer"
 GrindTimer.ExpEvents = {}
 GrindTimer.ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
+GrindTimer.LastUpdateTimestamp = GetTimeStamp()
+GrindTimer.UpdateTimer = 5 -- Update every 5 seconds
 GrindTimer.Version = "1.6.2"
 
 GrindTimer.AccountDefaults =
@@ -32,14 +34,14 @@ GrindTimer.Defaults =
 }
 
 function GrindTimer.Initialize(eventCode, addonName)
-    if addonName ~= GrindTimer.Name then return end
-
-    ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
-    EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, GrindTimer.Update)
-    GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.Version, "Character", GrindTimer.Defaults)
-    GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.Version, "Account", GrindTimer.AccountDefaults)
-    GrindTimer.InitializeUI()
-    EVENT_MANAGER:UnregisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED)
+    if addonName == GrindTimer.Name then
+        ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
+        EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, GrindTimer.Update)
+        GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.Version, "Character", GrindTimer.Defaults)
+        GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.Version, "Account", GrindTimer.AccountDefaults)
+        GrindTimer.InitializeUI()
+        EVENT_MANAGER:UnregisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED)
+    end
 end
 
 function GrindTimer.Reset()
@@ -84,16 +86,28 @@ function GrindTimer.CleanupExpiredEvents()
 end
 
 function GrindTimer.Update(eventCode, reason, level, previousExp, currentExp, championPoints)
-
+    local currentTimestamp = GetTimeStamp()
     GrindTimer.CleanupExpiredEvents()
 
     if reason == 0 or reason == 24 or reason == 26 then
         local expGained = currentExp - previousExp
-        GrindTimer.CreateExpEvent(GetTimeStamp(), expGained)
+        GrindTimer.CreateExpEvent(currentTimestamp, expGained)
     end
 
     GrindTimer.UpdateVars()
     GrindTimer.UpdateUIControls()
+    GrindTimer.LastUpdateTimestamp = currentTimestamp
+end
+
+function GrindTimer.TimedUpdate()
+    local currentTimestamp = GetTimeStamp()
+
+    if GetDiffBetweenTimeStamps(currentTimestamp, GrindTimer.LastUpdateTimestamp) >= GrindTimer.UpdateTimer then
+        GrindTimer.CleanupExpiredEvents()
+        GrindTimer.UpdateVars()
+        GrindTimer.UpdateUIControls()
+        GrindTimer.LastUpdateTimestamp = currentTimestamp
+    end
 end
 
 function GrindTimer.SetNewTargetLevel(targetLevel)
