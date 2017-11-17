@@ -31,17 +31,15 @@ GrindTimer.Defaults =
     TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal"
 }
 
-function GrindTimer.OnAddOnLoaded(eventCode, addonName)
-    if addonName ~= GrindTimer.Name then return end
-    GrindTimer.Initialize()
-end
-
 function GrindTimer.Initialize(eventCode, addonName)
+    if addonName ~= GrindTimer.Name then return end
+
     ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
     EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, GrindTimer.Update)
     GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.Version, "Character", GrindTimer.Defaults)
     GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.Version, "Account", GrindTimer.AccountDefaults)
     GrindTimer.InitializeUI()
+    EVENT_MANAGER:UnregisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED)
 end
 
 function GrindTimer.Reset()
@@ -285,4 +283,4 @@ function GrindTimer.UpdateVars()
     GrindTimer.SavedVariables.LevelsPerHour = levelsPerHour
 end
 
-EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED, GrindTimer.OnAddOnLoaded)
+EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED, GrindTimer.Initialize)
