@@ -1,6 +1,8 @@
 local extendedControls = {} -- Controls affected by using the extender button to show or hide more UI options
 local controlsExtended = false
 local labelsInitialized = false
+local timeline
+local GrindTimerMaxHeight = 175
 
 function GrindTimer.InitializeUI()
     GrindTimerWindow:ClearAnchors()
@@ -9,8 +11,10 @@ function GrindTimer.InitializeUI()
     local grindTimerFragment = ZO_HUDFadeSceneFragment:New(GrindTimerWindow, 0, 0)
     SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerFragment)
     SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerFragment)
-
+    
+    GrindTimer.InitializeAnimations()
     GrindTimer.InitializeUIControls()
+    GrindTimer.SettingsInitialized = true
 end
 
 function GrindTimer.AddToExtendedControlsArray(control)
@@ -46,6 +50,26 @@ function GrindTimer.ToggleWindowLock(lockButton)
     end
 
     GrindTimerWindow:SetMovable(not GrindTimer.AccountSavedVariables.Locked)
+end
+
+function GrindTimer.InitializeAnimations()
+    timeline = ANIMATION_MANAGER:CreateTimeline()
+    timeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
+    extendAnimation = timeline:InsertAnimation(ANIMATION_SIZE, GrindTimerWindow)
+
+    local width = GrindTimerWindow:GetWidth()
+    local startHeight = GrindTimerWindow:GetHeight()
+    extendAnimation:SetStartAndEndHeight(startHeight, GrindTimerMaxHeight)
+    extendAnimation:SetStartAndEndWidth(width, width)
+    extendAnimation:SetDuration(500)
+    extendAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
+
+    for key, control in pairs(extendedControls) do
+        local fadeAnimation = timeline:InsertAnimation(ANIMATION_ALPHA, control)
+        fadeAnimation:SetAlphaValues(0,1)
+        fadeAnimation:SetDuration(500)
+        fadeAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
+    end
 end
 
 function GrindTimer.InitializeUIControls()
@@ -157,6 +181,8 @@ function GrindTimer.UpdateButtons()
     local mode = GrindTimer.SavedVariables.Mode
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
 
+    GrindTimerWindowExtendButton:SetState(controlsExtended and BSTATE_PRESSED or BSTATE_NORMAL)
+
     if mode == "Next" then
         GrindTimerWindowNextModeButton:SetState(BSTATE_PRESSED)
         GrindTimerWindowTargetModeButton:SetState(BSTATE_NORMAL)
@@ -209,27 +235,20 @@ end
 
 -- Hides or shows the options normally hidden by the collapsed extender button.
 function GrindTimer.UpdateExtendedControls()
-    if controlsExtended then
-        for key, control in pairs(extendedControls) do
-            control:SetHidden(true)
-        end
-
-        GrindTimerWindow:SetDimensions(345, 70)
-        controlsExtended = false
-    else
-        for key, control in pairs(extendedControls) do
-            control:SetHidden(false)
-        end
-
-        GrindTimerWindow:SetDimensions(345, 175)
-        controlsExtended = true
-        GrindTimer.UpdateUIControls()
+    for key, control in pairs(extendedControls) do
+        control:SetHidden(controlsExtended)
     end
+    controlsExtended = not controlsExtended
+    GrindTimer.UpdateUIControls()
 end
 
-function GrindTimer.ExtendButtonClicked(button)
+function GrindTimer.ExtendButtonClicked()
+    if (controlsExtended) then
+        timeline:PlayBackward()
+    else
+        timeline:PlayForward()
+    end
     GrindTimer.UpdateExtendedControls()
-    button:SetState(controlsExtended and BSTATE_PRESSED or BSTATE_NORMAL)
 end
 
 function GrindTimer.LevelEntryTextChanged(textBox)

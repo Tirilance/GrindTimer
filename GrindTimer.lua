@@ -5,6 +5,7 @@ GrindTimer.ExpEvents = {}
 GrindTimer.ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
 GrindTimer.LastUpdateTimestamp = GetTimeStamp()
 GrindTimer.UpdateTimer = 5 -- Update every 5 seconds
+GrindTimer.SettingsInitialized = false
 GrindTimer.Version = "1.6.2"
 
 GrindTimer.AccountDefaults =
@@ -100,13 +101,15 @@ function GrindTimer.Update(eventCode, reason, level, previousExp, currentExp, ch
 end
 
 function GrindTimer.TimedUpdate()
-    local currentTimestamp = GetTimeStamp()
+    if GrindTimer.SettingsInitialized then
+        local currentTimestamp = GetTimeStamp()
 
-    if GetDiffBetweenTimeStamps(currentTimestamp, GrindTimer.LastUpdateTimestamp) >= GrindTimer.UpdateTimer then
-        GrindTimer.CleanupExpiredEvents()
-        GrindTimer.UpdateVars()
-        GrindTimer.UpdateUIControls()
-        GrindTimer.LastUpdateTimestamp = currentTimestamp
+        if GetDiffBetweenTimeStamps(currentTimestamp, GrindTimer.LastUpdateTimestamp) >= GrindTimer.UpdateTimer then
+            GrindTimer.CleanupExpiredEvents()
+            GrindTimer.UpdateVars()
+            GrindTimer.UpdateUIControls()
+            GrindTimer.LastUpdateTimestamp = currentTimestamp
+        end
     end
 end
 
