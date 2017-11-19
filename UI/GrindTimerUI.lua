@@ -38,7 +38,6 @@ local function InitializeUIControls()
 
     GrindTimer.UpdateUIControls()
     GrindTimer.UpdateUIOpacity()
-    GrindTimer.InitializeSettingsMenu()
 end
 
 local function GetLabelStrings()
@@ -91,6 +90,7 @@ function GrindTimer.InitializeUI()
     
     InitializeAnimations()
     InitializeUIControls()
+    GrindTimer.InitializeSettingsMenu()
     GrindTimer.UIInitialized = true
 end
 

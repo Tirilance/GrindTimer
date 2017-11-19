@@ -32,7 +32,7 @@
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
                     </Controls>
                     <OnClicked>
-                        GrindTimer.FirstLabelDropdownClick()
+                        GrindTimer.FirstLabelDropdownClicked()
                     </OnClicked>
                 </Button>
                 
@@ -100,7 +100,7 @@
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
                     </Controls>
                     <OnClicked>
-                        GrindTimer.SecondLabelDropdownClick()
+                        GrindTimer.SecondLabelDropdownClicked()
                     </OnClicked>
                 </Button>
 

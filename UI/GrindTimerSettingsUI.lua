@@ -1,20 +1,72 @@
 local fontControls = {}
 
+local function UpdateFonts()
+    local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
+    local outlineFont = "$(BOLD_FONT)|$(KB_18)|outline"
+    local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
+
+    for key, control in pairs(fontControls) do
+        -- Apply color to font controls
+        if control:GetType() == CT_BUTTON then
+            control:SetNormalFontColor(r, g, b, 1)
+        else
+            control:SetColor(r, g, b, 1)
+        end
+
+        -- Apply font to font controls
+        if GrindTimer.AccountSavedVariables.OutlineText then
+            control:SetFont(outlineFont)
+        else
+            control:SetFont(normalFont)
+        end
+    end
+end
+
+local function UpdateSettingWindowButtons()
+    
+        local labelButtons = { GrindTimerSettingsWindowFirstLabelDropdownButton,
+                               GrindTimerSettingsWindowSecondLabelDropdownButton }
+    
+        local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
+                              GrindTimer.AccountSavedVariables.SecondLabelType }
+    
+        for i in ipairs(labelButtons) do
+            if labelValues[i] == 1 then
+                labelButtons[i]:SetText("Time until level")
+    
+            elseif labelValues[i] == 2 then
+                labelButtons[i]:SetText("Experience until level")
+    
+            elseif labelValues[i] == 3 then
+                labelButtons[i]:SetText("Kills until level")
+    
+            elseif labelValues[i] == 4 then
+                labelButtons[i]:SetText("Experience per hour")
+    
+            elseif labelValues[i] == 5 then
+                labelButtons[i]:SetText("Levels per hour")
+    
+            elseif labelValues[i] == 6 then
+                labelButtons[i]:SetText("Kills in last 15 minutes")
+            end
+        end
+    end
+
 function GrindTimer.InitializeSettingsMenu()
     local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
     local OutlineTextChecked = (GrindTimer.AccountSavedVariables.OutlineText) and BSTATE_PRESSED or BSTATE_NORMAL
-    GrindTimer.UpdateSettingWindowButtons()
+    UpdateSettingWindowButtons()
     GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)    
     GrindTimerSettingsWindowFontCheckBox:SetState(OutlineTextChecked)
     GrindTimerSettingsWindowColorSelectButtonColorPickerTexture:SetColor(r, g, b, 1)
-    GrindTimer.UpdateFonts()
+    UpdateFonts()
 end
 
 function GrindTimer.AddToFontControlsArray(control)
     table.insert(fontControls, control)
 end
 
-function GrindTimer.FirstLabelDropdownClick()
+function GrindTimer.FirstLabelDropdownClicked()
     local firstDropDownMenu = GrindTimerSettingsWindowFirstLabelDropdownOptions
     local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
     local secondDropDownButton = GrindTimerSettingsWindowSecondLabelDropdownButton
@@ -50,10 +102,10 @@ function GrindTimer.FirstLabelDropdownOptionClicked(option)
     GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
 
-    GrindTimer.UpdateSettingWindowButtons()
+    UpdateSettingWindowButtons()
 end
 
-function GrindTimer.SecondLabelDropdownClick()
+function GrindTimer.SecondLabelDropdownClicked()
     local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
     local isMenuClosed = secondDropDownMenu:IsHidden()
 
@@ -79,7 +131,7 @@ function GrindTimer.SecondLabelDropdownOptionClicked(option)
     GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
 
-    GrindTimer.UpdateSettingWindowButtons()
+    UpdateSettingWindowButtons()
 end
 
 function GrindTimer.OpacityEntryTextChanged(textBox)
@@ -131,29 +183,7 @@ function GrindTimer.OutlineTextCheckboxChecked(checkBox)
         GrindTimer.AccountSavedVariables.OutlineText = true
     end
 
-    GrindTimer.UpdateFonts()
-end
-
-function GrindTimer.UpdateFonts()
-    local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
-    local outlineFont = "$(BOLD_FONT)|$(KB_18)|outline"
-    local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
-
-    for key, control in pairs(fontControls) do
-        -- Apply color to font controls
-        if control:GetType() == CT_BUTTON then
-            control:SetNormalFontColor(r, g, b, 1)
-        else
-            control:SetColor(r, g, b, 1)
-        end
-
-        -- Apply font to font controls
-        if GrindTimer.AccountSavedVariables.OutlineText then
-            control:SetFont(outlineFont)
-        else
-            control:SetFont(normalFont)
-        end
-    end
+    UpdateFonts()
 end
 
 function GrindTimer.ColorPickerOpen(texture)
@@ -189,39 +219,4 @@ function GrindTimer.SettingsClosed()
     GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
     GrindTimerSettingsWindow:SetHidden(true)
-end
-
-function GrindTimer.UpdateSettingWindowButtons()
-    local firstLabelType = GrindTimer.AccountSavedVariables.FirstLabelType
-    local secondLabelType = GrindTimer.AccountSavedVariables.SecondLabelType
-    local firstComboButton = GrindTimerSettingsWindowFirstLabelDropdownButton
-    local secondComboButton = GrindTimerSettingsWindowSecondLabelDropdownButton
-
-    if firstLabelType == 1 then
-        firstComboButton:SetText("Time until level")
-    elseif firstLabelType == 2 then
-        firstComboButton:SetText("Experience until level")
-    elseif firstLabelType == 3 then
-        firstComboButton:SetText("Kills until level")
-    elseif firstLabelType == 4 then
-        firstComboButton:SetText("Experience per hour")
-    elseif firstLabelType == 5 then
-        firstComboButton:SetText("Levels per hour")
-    elseif firstLabelType == 6 then
-        firstComboButton:SetText("Kills in last 15 minutes")
-    end
-
-    if secondLabelType == 1 then
-        secondComboButton:SetText("Time until level")
-    elseif secondLabelType == 2 then
-        secondComboButton:SetText("Experience until level")
-    elseif secondLabelType == 3 then
-        secondComboButton:SetText("Kills until level")
-    elseif secondLabelType == 4 then
-        secondComboButton:SetText("Experience per hour")
-    elseif secondLabelType == 5 then
-        secondComboButton:SetText("Levels per hour")
-    elseif secondLabelType == 6 then
-        secondComboButton:SetText("Kills in last 15 minutes")
-    end
 end
