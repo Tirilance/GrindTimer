@@ -46,74 +46,39 @@ local function GetLabelStrings()
     local minutes = GrindTimer.SavedVariables.TargetMinutes
     local expNeeded = GrindTimer.SavedVariables.TargetExpRemaining
     local targetLevel = GrindTimer.SavedVariables.TargetLevel
-    local firstLabelType = GrindTimer.AccountSavedVariables.FirstLabelType
-    local secondLabelType = GrindTimer.AccountSavedVariables.SecondLabelType
     local recentKills = GrindTimer.SavedVariables.RecentKills
     local killsNeeded = GrindTimer.SavedVariables.KillsNeeded
     local averageExpPerHour = GrindTimer.SavedVariables.ExpPerHour
     local levelsPerHour = GrindTimer.SavedVariables.LevelsPerHour
 
-    local firstLabelString = ""
-    local secondLabelString = ""
+    local firstLabelValue = GrindTimer.AccountSavedVariables.FirstLabelType
+    local secondLabelValue = GrindTimer.AccountSavedVariables.SecondLabelType
 
-    local mode = GrindTimer.SavedVariables.Mode
+    local labelStrings = { "", "" }
+    local labelValues = { firstLabelValue, secondLabelValue }
 
-    -- Mode dependant strings.
-    if mode == "Next" then
-        local nextLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    for i in ipairs(labelStrings) do
+        if labelValues[i] == 1 then
+            labelStrings[i] = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
 
-        if firstLabelType == 1 then
-            firstLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, nextLevel)
-        elseif firstLabelType == 2 then
-            firstLabelString = string.format("%s Experience needed until level %s", expNeeded, nextLevel)
-        elseif firstLabelType == 3 then
-            firstLabelString = string.format("%s Kills needed until level %s", killsNeeded, nextLevel)
-        end
+        elseif labelValues[i] == 2 then
+            labelStrings[i] = string.format("%s Experience needed until level %s", expNeeded, targetLevel)
 
-        if secondLabelType == 1 then
-            secondLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, nextLevel)
-        elseif secondLabelType == 2 then
-            secondLabelString = string.format("%s Experience needed until level %s", expNeeded, nextLevel)
-        elseif secondLabelType == 3 then
-            secondLabelString = string.format("%s Kills needed until level %s", killsNeeded, nextLevel)
-        end
+        elseif labelValues[i] == 3 then
+            labelStrings[i] = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
 
-    elseif mode == "Target" then
-        if firstLabelType == 1 then
-            firstLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
-        elseif firstLabelType == 2 then
-            firstLabelString = string.format("%s Experience needed until level %s", expNeeded, targetLevel)
-        elseif firstLabelType == 3 then
-            firstLabelString = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
-        end
+        elseif labelValues[i] == 4 then
+            labelStrings[i] = string.format("%s Experience gained per hour", averageExpPerHour)
 
-        if secondLabelType == 1 then
-            secondLabelString = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
-        elseif secondLabelType == 2 then
-            secondLabelString = string.format("%s Experience needed until level %s", expNeeded, targetLevel)
-        elseif secondLabelType == 3 then
-            secondLabelString = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
+        elseif labelValues[i] == 5 then
+            labelStrings[i] = string.format("%s Levels gained per hour", levelsPerHour)
+
+        elseif labelValues[i] == 6 then
+            labelStrings[i] = string.format("%s Kills in last 15 minutes", recentKills)
         end
     end
 
-    -- Mode independent strings.
-    if firstLabelType == 4 then
-        firstLabelString = string.format("%s Experience gained per hour", averageExpPerHour)
-    elseif firstLabelType == 5 then
-        firstLabelString = string.format("%s Levels gained per hour", levelsPerHour)
-    elseif firstLabelType == 6 then
-        firstLabelString = string.format("%s Kills in last 15 minutes", recentKills)
-    end
-
-    if secondLabelType == 4 then
-        secondLabelString = string.format("%s Experience gained per hour", averageExpPerHour)
-    elseif secondLabelType == 5 then
-        secondLabelString = string.format("%s Levels gained per hour", levelsPerHour)
-    elseif secondLabelType == 6 then
-        secondLabelString = string.format("%s Kills in last 15 minutes", recentKills)
-    end
-
-    return firstLabelString, secondLabelString
+    return labelStrings
 end
 
 function GrindTimer.InitializeUI()
@@ -173,7 +138,7 @@ end
 function GrindTimer.UpdateLabels()
     GrindTimerWindowLevelTypeLabel:SetHidden(not controlsExtended or mode == "Next" and true or false)
 
-    local firstLabelString, secondLabelString = GetLabelStrings()
+    local firstLabelString, secondLabelString = unpack(GetLabelStrings())
     GrindTimerWindowFirstOptionLabel:SetText(firstLabelString)
     GrindTimerWindowSecondOptionLabel:SetText(secondLabelString)
 end
