@@ -1,7 +1,7 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.6.2"
+GrindTimer.Version = "1.7.0"
 GrindTimer.UIInitialized = false
 
 local ExpEvents = {}
