@@ -50,11 +50,9 @@ local function GetLabelStrings()
     local averageExpPerHour = GrindTimer.SavedVariables.ExpPerHour
     local levelsPerHour = GrindTimer.SavedVariables.LevelsPerHour
 
-    local firstLabelValue = GrindTimer.AccountSavedVariables.FirstLabelType
-    local secondLabelValue = GrindTimer.AccountSavedVariables.SecondLabelType
-
     local labelStrings = { "", "" }
-    local labelValues = { firstLabelValue, secondLabelValue }
+    local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
+                        GrindTimer.AccountSavedVariables.SecondLabelType }
 
     for i in ipairs(labelStrings) do
         if labelValues[i] == 1 then
