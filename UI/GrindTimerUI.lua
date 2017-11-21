@@ -41,36 +41,37 @@ local function InitializeUIControls()
 end
 
 local function GetLabelStrings()
-    local hours = GrindTimer.SavedVariables.TargetHours
-    local minutes = GrindTimer.SavedVariables.TargetMinutes
-    local expNeeded = GrindTimer.SavedVariables.TargetExpRemaining
-    local targetLevel = GrindTimer.SavedVariables.TargetLevel
-    local recentKills = GrindTimer.SavedVariables.RecentKills
-    local killsNeeded = GrindTimer.SavedVariables.KillsNeeded
-    local averageExpPerHour = GrindTimer.SavedVariables.ExpPerHour
-    local levelsPerHour = GrindTimer.SavedVariables.LevelsPerHour
-
     local labelStrings = { "", "" }
     local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
                         GrindTimer.AccountSavedVariables.SecondLabelType }
 
     for i in ipairs(labelStrings) do
         if labelValues[i] == 1 then
+            local hours = GrindTimer.SavedVariables.TargetHours
+            local minutes = GrindTimer.SavedVariables.TargetMinutes
+            local targetLevel = GrindTimer.SavedVariables.TargetLevel
             labelStrings[i] = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
 
         elseif labelValues[i] == 2 then
+            local expNeeded = GrindTimer.SavedVariables.TargetExpRemaining
+            local targetLevel = GrindTimer.SavedVariables.TargetLevel
             labelStrings[i] = string.format("%s Experience needed until level %s", expNeeded, targetLevel)
 
         elseif labelValues[i] == 3 then
+            local killsNeeded = GrindTimer.SavedVariables.KillsNeeded
+            local targetLevel = GrindTimer.SavedVariables.TargetLevel
             labelStrings[i] = string.format("%s Kills needed until level %s", killsNeeded, targetLevel)
 
         elseif labelValues[i] == 4 then
+            local averageExpPerHour = GrindTimer.SavedVariables.ExpPerHour
             labelStrings[i] = string.format("%s Experience gained per hour", averageExpPerHour)
 
         elseif labelValues[i] == 5 then
+            local levelsPerHour = GrindTimer.SavedVariables.LevelsPerHour
             labelStrings[i] = string.format("%s Levels gained per hour", levelsPerHour)
 
         elseif labelValues[i] == 6 then
+            local recentKills = GrindTimer.SavedVariables.RecentKills
             labelStrings[i] = string.format("%s Kills in last 15 minutes", recentKills)
         end
     end
