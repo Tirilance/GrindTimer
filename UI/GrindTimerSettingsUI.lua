@@ -24,41 +24,47 @@ end
 
 local function UpdateSettingWindowButtons()
     
-        local labelButtons = { GrindTimerSettingsWindowFirstLabelDropdownButton,
-                               GrindTimerSettingsWindowSecondLabelDropdownButton }
-    
-        local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
-                              GrindTimer.AccountSavedVariables.SecondLabelType }
-    
-        for i in ipairs(labelButtons) do
-            if labelValues[i] == 1 then
-                labelButtons[i]:SetText("Time until level")
-    
-            elseif labelValues[i] == 2 then
-                labelButtons[i]:SetText("Experience until level")
-    
-            elseif labelValues[i] == 3 then
-                labelButtons[i]:SetText("Kills until level")
-    
-            elseif labelValues[i] == 4 then
-                labelButtons[i]:SetText("Experience per hour")
-    
-            elseif labelValues[i] == 5 then
-                labelButtons[i]:SetText("Levels per hour")
-    
-            elseif labelValues[i] == 6 then
-                labelButtons[i]:SetText("Kills in last 15 minutes")
-            end
+    local labelButtons = { GrindTimerSettingsWindowFirstLabelDropdownButton,
+                            GrindTimerSettingsWindowSecondLabelDropdownButton }
+
+    local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
+                            GrindTimer.AccountSavedVariables.SecondLabelType }
+
+    for i in ipairs(labelButtons) do
+        if labelValues[i] == 1 then
+            labelButtons[i]:SetText("Time until level")
+
+        elseif labelValues[i] == 2 then
+            labelButtons[i]:SetText("Experience until level")
+
+        elseif labelValues[i] == 3 then
+            labelButtons[i]:SetText("Kills until level")
+
+        elseif labelValues[i] == 4 then
+            labelButtons[i]:SetText("Experience per hour")
+
+        elseif labelValues[i] == 5 then
+            labelButtons[i]:SetText("Levels per hour")
+
+        elseif labelValues[i] == 6 then
+            labelButtons[i]:SetText("Kills in last 15 minutes")
         end
     end
+end
 
 function GrindTimer.InitializeSettingsMenu()
     local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
-    local OutlineTextChecked = (GrindTimer.AccountSavedVariables.OutlineText) and BSTATE_PRESSED or BSTATE_NORMAL
-    UpdateSettingWindowButtons()
+    local outlineTextChecked = GrindTimer.AccountSavedVariables.OutlineText and BSTATE_PRESSED or BSTATE_NORMAL
+    local secondLabelEnabled = GrindTimer.AccountSavedVariables.SecondLabelEnabled
+    local secondLabelChecked = secondLabelEnabled and BSTATE_PRESSED or BSTATE_NORMAL
+
     GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)    
-    GrindTimerSettingsWindowOutlineCheckBox:SetState(OutlineTextChecked)
+    GrindTimerSettingsWindowOutlineCheckBox:SetState(outlineTextChecked)
+    GrindTimerSettingsWindowSecondLabelCheckBox:SetState(secondLabelChecked)
+    GrindTimerSettingsWindowSecondLabelDropdownButton:SetEnabled(secondLabelEnabled)
     GrindTimerSettingsWindowColorSelectButtonColorPickerTexture:SetColor(r, g, b, 1)
+
+    UpdateSettingWindowButtons()
     UpdateFonts()
 end
 
@@ -170,6 +176,20 @@ function GrindTimer.OpacityEntryTextSubmitted(textBox)
     end
     
     GrindTimer.AccountSavedVariables.Opacity = newOpacity
+    GrindTimer.UpdateUIControls()
+end
+
+function GrindTimer.SecondLabelCheckBoxChecked(checkBox)
+    if GrindTimer.AccountSavedVariables.SecondLabelEnabled then
+        GrindTimer.AccountSavedVariables.SecondLabelEnabled = false
+        GrindTimerSettingsWindowSecondLabelDropdownButton:SetEnabled(false)
+        checkBox:SetState(BSTATE_NORMAL)
+    else
+        GrindTimer.AccountSavedVariables.SecondLabelEnabled = true
+        GrindTimerSettingsWindowSecondLabelDropdownButton:SetEnabled(true)
+        checkBox:SetState(BSTATE_PRESSED)
+    end
+
     GrindTimer.UpdateUIControls()
 end
 

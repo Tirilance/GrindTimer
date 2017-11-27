@@ -20,10 +20,6 @@
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="55"/>
                 </Label>
 
-                <Label name="$(parent)SecondLabelLabel" font="ZoFontGameShadowSettings" text="Second Label" color="FFFFFF">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="105"/>
-                </Label>
-
                 <Button name="$(parent)FirstLabelDropdownButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Time until level" horizontalAlignment="LEFT">
                     <Dimensions x="200" y="25"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="170" offsetY="55"/>
@@ -92,10 +88,23 @@
                     </Controls>
                 </Label>
 
+                <Label name="$(parent)SecondLabelLabel" font="ZoFontGameShadowSettings" text="Second Label" color="FFFFFF">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="105"/>
+                </Label>
+
+                <Button name="$(parent)SecondLabelCheckBox" font="ZoFontGameShadowSettings">
+                    <Dimensions x="35" y="35"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="120" offsetY="100"/>
+                    <Textures normal="esoui/art/cadwell/checkboxicon_unchecked.dds" pressed="esoui/art/cadwell/checkboxicon_checked.dds"/>
+                    <OnClicked>
+                        GrindTimer.SecondLabelCheckBoxChecked(self)
+                    </OnClicked>
+                </Button>
+
                 <Button name="$(parent)SecondLabelDropdownButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Experience until level" horizontalAlignment="LEFT">
                     <Dimensions x="200" y="25"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="170" offsetY="105"/>
-                    <FontColors normalColor="1E90FF"/>
+                    <FontColors normalColor="1E90FF" disabledColor="707070"/>
                     <Controls>
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
                     </Controls>
@@ -200,7 +209,7 @@
 
                 <Button name="$(parent)OutlineCheckBox" font="ZoFontGameShadowSettings">
                     <Dimensions x="35" y="35"/>
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="160" offsetY="205"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="155" offsetY="205"/>
                     <Textures normal="esoui/art/cadwell/checkboxicon_unchecked.dds" pressed="esoui/art/cadwell/checkboxicon_checked.dds"/>
                     <OnClicked>
                         GrindTimer.OutlineTextCheckBoxChecked(self)
@@ -229,7 +238,7 @@
                 <Button name="$(parent)CloseButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Close">
                     <Dimensions x="75" y="25"/>
                     <Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="BOTTOM" offsetY="-10"/>
-                    <FontColors disabledColor="700000" mouseOverColor="FFFFFF" pressedColor="909090" normalColor="A8A8A8"/>
+                    <FontColors mouseOverColor="FFFFFF" pressedColor="909090" normalColor="A8A8A8"/>
                     <OnClicked>
                         GrindTimer.SettingsClosed()
                     </OnClicked>

@@ -18,7 +18,8 @@ local AccountDefaults =
     OffsetX = 400,
     OffsetY = 100,
     FirstLabelType = 1,
-    SecondLabelType = 2
+    SecondLabelType = 2,
+    SecondLabelEnabled = true
 }
 
 local Defaults =

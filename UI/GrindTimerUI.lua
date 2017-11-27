@@ -1,14 +1,14 @@
 local extendedControls = {} -- UI controls affected by extending or retracting the window.
 local controlsExtended = false
 local labelsInitialized = false
-local animationTimeline
+local extendAnimationTimeline
 
 local GrindTimerMaxHeight = 175
 
 local function InitializeAnimations()
-    animationTimeline = ANIMATION_MANAGER:CreateTimeline()
-    animationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
-    extendAnimation = animationTimeline:InsertAnimation(ANIMATION_SIZE, GrindTimerWindow)
+    extendAnimationTimeline = ANIMATION_MANAGER:CreateTimeline()
+    extendAnimationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
+    extendAnimation = extendAnimationTimeline:InsertAnimation(ANIMATION_SIZE, GrindTimerWindow)
 
     local width = GrindTimerWindow:GetWidth()
     local startHeight = GrindTimerWindow:GetHeight()
@@ -18,7 +18,7 @@ local function InitializeAnimations()
     extendAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
 
     for key, control in pairs(extendedControls) do
-        local fadeAnimation = animationTimeline:InsertAnimation(ANIMATION_ALPHA, control)
+        local fadeAnimation = extendAnimationTimeline:InsertAnimation(ANIMATION_ALPHA, control)
         fadeAnimation:SetAlphaValues(0,1)
         fadeAnimation:SetDuration(500)
         fadeAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
@@ -73,7 +73,8 @@ local function UpdateUIOpacity()
 end
 
 local function UpdateLabels()
-    GrindTimerWindowLevelTypeLabel:SetHidden(not controlsExtended or mode == "Next" and true or false)
+    GrindTimerWindowLevelTypeLabel:SetHidden(not controlsExtended or (mode == "Next" and true or false))
+    GrindTimerWindowSecondOptionLabel:SetHidden(not GrindTimer.AccountSavedVariables.SecondLabelEnabled)
 
     local firstLabelString, secondLabelString = unpack(GetLabelStrings())
     GrindTimerWindowFirstOptionLabel:SetText(firstLabelString)
@@ -165,7 +166,7 @@ function GrindTimer.AddToExtendedControlsArray(control)
 end
 
 function GrindTimer.OnWindowShown()
-    GrindTimer.UpdateUIOpacity()
+    UpdateUIOpacity()
 end
 
 function GrindTimer.SaveWindowPosition(window)
@@ -209,9 +210,9 @@ end
 
 function GrindTimer.ExtendButtonClicked()
     if (controlsExtended) then
-        animationTimeline:PlayBackward()
+        extendAnimationTimeline:PlayBackward()
     else
-        animationTimeline:PlayForward()
+        extendAnimationTimeline:PlayForward()
     end
     GrindTimer.UpdateExtendedControls()
 end
