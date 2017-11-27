@@ -193,17 +193,17 @@
                     </Controls>
                 </EditBox>
 
-                <Label name="$(parent)FontLabel" font="ZoFontGameShadowSettings" text="Text Outline" color="FFFFFF">
+                <Label name="$(parent)OutlineLabel" font="ZoFontGameShadowSettings" text="Text Outline" color="FFFFFF">
                     <Dimensions x="200" y="25"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="210"/>
                 </Label>
 
-                <Button name="$(parent)FontCheckBox" font="ZoFontGameShadowSettings">
+                <Button name="$(parent)OutlineCheckBox" font="ZoFontGameShadowSettings">
                     <Dimensions x="35" y="35"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="160" offsetY="205"/>
                     <Textures normal="esoui/art/cadwell/checkboxicon_unchecked.dds" pressed="esoui/art/cadwell/checkboxicon_checked.dds"/>
                     <OnClicked>
-                        GrindTimer.OutlineTextCheckboxChecked(self)
+                        GrindTimer.OutlineTextCheckBoxChecked(self)
                     </OnClicked>
                 </Button>
 

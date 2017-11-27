@@ -57,7 +57,7 @@ function GrindTimer.InitializeSettingsMenu()
     local OutlineTextChecked = (GrindTimer.AccountSavedVariables.OutlineText) and BSTATE_PRESSED or BSTATE_NORMAL
     UpdateSettingWindowButtons()
     GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)    
-    GrindTimerSettingsWindowFontCheckBox:SetState(OutlineTextChecked)
+    GrindTimerSettingsWindowOutlineCheckBox:SetState(OutlineTextChecked)
     GrindTimerSettingsWindowColorSelectButtonColorPickerTexture:SetColor(r, g, b, 1)
     UpdateFonts()
 end
@@ -173,7 +173,7 @@ function GrindTimer.OpacityEntryTextSubmitted(textBox)
     GrindTimer.UpdateUIOpacity()
 end
 
-function GrindTimer.OutlineTextCheckboxChecked(checkBox)
+function GrindTimer.OutlineTextCheckBoxChecked(checkBox)
     local outlineText = GrindTimer.AccountSavedVariables.OutlineText
     if outlineText then
         checkBox:SetState(BSTATE_NORMAL)
