@@ -74,7 +74,7 @@ function GrindTimer.FirstLabelDropdownClicked()
     
     -- Hide or show controls that may be overlapped by the dropdown menus.
     GrindTimerSettingsWindowCloseButton:SetHidden(false)
-    GrindTimerSettingsWindowFontCheckBox:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
 
@@ -99,7 +99,7 @@ function GrindTimer.FirstLabelDropdownOptionClicked(option)
     local secondDropDownButton = GrindTimerSettingsWindowSecondLabelDropdownButton
     secondDropDownButton:SetHidden(false)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(false)
-    GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
+    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
 
     UpdateSettingWindowButtons()
@@ -113,7 +113,7 @@ function GrindTimer.SecondLabelDropdownClicked()
     secondDropDownMenu:SetHidden(not isMenuClosed)
     GrindTimerSettingsWindowCloseButton:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(isMenuClosed)
-    GrindTimerSettingsWindowFontCheckBox:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
 end
 
@@ -128,7 +128,7 @@ function GrindTimer.SecondLabelDropdownOptionClicked(option)
     local closeButton = GrindTimerSettingsWindowCloseButton
     closeButton:SetHidden(false)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(false)
-    GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
+    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
 
     UpdateSettingWindowButtons()
@@ -216,7 +216,7 @@ function GrindTimer.SettingsClosed()
     GrindTimerSettingsWindowFirstLabelDropdownButton:SetHidden(false)
     GrindTimerSettingsWindowSecondLabelDropdownButton:SetHidden(false)
     GrindTimerSettingsWindowOpacityEntryBox:SetHidden(false)
-    GrindTimerSettingsWindowFontCheckBox:SetHidden(false)
+    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
     GrindTimerSettingsWindow:SetHidden(true)
 end
