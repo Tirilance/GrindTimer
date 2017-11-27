@@ -25,21 +25,6 @@ local function InitializeAnimations()
     end
 end
 
-local function InitializeUIControls()
-    for key, control in pairs(extendedControls) do
-        control:SetHidden(true)
-    end
-    GrindTimerWindow:SetDimensions(345, 70)
-
-    local locked = GrindTimer.AccountSavedVariables.Locked
-    local lockButtonState = locked and BSTATE_PRESSED or BSTATE_NORMAL
-    GrindTimerWindow:SetMovable(not locked)
-    GrindTimerWindowLockButton:SetState(lockButtonState)
-
-    GrindTimer.UpdateUIControls()
-    GrindTimer.UpdateUIOpacity()
-end
-
 local function GetLabelStrings()
     local labelStrings = { "", "" }
     local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
@@ -79,34 +64,7 @@ local function GetLabelStrings()
     return labelStrings
 end
 
-function GrindTimer.InitializeUI()
-    GrindTimerWindow:ClearAnchors()
-    GrindTimerWindow:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, GrindTimer.AccountSavedVariables.OffsetX, GrindTimer.AccountSavedVariables.OffsetY)
-
-    local grindTimerFragment = ZO_HUDFadeSceneFragment:New(GrindTimerWindow, 0, 0)
-    SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerFragment)
-    SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerFragment)
-    
-    InitializeAnimations()
-    InitializeUIControls()
-    GrindTimer.InitializeSettingsMenu()
-    GrindTimer.UIInitialized = true
-end
-
-function GrindTimer.AddToExtendedControlsArray(control)
-    table.insert(extendedControls, control)
-end
-
-function GrindTimer.OnWindowShown()
-    GrindTimer.UpdateUIOpacity()
-end
-
-function GrindTimer.SaveWindowPosition(window)
-    GrindTimer.AccountSavedVariables.OffsetX = window:GetLeft()
-    GrindTimer.AccountSavedVariables.OffsetY = window:GetTop()
-end
-
-function GrindTimer.UpdateUIOpacity()
+local function UpdateUIOpacity()
     local opacity = GrindTimer.AccountSavedVariables.Opacity
     GrindTimerWindow:SetAlpha(opacity)
     GrindTimerWindowSettingsButtonBackdrop:SetAlpha(opacity)
@@ -114,27 +72,7 @@ function GrindTimer.UpdateUIOpacity()
     GrindTimerWindowLevelEntryBoxBackdrop:SetAlpha(opacity)
 end
 
-function GrindTimer.ToggleWindowLock(lockButton)
-    local locked = GrindTimer.AccountSavedVariables.Locked
-
-    if locked then
-        GrindTimer.AccountSavedVariables.Locked = false
-        lockButton:SetState(BSTATE_NORMAL)
-    else
-        GrindTimer.AccountSavedVariables.Locked = true
-        lockButton:SetState(BSTATE_PRESSED)
-    end
-
-    GrindTimerWindow:SetMovable(not GrindTimer.AccountSavedVariables.Locked)
-end
-
-function GrindTimer.UpdateUIControls()
-    GrindTimer.UpdateLabels()
-    GrindTimer.UpdateButtons()
-    GrindTimer.UpdateLevelEntryBox()
-end
-
-function GrindTimer.UpdateLabels()
+local function UpdateLabels()
     GrindTimerWindowLevelTypeLabel:SetHidden(not controlsExtended or mode == "Next" and true or false)
 
     local firstLabelString, secondLabelString = unpack(GetLabelStrings())
@@ -142,7 +80,7 @@ function GrindTimer.UpdateLabels()
     GrindTimerWindowSecondOptionLabel:SetText(secondLabelString)
 end
 
-function GrindTimer.UpdateButtons()
+local function UpdateButtons()
     local mode = GrindTimer.SavedVariables.Mode
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
 
@@ -181,7 +119,7 @@ function GrindTimer.UpdateButtons()
     end
 end
 
-function GrindTimer.UpdateLevelEntryBox()
+local function UpdateLevelEntryBox()
     local mode = GrindTimer.SavedVariables.Mode
 
     if mode == "Next" then
@@ -192,6 +130,68 @@ function GrindTimer.UpdateLevelEntryBox()
         GrindTimerWindowLevelEntryLabel:SetHidden(false)
         GrindTimerWindowLevelEntryBox:SetText(GrindTimer.SavedVariables.TargetLevel)
     end
+end
+
+local function InitializeUIControls()
+    for key, control in pairs(extendedControls) do
+        control:SetHidden(true)
+    end
+    GrindTimerWindow:SetDimensions(345, 70)
+
+    local locked = GrindTimer.AccountSavedVariables.Locked
+    local lockButtonState = locked and BSTATE_PRESSED or BSTATE_NORMAL
+    GrindTimerWindow:SetMovable(not locked)
+    GrindTimerWindowLockButton:SetState(lockButtonState)
+
+    GrindTimer.UpdateUIControls()
+end
+
+function GrindTimer.InitializeUI()
+    GrindTimerWindow:ClearAnchors()
+    GrindTimerWindow:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, GrindTimer.AccountSavedVariables.OffsetX, GrindTimer.AccountSavedVariables.OffsetY)
+
+    local grindTimerFragment = ZO_HUDFadeSceneFragment:New(GrindTimerWindow, 0, 0)
+    SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerFragment)
+    SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerFragment)
+    
+    InitializeAnimations()
+    InitializeUIControls()
+    GrindTimer.InitializeSettingsMenu()
+    GrindTimer.UIInitialized = true
+end
+
+function GrindTimer.AddToExtendedControlsArray(control)
+    table.insert(extendedControls, control)
+end
+
+function GrindTimer.OnWindowShown()
+    GrindTimer.UpdateUIOpacity()
+end
+
+function GrindTimer.SaveWindowPosition(window)
+    GrindTimer.AccountSavedVariables.OffsetX = window:GetLeft()
+    GrindTimer.AccountSavedVariables.OffsetY = window:GetTop()
+end
+
+function GrindTimer.ToggleWindowLock(lockButton)
+    local locked = GrindTimer.AccountSavedVariables.Locked
+
+    if locked then
+        GrindTimer.AccountSavedVariables.Locked = false
+        lockButton:SetState(BSTATE_NORMAL)
+    else
+        GrindTimer.AccountSavedVariables.Locked = true
+        lockButton:SetState(BSTATE_PRESSED)
+    end
+
+    GrindTimerWindow:SetMovable(not GrindTimer.AccountSavedVariables.Locked)
+end
+
+function GrindTimer.UpdateUIControls()
+    UpdateLabels()
+    UpdateButtons()
+    UpdateLevelEntryBox()
+    UpdateUIOpacity()
 end
 
 function GrindTimer.ToggleDisplay()

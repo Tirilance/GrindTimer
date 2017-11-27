@@ -90,7 +90,7 @@ end
 
 function GrindTimer.FirstLabelDropdownOptionClicked(option)
     GrindTimer.AccountSavedVariables.FirstLabelType = option
-    GrindTimer.UpdateLabels()
+    GrindTimer.UpdateUIControls()
 
     -- When a dropdown option is clicked, hide the dropdown menu and reveal any hidden overlapped controls.
     local firstDropDownMenu = GrindTimerSettingsWindowFirstLabelDropdownOptions
@@ -119,7 +119,7 @@ end
 
 function GrindTimer.SecondLabelDropdownOptionClicked(option)
     GrindTimer.AccountSavedVariables.SecondLabelType = option
-    GrindTimer.UpdateLabels()
+    GrindTimer.UpdateUIControls()
 
     -- When a dropdown option is clicked, hide the dropdown menu and reveal any hidden overlapped controls.
     local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
@@ -155,7 +155,7 @@ function GrindTimer.OpacityEntryTextChanged(textBox)
 
     local newOpacity = currentNumber / 100
     GrindTimer.AccountSavedVariables.Opacity = newOpacity
-    GrindTimer.UpdateUIOpacity()
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.OpacityEntryTextSubmitted(textBox)
@@ -170,7 +170,7 @@ function GrindTimer.OpacityEntryTextSubmitted(textBox)
     end
     
     GrindTimer.AccountSavedVariables.Opacity = newOpacity
-    GrindTimer.UpdateUIOpacity()
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.OutlineTextCheckBoxChecked(checkBox)
