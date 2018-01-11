@@ -72,7 +72,7 @@ end
 
 local function ClearDungeonExpEvents()
     for key, expEvent in pairs(DungeonRunExpEvents) do
-        ExpEvents[key] = nil
+        DungeonRunExpEvents[key] = nil
     end
 end
 
@@ -268,7 +268,7 @@ local function IncrementDungeonRuns()
         exp = GetDungeonRunExp()
         average = exp
     end
-    
+
     DungeonInfo[DungeonName] = { Experience = exp, RunCount = runCount, Average = average }
 end
 
