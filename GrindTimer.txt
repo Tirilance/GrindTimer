@@ -1,7 +1,7 @@
 ## Title: Grind Timer
-## APIVersion: 100021
+## APIVersion: 100021 100022
 ## Author: Tirilance
-## Version: 1.7.0
+## Version: 1.8.0
 ## Description: An addon to visualize your leveling goals.
 ## SavedVariables: GrindTimerVars
 
