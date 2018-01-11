@@ -268,7 +268,7 @@ local function IncrementDungeonRuns()
         exp = GetDungeonRunExp()
         average = exp
     end
-    df("%s exp gained in %s runs from %s. Average run has given %s exp.", exp, runCount, DungeonName, average)
+    
     DungeonInfo[DungeonName] = { Experience = exp, RunCount = runCount, Average = average }
 end
 
