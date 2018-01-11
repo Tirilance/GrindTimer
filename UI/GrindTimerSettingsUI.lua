@@ -48,6 +48,9 @@ local function UpdateSettingWindowButtons()
 
         elseif labelValues[i] == 6 then
             labelButtons[i]:SetText("Kills in last 15 minutes")
+
+        elseif labelValues[i] == 7 then
+            labelButtons[i]:SetText("Dungeon runs until level")
         end
     end
 end

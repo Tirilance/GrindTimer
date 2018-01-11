@@ -3,8 +3,6 @@ local controlsExtended = false
 local labelsInitialized = false
 local extendAnimationTimeline
 
-local GrindTimerMaxHeight = 175
-
 local function InitializeAnimations()
     extendAnimationTimeline = ANIMATION_MANAGER:CreateTimeline()
     extendAnimationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
@@ -12,7 +10,7 @@ local function InitializeAnimations()
 
     local width = GrindTimerWindow:GetWidth()
     local startHeight = GrindTimerWindow:GetHeight()
-    extendAnimation:SetStartAndEndHeight(startHeight, GrindTimerMaxHeight)
+    extendAnimation:SetStartAndEndHeight(startHeight, 175)
     extendAnimation:SetStartAndEndWidth(width, width)
     extendAnimation:SetDuration(500)
     extendAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
@@ -58,6 +56,17 @@ local function GetLabelStrings()
         elseif labelValues[i] == 6 then
             local recentKills = GrindTimer.SavedVariables.RecentKills
             labelStrings[i] = string.format("%s Kills in last 15 minutes", recentKills)
+
+        elseif labelValues[i] == 7 then
+            local dungeonRunsNeeded = GrindTimer.SavedVariables.DungeonRunsNeeded
+            local lastDungeonName = GrindTimer.SavedVariables.LastDungeonName
+            local targetLevel = GrindTimer.SavedVariables.TargetLevel
+
+            if lastDungeonName ~= nil then
+                labelStrings[i] = string.format("%s %s Runs until level %s", dungeonRunsNeeded, lastDungeonName, targetLevel)
+            else
+                labelStrings[i] = string.format("Label updates upon exiting a dungeon.")
+            end
         end
     end
 

@@ -5,9 +5,12 @@ GrindTimer.Version = "1.7.0"
 GrindTimer.UIInitialized = false
 
 local ExpEvents = {}
+local DungeonRunExpEvents = {}
+local DungeonInfo = {}
 local ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
 local LastUpdateTimestamp = GetTimeStamp()
 local UpdateTimer = 5 -- Update every 5 seconds
+local DungeonName = nil
 
 local AccountDefaults =
 {
@@ -32,6 +35,8 @@ local Defaults =
     LevelsPerHour = 0,
     ExpPerHour = 0,
     RecentKills = 0,
+    LastDungeonName = nil,
+    DungeonRunsNeeded = 0,
     TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1,
     TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal"
 }
@@ -41,7 +46,7 @@ local function NewExpEvent(timestamp, expGained)
     local expEvent = {}
     expEvent.Timestamp = timestamp
     expEvent.ExpGained = expGained
-
+    
     expEvent.IsExpired = function(self)
         return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > ExpEventTimeWindow
     end
@@ -51,13 +56,23 @@ end
 local function CreateExpEvent(timestamp, expGained)
     local newExpEvent = NewExpEvent(timestamp, expGained)
     table.insert(ExpEvents, newExpEvent)
+
+    if DungeonName ~= nil then
+        table.insert(DungeonRunExpEvents, newExpEvent)
+    end
 end
 
-local function RemoveExpiredEvents()
+local function ClearExpiredExpEvents()
     for key, expEvent in pairs(ExpEvents) do
         if expEvent:IsExpired() then
-            ExpEvents[key] = nil;
+            ExpEvents[key] = nil
         end
+    end
+end
+
+local function ClearDungeonExpEvents()
+    for key, expEvent in pairs(DungeonRunExpEvents) do
+        ExpEvents[key] = nil
     end
 end
 
@@ -220,6 +235,43 @@ local function GetKillInfo()
     return average, kills
 end
 
+local function GetDungeonRunsNeeded(expNeeded)
+    local averagePerRun = DungeonInfo[DungeonName].Average
+
+    if averagePerRun ~= nil then
+        local runsNeeded = math.ceil(expNeeded / averagePerRun)
+
+        return runsNeeded
+    end
+end
+
+local function GetDungeonRunExp()
+    local totalExpGained = 0
+
+    for key, expEvent in pairs(DungeonRunExpEvents) do
+        totalExpGained = totalExpGained + expEvent.ExpGained
+    end
+
+    return totalExpGained
+end
+
+local function IncrementDungeonRuns()
+    local dungeonInfo = DungeonInfo[DungeonName]    
+    local runCount, exp, average = nil
+
+    if dungeonInfo ~= nil then
+        runCount = dungeonInfo.RunCount + 1
+        exp = dungeonInfo.Experience + GetDungeonRunExp()
+        average = exp / runCount
+    else
+        runCount = 1
+        exp = GetDungeonRunExp()
+        average = exp
+    end
+    df("%s exp gained in %s runs from %s. Average run has given %s exp.", exp, runCount, DungeonName, average)
+    DungeonInfo[DungeonName] = { Experience = exp, RunCount = runCount, Average = average }
+end
+
 -- Formats numbers to include commas every third digit.
 local function FormatNumber(num)
     return tostring(math.floor(num)):reverse():gsub("(%d%d%d)","%1,"):gsub(",(%-?)$","%1"):reverse()
@@ -247,12 +299,12 @@ local function UpdateVars()
     GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKills)
     GrindTimer.SavedVariables.KillsNeeded = FormatNumber(killsNeeded)
     GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
-    GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
+    GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour) 
 end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
     local currentTimestamp = GetTimeStamp()
-    RemoveExpiredEvents()
+    ClearExpiredExpEvents()
 
     if reason == 0 or reason == 24 or reason == 26 then
         local expGained = currentExp - previousExp
@@ -264,6 +316,24 @@ local function Update(eventCode, reason, level, previousExp, currentExp, champio
     LastUpdateTimestamp = currentTimestamp
 end
 
+local function UpdateDungeonInfo()
+    local dungeonRunsNeeded = GetDungeonRunsNeeded(GetExpNeeded())
+    
+    GrindTimer.SavedVariables.DungeonRunsNeeded = FormatNumber(dungeonRunsNeeded)
+    GrindTimer.SavedVariables.LastDungeonName = DungeonName
+end
+
+local function PlayerActivated(eventCode, initial)
+    if IsUnitInDungeon("player") then
+        DungeonName = GetUnitZone("player")
+    elseif DungeonName ~= nil then
+        IncrementDungeonRuns()
+        UpdateDungeonInfo()
+        ClearDungeonExpEvents()
+        DungeonName = nil        
+    end
+end
+
 local function Initialize(eventCode, addonName)
     if addonName == GrindTimer.Name then
 
@@ -273,6 +343,7 @@ local function Initialize(eventCode, addonName)
         ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
 
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, Update)
+        EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_PLAYER_ACTIVATED, PlayerActivated)
         EVENT_MANAGER:UnregisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED)
 
         GrindTimer.InitializeUI()
@@ -293,6 +364,8 @@ function GrindTimer.Reset()
     GrindTimer.SavedVariables.ExpPerHour = 0
     GrindTimer.SavedVariables.RecentKills = 0
     GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(GetExpNeeded())
+    GrindTimer.SavedVariables.LastDungeonName = nil
+    GrindTimer.SavedVariables.DungeonRunsNeeded = 0
 end
 
 -- Updates Grind Timer every 5 seconds if no exp is gained within those 5 seconds.
@@ -301,7 +374,7 @@ function GrindTimer.TimedUpdate()
         local currentTimestamp = GetTimeStamp()
 
         if GetDiffBetweenTimeStamps(currentTimestamp, LastUpdateTimestamp) >= UpdateTimer then
-            RemoveExpiredEvents()
+            ClearExpiredExpEvents()
             UpdateVars()
             GrindTimer.UpdateUIControls()
             LastUpdateTimestamp = currentTimestamp
