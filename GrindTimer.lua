@@ -2,6 +2,7 @@ GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
 GrindTimer.Version = "1.7.0"
+GrindTimer.SavedVariableVersion = "1"
 GrindTimer.UIInitialized = false
 
 local ExpEvents = {}
@@ -337,8 +338,8 @@ end
 local function Initialize(eventCode, addonName)
     if addonName == GrindTimer.Name then
 
-        GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.Version, "Character", Defaults)
-        GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.Version, "Account", AccountDefaults)
+        GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
+        GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.SavedVariableVersion, "Account", AccountDefaults)
 
         ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
 
