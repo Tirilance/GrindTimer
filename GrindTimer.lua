@@ -237,9 +237,10 @@ local function GetKillInfo()
 end
 
 local function GetDungeonRunsNeeded(expNeeded)
-    local averagePerRun = DungeonInfo[DungeonName].Average
+    local dungeonInfo = DungeonInfo[DungeonName]
 
-    if averagePerRun ~= nil then
+    if dungeonInfo ~= nil then
+        local averagePerRun = dungeonInfo.Average
         local runsNeeded = math.ceil(expNeeded / averagePerRun)
 
         return runsNeeded
@@ -257,17 +258,20 @@ local function GetDungeonRunExp()
 end
 
 local function IncrementDungeonRuns()
-    local dungeonInfo = DungeonInfo[DungeonName]    
-    local runCount, exp, average = nil
+    local dungeonInfo = DungeonInfo[DungeonName]
+    local runExp = GetDungeonRunExp()
+    local runCount, exp, average = nil    
 
-    if dungeonInfo ~= nil then
+    if dungeonInfo ~= nil and runExp > 0 then
         runCount = dungeonInfo.RunCount + 1
-        exp = dungeonInfo.Experience + GetDungeonRunExp()
+        exp = dungeonInfo.Experience + runExp
         average = exp / runCount
-    else
+    elseif runExp > 0 then
         runCount = 1
-        exp = GetDungeonRunExp()
+        exp = runExp
         average = exp
+    else
+        return
     end
 
     DungeonInfo[DungeonName] = { Experience = exp, RunCount = runCount, Average = average }
@@ -319,9 +323,14 @@ end
 
 local function UpdateDungeonInfo()
     local dungeonRunsNeeded = GetDungeonRunsNeeded(GetExpNeeded())
-    
-    GrindTimer.SavedVariables.DungeonRunsNeeded = FormatNumber(dungeonRunsNeeded)
-    GrindTimer.SavedVariables.LastDungeonName = DungeonName
+
+    if dungeonRunsNeeded ~= nil then
+        -- Check for INF
+        dungeonRunsNeeded = (dungeonRunsNeeded == math.huge or dungeonRunsNeeded == -math.huge) and 0 or dungeonRunsNeeded
+        
+        GrindTimer.SavedVariables.DungeonRunsNeeded = FormatNumber(dungeonRunsNeeded)
+        GrindTimer.SavedVariables.LastDungeonName = DungeonName
+    end
 end
 
 local function PlayerActivated(eventCode, initial)
@@ -386,6 +395,17 @@ end
 function GrindTimer.SetNewTargetLevel(targetLevel)
     GrindTimer.SavedVariables.TargetLevel = targetLevel
     UpdateVars()
+end
+
+function GrindTimer.HasGainedExpFromDungeon(dungeonName)
+    local dungeonInfo = DungeonInfo[dungeonName]
+
+    if dungeonInfo ~= nil then
+        local exp = dungeonInfo.Experience
+        return exp > 0
+    else
+        return false
+    end
 end
 
 EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED, Initialize)
