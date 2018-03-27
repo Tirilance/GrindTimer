@@ -6,12 +6,12 @@ GrindTimer.SavedVariableVersion = "1"
 GrindTimer.UIInitialized = false
 
 local ExpEvents = {}
-local DungeonRunExpEvents = {}
 local DungeonInfo = {}
 local ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
 local LastUpdateTimestamp = GetTimeStamp()
 local UpdateTimer = 5 -- Update every 5 seconds
 local DungeonName = nil
+local IsPlayerInDungeon = false
 
 local AccountDefaults =
 {
@@ -43,10 +43,18 @@ local Defaults =
 }
 
 -- ExpEvents used to track exp gains.
-local function NewExpEvent(timestamp, expGained)
+local function NewExpEvent(timestamp, expGained, isDungeon, reason)
     local expEvent = {}
     expEvent.Timestamp = timestamp
     expEvent.ExpGained = expGained
+    expEvent.IsDungeon = isDungeon
+
+    local reasonText = ""
+    if reason == 0 or reason == 24 or reason == 26 then
+        reasonText = "Kill"
+    end
+
+    expEvent.Reason = reasonText
     
     expEvent.IsExpired = function(self)
         return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > ExpEventTimeWindow
@@ -54,13 +62,9 @@ local function NewExpEvent(timestamp, expGained)
     return expEvent
 end
 
-local function CreateExpEvent(timestamp, expGained)
-    local newExpEvent = NewExpEvent(timestamp, expGained)
+local function CreateExpEvent(timestamp, expGained, reason)
+    local newExpEvent = NewExpEvent(timestamp, expGained, IsPlayerInDungeon, reason)
     table.insert(ExpEvents, newExpEvent)
-
-    if DungeonName ~= nil then
-        table.insert(DungeonRunExpEvents, newExpEvent)
-    end
 end
 
 local function ClearExpiredExpEvents()
@@ -72,8 +76,10 @@ local function ClearExpiredExpEvents()
 end
 
 local function ClearDungeonExpEvents()
-    for key, expEvent in pairs(DungeonRunExpEvents) do
-        DungeonRunExpEvents[key] = nil
+    for key, expEvent in pairs(ExpEvents) do
+        if expEvent.IsDungeon then
+            ExpEvents[key] = nil
+        end
     end
 end
 
@@ -228,8 +234,10 @@ local function GetKillInfo()
     local kills = 0
 
     for key, expEvent in pairs(ExpEvents) do
-        totalExpGained = totalExpGained + expEvent.ExpGained
-        kills = kills + 1
+        if expEvent.Reason == "Kill" then
+            totalExpGained = totalExpGained + expEvent.ExpGained
+            kills = kills + 1
+        end
     end
 
     local average = totalExpGained / kills
@@ -250,8 +258,10 @@ end
 local function GetDungeonRunExp()
     local totalExpGained = 0
 
-    for key, expEvent in pairs(DungeonRunExpEvents) do
-        totalExpGained = totalExpGained + expEvent.ExpGained
+    for key, expEvent in pairs(ExpEvents) do
+        if expEvent.IsDungeon then
+            totalExpGained = totalExpGained + expEvent.ExpGained
+        end
     end
 
     return totalExpGained
@@ -313,7 +323,7 @@ local function Update(eventCode, reason, level, previousExp, currentExp, champio
 
     if reason == 0 or reason == 24 or reason == 26 then
         local expGained = currentExp - previousExp
-        CreateExpEvent(currentTimestamp, expGained)
+        CreateExpEvent(currentTimestamp, expGained, reason)
     end
 
     UpdateVars()
@@ -335,11 +345,13 @@ end
 
 local function PlayerActivated(eventCode, initial)
     if IsUnitInDungeon("player") then
+        IsPlayerInDungeon = true
         DungeonName = GetUnitZone("player")
     elseif DungeonName ~= nil then
         IncrementDungeonRuns()
         UpdateDungeonInfo()
         ClearDungeonExpEvents()
+        IsPlayerInDungeon = false
         DungeonName = nil        
     end
 end
