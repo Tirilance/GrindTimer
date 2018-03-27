@@ -32,13 +32,13 @@ local function UpdateSettingWindowButtons()
 
     for i in ipairs(labelButtons) do
         if labelValues[i] == 1 then
-            labelButtons[i]:SetText("Time until level")
+            labelButtons[i]:SetText("Time until goal")
 
         elseif labelValues[i] == 2 then
-            labelButtons[i]:SetText("Experience until level")
+            labelButtons[i]:SetText("Experience until goal")
 
         elseif labelValues[i] == 3 then
-            labelButtons[i]:SetText("Kills until level")
+            labelButtons[i]:SetText("Kills until goal")
 
         elseif labelValues[i] == 4 then
             labelButtons[i]:SetText("Experience per hour")
@@ -50,7 +50,10 @@ local function UpdateSettingWindowButtons()
             labelButtons[i]:SetText("Kills in last 15 minutes")
 
         elseif labelValues[i] == 7 then
-            labelButtons[i]:SetText("Dungeon runs until level")
+            labelButtons[i]:SetText("Dungeon runs until goal")
+        
+        elseif labelValues[i] == 8 then
+            labelButtons[i]:SetText("Dolmens until goal")
         end
     end
 end

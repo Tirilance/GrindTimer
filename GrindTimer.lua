@@ -1,8 +1,9 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.8.0"
+GrindTimer.Version = "1.9.0"
 GrindTimer.SavedVariableVersion = "1"
+GrindTimer.AccountSavedVariablesVersion = "1"
 GrindTimer.UIInitialized = false
 
 local ExpEvents = {}
@@ -12,6 +13,7 @@ local LastUpdateTimestamp = GetTimeStamp()
 local UpdateTimer = 5 -- Update every 5 seconds
 local DungeonName = nil
 local IsPlayerInDungeon = false
+local IsPlayerInDolmen = false
 
 local AccountDefaults =
 {
@@ -38,20 +40,25 @@ local Defaults =
     RecentKills = 0,
     LastDungeonName = nil,
     DungeonRunsNeeded = 0,
+    DolmensNeeded = 0,
     TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1,
     TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal"
 }
 
 -- ExpEvents used to track exp gains.
-local function NewExpEvent(timestamp, expGained, isDungeon, reason)
+local function NewExpEvent(timestamp, expGained, isDungeon, isDolmen, reason)
     local expEvent = {}
     expEvent.Timestamp = timestamp
     expEvent.ExpGained = expGained
     expEvent.IsDungeon = isDungeon
+    expEvent.IsDolmen = isDolmen
 
     local reasonText = ""
+
     if reason == 0 or reason == 24 or reason == 26 then
         reasonText = "Kill"
+    elseif reason == 7 then
+        reasonText = "DolmenClosed"
     end
 
     expEvent.Reason = reasonText
@@ -63,7 +70,7 @@ local function NewExpEvent(timestamp, expGained, isDungeon, reason)
 end
 
 local function CreateExpEvent(timestamp, expGained, reason)
-    local newExpEvent = NewExpEvent(timestamp, expGained, IsPlayerInDungeon, reason)
+    local newExpEvent = NewExpEvent(timestamp, expGained, IsPlayerInDungeon, IsPlayerInDolmen, reason)
     table.insert(ExpEvents, newExpEvent)
 end
 
@@ -244,6 +251,26 @@ local function GetKillInfo()
     return average, kills
 end
 
+local function GetDolmensNeeded(expNeeded)
+    local totalExpGained = 0
+    local totalDolmensClosed = 0
+
+    for key, expEvent in pairs(ExpEvents) do
+        if expEvent.IsDolmen then
+            totalExpGained = totalExpGained + expEvent.ExpGained
+
+            if expEvent.Reason == "DolmenClosed" then
+                totalDolmensClosed = totalDolmensClosed + 1
+            end
+        end
+    end
+
+    local averageDolmenExp = totalExpGained / totalDolmensClosed
+    local dolmensNeeded = math.ceil(expNeeded / averageDolmenExp)
+
+    return dolmensNeeded
+end
+
 local function GetDungeonRunsNeeded(expNeeded)
     local dungeonInfo = DungeonInfo[DungeonName]
 
@@ -289,7 +316,11 @@ end
 
 -- Formats numbers to include commas every third digit.
 local function FormatNumber(num)
-    return tostring(math.floor(num)):reverse():gsub("(%d%d%d)","%1,"):gsub(",(%-?)$","%1"):reverse()
+    if string.len(tostring(num)) > 3 then
+        return tostring(math.floor(num)):reverse():gsub("(%d%d%d)","%1,"):gsub(",(%-?)$","%1"):reverse()
+    else
+        return num
+    end
 end
 
 local function UpdateVars()
@@ -300,6 +331,7 @@ local function UpdateVars()
     local hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
     local averageExpPerKill, recentKills = GetKillInfo()
     local killsNeeded = math.ceil(expNeeded / averageExpPerKill)
+    local dolmensNeeded = GetDolmensNeeded(expNeeded)
 
     -- Check for INF / IND
     hours = (hours == math.huge or hours == -math.huge) and 0 or hours
@@ -307,6 +339,7 @@ local function UpdateVars()
     averageExpPerKill = (averageExpPerKill ~= averageExpPerKill) and 0 or averageExpPerKill
     killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
     expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
+    dolmensNeeded = (dolmensNeeded == math.huge or dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
 
     GrindTimer.SavedVariables.TargetHours = hours
     GrindTimer.SavedVariables.TargetMinutes = minutes
@@ -314,14 +347,15 @@ local function UpdateVars()
     GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKills)
     GrindTimer.SavedVariables.KillsNeeded = FormatNumber(killsNeeded)
     GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
-    GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour) 
+    GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
+    GrindTimer.SavedVariables.DolmensNeeded = FormatNumber(dolmensNeeded)
 end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
     local currentTimestamp = GetTimeStamp()
     ClearExpiredExpEvents()
 
-    if reason == 0 or reason == 24 or reason == 26 then
+    if reason == 0 or reason == 24 or reason == 26 or reason == 7 and IsPlayerInDolmen then
         local expGained = currentExp - previousExp
         CreateExpEvent(currentTimestamp, expGained, reason)
     end
@@ -344,6 +378,8 @@ local function UpdateDungeonInfo()
 end
 
 local function PlayerActivated(eventCode, initial)
+    IsPlayerInDolmen = string.match(GetPlayerActiveSubzoneName(), "Dolmen") and true or false
+
     if IsUnitInDungeon("player") then
         IsPlayerInDungeon = true
         DungeonName = GetUnitZone("player")
@@ -356,15 +392,20 @@ local function PlayerActivated(eventCode, initial)
     end
 end
 
+local function ZoneChanged(eventCode, zoneName, subZoneName, isNewSubzone, zoneId, subZoneId)
+    IsPlayerInDolmen = string.match(subZoneName, "Dolmen") and true or false
+end
+
 local function Initialize(eventCode, addonName)
     if addonName == GrindTimer.Name then
 
         GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
-        GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.SavedVariableVersion, "Account", AccountDefaults)
+        GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.AccountSavedVariablesVersion, "Account", AccountDefaults)
 
         ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
 
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, Update)
+        EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_ZONE_CHANGED, ZoneChanged)
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_PLAYER_ACTIVATED, PlayerActivated)
         EVENT_MANAGER:UnregisterForEvent(GrindTimer.Name, EVENT_ADD_ON_LOADED)
 
@@ -388,6 +429,7 @@ function GrindTimer.Reset()
     GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(GetExpNeeded())
     GrindTimer.SavedVariables.LastDungeonName = nil
     GrindTimer.SavedVariables.DungeonRunsNeeded = 0
+    GrindTimer.SavedVariables.DolmensNeeded = 0
 end
 
 -- Updates Grind Timer every 5 seconds if no exp is gained within those 5 seconds.

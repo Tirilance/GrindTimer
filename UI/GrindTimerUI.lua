@@ -65,7 +65,17 @@ local function GetLabelStrings()
             if lastDungeonName ~= nil and GrindTimer.HasGainedExpFromDungeon(lastDungeonName) then
                 labelStrings[i] = string.format("%s %s Runs until level %s", dungeonRunsNeeded, lastDungeonName, targetLevel)             
             else
-                labelStrings[i] = string.format("Label updates upon exiting a dungeon.")
+                labelStrings[i] = "Label updates upon exiting a dungeon."
+            end
+
+        elseif labelValues[i] == 8 then
+            local dolmensNeeded = GrindTimer.SavedVariables.DolmensNeeded
+            local targetLevel = GrindTimer.SavedVariables.TargetLevel
+
+            if dolmensNeeded == 0 then
+                labelStrings[i] = "Label updates upon closing a dolmen."
+            else
+                labelStrings[i] = string.format("%s Dolmens until level %s", dolmensNeeded, targetLevel)
             end
         end
     end
