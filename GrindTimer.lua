@@ -42,7 +42,8 @@ local Defaults =
     DungeonRunsNeeded = 0,
     DolmensNeeded = 0,
     TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1,
-    TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal"
+    TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal",
+    IsPlayerChampion = IsUnitChampion("player")
 }
 
 -- ExpEvents used to track exp gains.
@@ -90,7 +91,8 @@ local function ClearDungeonExpEvents()
     end
 end
 
-local function GetTargetLevelExp(level, championPoints, isChamp)
+local function GetTargetLevelExp(championPoints, isChamp)
+    local level = GetUnitLevel("player")
     local targetLevel = GrindTimer.SavedVariables.TargetLevel
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
     local totalExpRequired = 0
@@ -125,8 +127,7 @@ local function GetTargetLevelExp(level, championPoints, isChamp)
 end
 
 local function GetExpNeeded()
-    local isChamp = IsUnitChampion("player")
-    local level = GetUnitLevel("player")
+    local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
     local championPoints = GetPlayerChampionPointsEarned()
     local currentExp = isChamp and GetPlayerChampionXP() or GetUnitXP("player")
     local maxExp = isChamp and GetNumChampionXPInChampionPoint(championPoints) or GetUnitXPMax("player")
@@ -135,7 +136,7 @@ local function GetExpNeeded()
     if GrindTimer.SavedVariables.Mode == "Next" then
         expNeeded = maxExp - currentExp
     else
-        expNeeded = GetTargetLevelExp(level, championPoints, isChamp)
+        expNeeded = GetTargetLevelExp(championPoints, isChamp)
     end
     return expNeeded
 end
@@ -165,7 +166,7 @@ local function GetLevelsPerHour(expGainPerHour)
     if expGainPerHour == 0 then
         return 0
     end
-    local isChamp = IsUnitChampion("player")
+    local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
     local playerLevel = isChamp and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
     local levelsPerHour = 0
 
@@ -324,6 +325,8 @@ local function FormatNumber(num)
 end
 
 local function UpdateVars()
+    GrindTimer.SavedVariables.IsPlayerChampion = IsUnitChampion("player")
+
     local expNeeded = GetExpNeeded()
     local expGainPerMinute = GetExpGainPerMinute()
     local expGainPerHour = math.floor(expGainPerMinute*60)
@@ -430,6 +433,7 @@ function GrindTimer.Reset()
     GrindTimer.SavedVariables.LastDungeonName = nil
     GrindTimer.SavedVariables.DungeonRunsNeeded = 0
     GrindTimer.SavedVariables.DolmensNeeded = 0
+    GrindTimer.SavedVariables.IsPlayerChampion = isChamp
 end
 
 -- Updates Grind Timer every 5 seconds if no exp is gained within those 5 seconds.

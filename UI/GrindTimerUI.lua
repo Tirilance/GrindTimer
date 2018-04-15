@@ -128,7 +128,7 @@ local function UpdateButtons()
             GrindTimerWindowChampionTypeButton:SetState(BSTATE_PRESSED)
             GrindTimerWindowChampionTypeButton:SetHidden(false)
 
-            if IsUnitChampion("player") then
+            if GrindTimer.SavedVariables.IsPlayerChampion then
                 GrindTimerWindowNormalTypeButton:SetState(BSTATE_DISABLED)
                 GrindTimerWindowNormalTypeButton:SetHidden(true)
             else
@@ -255,7 +255,7 @@ end
 function GrindTimer.LevelEntryTextSubmitted(textBox)
     local currentText = textBox:GetText()
     local currentNumber = tonumber(currentText)
-    local isChamp = IsUnitChampion("player")
+    local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
 
     if currentText ~= nil and currentText ~= "" then
@@ -286,7 +286,7 @@ function GrindTimer.NextModeButtonClicked(button)
     GrindTimerWindowTargetModeButton:SetState(BSTATE_NORMAL)
 
     GrindTimer.SavedVariables.Mode = "Next"
-    local targetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
 
     GrindTimer.SetNewTargetLevel(targetLevel)
     GrindTimer.UpdateUIControls()
@@ -297,16 +297,19 @@ function GrindTimer.TargetModeButtonClicked(button)
     GrindTimerWindowNextModeButton:SetState(BSTATE_NORMAL)
 
     GrindTimer.SavedVariables.Mode = "Target"
-    local targetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
 
     GrindTimerWindowLevelEntryBox:SetText(targetLevel)
-    GrindTimer.SavedVariables.TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal"
+    GrindTimer.SavedVariables.TargetLevelType = GrindTimer.SavedVariables.IsPlayerChampion and "Champion" or "Normal"
     GrindTimer.SetNewTargetLevel(targetLevel)
     GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.NormalTypeButtonClicked(button)
-    if IsUnitChampion("player") then return end
+    if GrindTimer.SavedVariables.IsPlayerChampion then
+        return
+    end
+    
     button:SetState(BSTATE_PRESSED)
     GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
 
