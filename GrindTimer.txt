@@ -2,7 +2,7 @@
 ## APIVersion: 100023 100024
 ## Author: Tirilance
 ## Version: 1.9.1
-## Description: An experience tracker for anyone who prefers to have some visualization on their leveling goals in many different metrics.
+## Description: An experience tracker for tracking leveling goals in a variety of metrics.
 ## SavedVariables: GrindTimerVars
 
 GrindTimer.lua
