@@ -361,7 +361,7 @@ local function Update(eventCode, reason, level, previousExp, currentExp, champio
     if reason == 0 or reason == 24 or reason == 26 or reason == 7 and IsPlayerInDolmen then
         local currentPlayerLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
 
-        if level ~= currentPlayerLevel then
+        if GrindTimer.SavedVariables.TargetLevel == currentPlayerLevel then
             GrindTimer.SetNewTargetLevel(currentPlayerLevel+1)
         end
 
