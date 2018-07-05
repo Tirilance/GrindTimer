@@ -167,14 +167,15 @@ local function GetLevelsPerHour(expGainPerHour)
         return 0
     end
     local isChamp = IsUnitChampion("player")
-    local playerLevel = isChamp and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
+    local championPoints = GetPlayerChampionPointsEarned()
+    local playerLevel = GetUnitLevel("player")
     local levelsPerHour = 0
 
     if isChamp then
         -- Champion levels gained in the next hour.
-        for i = playerLevel, 1000 do
+        for i = championPoints, championPoints+1000 do
             local expInLevel = GetNumChampionXPInChampionPoint(i)
-            if i == playerLevel then
+            if i == championPoints then
                 expNeeded = expInLevel - GetPlayerChampionXP()
                 expGainPerHour = expGainPerHour - expNeeded
             else
@@ -188,9 +189,7 @@ local function GetLevelsPerHour(expGainPerHour)
         end
     else
         -- Normal levels up to 50 in the next hour.
-        local levelsTil50 = (50-playerLevel-1) + playerLevel
-
-        for i = playerLevel, levelsTil50 do
+        for i = playerLevel, 49 do
             local expInLevel = GetNumExperiencePointsInLevel(i)
             if i == playerLevel then
                 expNeeded = expInLevel - GetUnitXP("player")
@@ -206,7 +205,7 @@ local function GetLevelsPerHour(expGainPerHour)
         end
         -- Champion levels surpassing level 50 in the next hour.
         if expGainPerHour >= 0 then
-            for i = 0, 1000 do
+            for i = championPoints, championPoints+1000 do
                 local expInLevel = GetNumChampionXPInChampionPoint(i)
                 expGainPerHour = expGainPerHour - expInLevel
 
