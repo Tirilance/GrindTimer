@@ -351,6 +351,8 @@ local function UpdateVars()
     GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
     GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
     GrindTimer.SavedVariables.DolmensNeeded = FormatNumber(dolmensNeeded)
+
+    RequestAddOnSavedVariablesPrioritySave(GrindTimer.Name)
 end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
@@ -439,6 +441,8 @@ function GrindTimer.Reset()
     GrindTimer.SavedVariables.DungeonRunsNeeded = 0
     GrindTimer.SavedVariables.DolmensNeeded = 0
     GrindTimer.SavedVariables.IsPlayerChampion = isChamp
+
+    RequestAddOnSavedVariablesPrioritySave(GrindTimer.Name)
 end
 
 -- Updates Grind Timer every 5 seconds if no exp is gained within those 5 seconds.
