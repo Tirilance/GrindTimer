@@ -23,7 +23,7 @@
                 <Button name="$(parent)FirstLabelDropdownButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Time until goal" horizontalAlignment="LEFT">
                     <Dimensions x="200" y="25"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="170" offsetY="55"/>
-                    <FontColors normalColor="1E90FF"/>
+                    <FontColors normalColor="A8A8A8"/>
                     <Controls>
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
                     </Controls>
@@ -40,7 +40,7 @@
                         <Button name="$(parent)Option1" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Time until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="0"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(1)
                             </OnClicked>
@@ -48,7 +48,7 @@
                         <Button name="$(parent)Option2" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Experience until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="37"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(2)
                             </OnClicked>
@@ -56,7 +56,7 @@
                         <Button name="$(parent)Option3" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="74"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(3)
                             </OnClicked>
@@ -64,7 +64,7 @@
                         <Button name="$(parent)Option4" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Experience per hour" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="111"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(4)
                             </OnClicked>
@@ -72,7 +72,7 @@
                         <Button name="$(parent)Option5" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Levels per hour" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="148"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(5)
                             </OnClicked>
@@ -80,7 +80,7 @@
                         <Button name="$(parent)Option6" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills in last 15 minutes" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="185"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(6)
                             </OnClicked>
@@ -88,7 +88,7 @@
                         <Button name="$(parent)Option7" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Dungeon runs until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="222"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(7)
                             </OnClicked>
@@ -96,7 +96,7 @@
                         <Button name="$(parent)Option8" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Dolmens until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="259"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.FirstLabelDropdownOptionClicked(8)
                             </OnClicked>
@@ -120,7 +120,7 @@
                 <Button name="$(parent)SecondLabelDropdownButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Experience until goal" horizontalAlignment="LEFT">
                     <Dimensions x="200" y="25"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="170" offsetY="105"/>
-                    <FontColors normalColor="1E90FF" disabledColor="707070"/>
+                    <FontColors normalColor="A8A8A8" disabledColor="707070"/>
                     <Controls>
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
                     </Controls>
@@ -137,7 +137,7 @@
                         <Button name="$(parent)Option1" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Time until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="0"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(1)
                             </OnClicked>
@@ -145,7 +145,7 @@
                         <Button name="$(parent)Option2" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Experience until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="37"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(2)
                             </OnClicked>
@@ -153,7 +153,7 @@
                         <Button name="$(parent)Option3" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="74"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(3)
                             </OnClicked>
@@ -161,7 +161,7 @@
                         <Button name="$(parent)Option4" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Experience per hour" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="111"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(4)
                             </OnClicked>
@@ -169,7 +169,7 @@
                         <Button name="$(parent)Option5" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Levels per hour" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="148"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(5)
                             </OnClicked>
@@ -177,7 +177,7 @@
                         <Button name="$(parent)Option6" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Kills in last 15 minutes" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="185"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(6)
                             </OnClicked>
@@ -185,7 +185,7 @@
                         <Button name="$(parent)Option7" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Dungeon runs until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="222"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(7)
                             </OnClicked>
@@ -193,7 +193,7 @@
                         <Button name="$(parent)Option8" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Dolmens until goal" horizontalAlignment="LEFT">
                             <Dimensions x="200" y="25"/>
                             <Anchor pont="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="259"/>
-                            <FontColors normalColor="A8A8A8" mouseOverColor="1E90FF" pressedColor="808080"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
                                 GrindTimer.SecondLabelDropdownOptionClicked(8)
                             </OnClicked>
@@ -206,7 +206,7 @@
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="160"/>
                 </Label>
 
-                <EditBox name="$(parent)OpacityEntryBox" font="ZoFontGameShadowSettings" text="100" color="1E90FF" editEnabled="true" maxInputCharacters="3" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" horizontalAlignment="LEFT">
+                <EditBox name="$(parent)OpacityEntryBox" font="ZoFontGameShadowSettings" text="100" color="FFFFFF" editEnabled="true" maxInputCharacters="3" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" horizontalAlignment="LEFT">
                     <Dimensions x="45" y="30"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="171" offsetY="160"/>
                     <OnMouseDown>
