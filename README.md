@@ -1,4 +1,4 @@
-# Grind Timer
+# Grind Timer [![GitHub license](https://img.shields.io/github/license/Tirilance/GrindTimer.svg)](https://github.com/Tirilance/GrindTimer/blob/master/LICENSE)
 
 Grind Timer is a simple experience tracking addon for Elder Scrolls Online to track your leveling progress in a variety of metrics.
 
