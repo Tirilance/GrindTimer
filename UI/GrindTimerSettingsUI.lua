@@ -1,4 +1,5 @@
 local fontControls = {}
+local windowHidden = true
 
 local function UpdateFonts()
     local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
@@ -72,6 +73,12 @@ function GrindTimer.InitializeSettingsMenu()
 
     UpdateSettingWindowButtons()
     UpdateFonts()
+
+    local grindTimerSettingsFragment = ZO_HUDFadeSceneFragment:New(GrindTimerSettingsWindow, 0, 0)
+    SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerSettingsFragment)
+    SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerSettingsFragment)
+
+    GrindTimerSettingsWindow:SetHidden(true)
 end
 
 function GrindTimer.AddToFontControlsArray(control)
@@ -232,6 +239,15 @@ function GrindTimer.ColorPickerOpen(texture)
     COLOR_PICKER:Show(ColorSelected, currentR, currentG, currentB)
 end
 
+function GrindTimer.SettingsWindowShown()
+    GrindTimerSettingsWindow:SetHidden(windowHidden)
+end
+
+function GrindTimer.SettingsWindowToggled()
+    windowHidden = not windowHidden
+    GrindTimerSettingsWindow:SetHidden(windowHidden)    
+end
+
 function GrindTimer.SettingsClosed()
     local firstDropDownMenu = GrindTimerSettingsWindowFirstLabelDropdownOptions
     local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
@@ -245,4 +261,5 @@ function GrindTimer.SettingsClosed()
     GrindTimerSettingsWindowOutlineCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
     GrindTimerSettingsWindow:SetHidden(true)
+    windowHidden = true
 end

@@ -355,5 +355,5 @@ function GrindTimer.ResetButtonClicked()
 end
 
 function GrindTimer.SettingsButtonClicked()
-    GrindTimerSettingsWindow:SetHidden(not GrindTimerSettingsWindow:IsHidden())
+    GrindTimer.SettingsWindowToggled()
 end

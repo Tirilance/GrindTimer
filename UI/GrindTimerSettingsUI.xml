@@ -4,6 +4,9 @@
         <TopLevelControl name="GrindTimerSettingsWindow" inheritsAlpha="false" hidden="true" mouseEnabled="true" clampedToScreen="true" layer="0">
             <Dimensions x="400" y="434"/>
             <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
+            <OnShow>
+                GrindTimer.SettingsWindowShown()
+            </OnShow>
             <Controls>
                 <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
 
