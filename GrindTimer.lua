@@ -127,7 +127,7 @@ local function GetTargetLevelExp(championPoints, isChamp)
 end
 
 local function GetExpNeeded()
-    local isChamp = IsUnitChampion("player")
+    local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
     local championPoints = GetPlayerChampionPointsEarned()
     local currentExp = isChamp and GetPlayerChampionXP() or GetUnitXP("player")
     local maxExp = isChamp and GetNumChampionXPInChampionPoint(championPoints) or GetUnitXPMax("player")
@@ -166,7 +166,7 @@ local function GetLevelsPerHour(expGainPerHour)
     if expGainPerHour == 0 then
         return 0
     end
-    local isChamp = IsUnitChampion("player")
+    local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
     local championPoints = GetPlayerChampionPointsEarned()
     local playerLevel = GetUnitLevel("player")
     local levelsPerHour = 0
