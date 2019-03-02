@@ -141,21 +141,8 @@ local function GetExpNeeded()
     return expNeeded
 end
 
-local function GetExpGainPerMinute()
-    local totalExpGained = 0
-    local firstRememberedEvent = 0
-    local count = 0
-
-    for key, expEvent in pairs(ExpEvent.Events) do
-        if count == 0 then
-            firstRememberedEvent = expEvent.Timestamp
-        end
-
-        totalExpGained = totalExpGained + expEvent.ExpGained
-        count = count + 1
-    end
-
-    local timeDiff = GetDiffBetweenTimeStamps(GetTimeStamp(), firstRememberedEvent)
+local function GetExpGainPerMinute(totalExpGained, oldestEventTimestamp)
+    local timeDiff = GetDiffBetweenTimeStamps(GetTimeStamp(), oldestEventTimestamp)
     timeDiff = (timeDiff == 0) and 1 or timeDiff
 
     local expGainPerMinute = totalExpGained / (timeDiff/60)
@@ -235,37 +222,8 @@ local function GetLevelTimeRemaining(expGainPerMinute, expRemaining)
     return hoursToLevel, minutesToLevel
 end
 
--- Returns average kill exp and number of kills in last 15 minutes
-local function GetKillInfo()
-    local totalExpGained = 0
-    local kills = 0
-
-    for key, expEvent in pairs(ExpEvent.Events) do
-        if expEvent.Reason == "Kill" then
-            totalExpGained = totalExpGained + expEvent.ExpGained
-            kills = kills + 1
-        end
-    end
-
-    local average = totalExpGained / kills
-    return average, kills
-end
-
-local function GetDolmensNeeded(expNeeded)
-    local totalExpGained = 0
-    local totalDolmensClosed = 0
-
-    for key, expEvent in pairs(ExpEvent.Events) do
-        if expEvent.IsDolmen then
-            totalExpGained = totalExpGained + expEvent.ExpGained
-
-            if expEvent.Reason == "DolmenClosed" then
-                totalDolmensClosed = totalDolmensClosed + 1
-            end
-        end
-    end
-
-    local averageDolmenExp = totalExpGained / totalDolmensClosed
+local function GetDolmensNeeded(expNeeded, dolmenExpGained, dolmensClosed)
+    local averageDolmenExp = dolmenExpGained / dolmensClosed
     local dolmensNeeded = math.ceil(expNeeded / averageDolmenExp)
 
     return dolmensNeeded
@@ -323,18 +281,59 @@ local function UpdateVars()
     GrindTimer.SavedVariables.IsPlayerChampion = IsUnitChampion("player")
 
     local expNeeded = GetExpNeeded()
-    local expGainPerMinute = GetExpGainPerMinute()
-    local expGainPerHour = math.floor(expGainPerMinute*60)
-    local levelsPerHour = GetLevelsPerHour(expGainPerHour)
-    local hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
-    local averageExpPerKill, recentKills = GetKillInfo()
-    local killsNeeded = math.ceil(expNeeded / averageExpPerKill)
-    local dolmensNeeded = GetDolmensNeeded(expNeeded)
+    local oldestEventTimestamp = math.huge
+
+    local totalExpGained = 0
+    local expGainPerMinute = 0
+    local expGainPerHour = 0
+    local levelsPerHour = 0
+    local hours, minutes = 0,0
+    
+    local killExpGained = 0
+    local averageKillExp = 0
+    local recentKillCount = 0
+    local killsNeeded = 0
+
+    local dolmenExpGained = 0
+    local dolmensClosed = 0
+    local dolmensNeeded = 0
+
+    if ExpEvent.EventCount > 0 then
+        for key, expEvent in pairs(ExpEvent.Events) do
+            totalExpGained = totalExpGained + expEvent.ExpGained
+
+            if expEvent.Reason == "Kill" then
+                killExpGained = killExpGained + expEvent.ExpGained
+                recentKillCount = recentKillCount + 1
+            end
+
+            if expEvent.IsDolmen then
+                dolmenExpGained = dolmenExpGained + expEvent.ExpGained
+
+                if expEvent.Reason == "DolmenClosed" then
+                    dolmensClosed = dolmensClosed + 1
+                end
+            end
+
+            if expEvent.Timestamp < oldestEventTimestamp then
+                oldestEventTimestamp = expEvent.Timestamp
+            end
+        end
+
+        expGainPerMinute = GetExpGainPerMinute(totalExpGained, oldestEventTimestamp)
+        expGainPerHour = math.floor(expGainPerMinute * 60)
+        levelsPerHour = GetLevelsPerHour(expGainPerHour)
+        hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
+
+        averageKillExp = killExpGained / recentKillCount
+        killsNeeded = math.ceil(expNeeded / averageKillExp)
+        dolmensNeeded = GetDolmensNeeded(expNeeded, dolmenExpGained, dolmensClosed)
+    end
 
     -- Check for INF / IND
     hours = (hours == math.huge or hours == -math.huge) and 0 or hours
     minutes = (minutes ~= minutes or minutes == math.huge or minutes == -math.huge) and 0 or minutes
-    averageExpPerKill = (averageExpPerKill ~= averageExpPerKill) and 0 or averageExpPerKill
+    averageKillExp = (averageKillExp ~= averageKillExp) and 0 or averageKillExp
     killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
     expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
     dolmensNeeded = (dolmensNeeded == math.huge or dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
@@ -342,7 +341,7 @@ local function UpdateVars()
     GrindTimer.SavedVariables.TargetHours = hours
     GrindTimer.SavedVariables.TargetMinutes = minutes
     GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(expNeeded)
-    GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKills)
+    GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKillCount)
     GrindTimer.SavedVariables.KillsNeeded = FormatNumber(killsNeeded)
     GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
     GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
