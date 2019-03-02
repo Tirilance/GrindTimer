@@ -6,9 +6,7 @@ GrindTimer.SavedVariableVersion = "1"
 GrindTimer.AccountSavedVariablesVersion = "1"
 GrindTimer.UIInitialized = false
 
-local ExpEvents = {}
 local DungeonInfo = {}
-local ExpEventTimeWindow = 900 -- Remember exp events from the last 15 minutes.
 local LastUpdateTimestamp = GetTimeStamp()
 local UpdateTimer = 5 -- Update every 5 seconds
 local DungeonName = nil
@@ -47,46 +45,48 @@ local Defaults =
 }
 
 -- ExpEvents used to track exp gains.
-local function NewExpEvent(timestamp, expGained, isDungeon, isDolmen, reason)
-    local expEvent = {}
-    expEvent.Timestamp = timestamp
-    expEvent.ExpGained = expGained
-    expEvent.IsDungeon = isDungeon
-    expEvent.IsDolmen = isDolmen
+local ExpEvent = { EventCount = 0, Events = {}, Timeout = 900 }
 
-    local reasonText = ""
+function ExpEvent.Create(timestamp, expGained, isDungeon, isDolmen, reason)
+    local newExpEvent = {}
+
+    newExpEvent.Timestamp = timestamp
+    newExpEvent.ExpGained = expGained
+    newExpEvent.IsDungeon = isDungeon
+    newExpEvent.IsDolmen = isDolmen
 
     if reason == 0 or reason == 24 or reason == 26 then
-        reasonText = "Kill"
+        newExpEvent.Reason = "Kill"
     elseif reason == 7 then
-        reasonText = "DolmenClosed"
+        newExpEvent.Reason = "DolmenClosed"
+    else
+        newExpEvent.Reason = "Other"
     end
-
-    expEvent.Reason = reasonText
     
-    expEvent.IsExpired = function(self)
-        return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > ExpEventTimeWindow
+    newExpEvent.IsExpired = function(self)
+        return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > ExpEvent.Timeout
     end
-    return expEvent
-end
 
-local function CreateExpEvent(timestamp, expGained, reason)
-    local newExpEvent = NewExpEvent(timestamp, expGained, IsPlayerInDungeon, IsPlayerInDolmen, reason)
-    table.insert(ExpEvents, newExpEvent)
+    table.insert(ExpEvent.Events, newExpEvent)
+    ExpEvent.EventCount = ExpEvent.EventCount + 1
+
+    return newExpEvent
 end
 
 local function ClearExpiredExpEvents()
-    for key, expEvent in pairs(ExpEvents) do
+    for key, expEvent in pairs(ExpEvent.Events) do
         if expEvent:IsExpired() then
-            ExpEvents[key] = nil
+            ExpEvent.Events[key] = nil
+            ExpEvent.EventCount = ExpEvent.EventCount - 1
         end
     end
 end
 
 local function ClearDungeonExpEvents()
-    for key, expEvent in pairs(ExpEvents) do
+    for key, expEvent in pairs(ExpEvent.Events) do
         if expEvent.IsDungeon then
-            ExpEvents[key] = nil
+            ExpEvent.Events[key] = nil
+            ExpEvent.EventCount = ExpEvent.EventCount - 1
         end
     end
 end
@@ -146,7 +146,7 @@ local function GetExpGainPerMinute()
     local firstRememberedEvent = 0
     local count = 0
 
-    for key, expEvent in pairs(ExpEvents) do
+    for key, expEvent in pairs(ExpEvent.Events) do
         if count == 0 then
             firstRememberedEvent = expEvent.Timestamp
         end
@@ -240,7 +240,7 @@ local function GetKillInfo()
     local totalExpGained = 0
     local kills = 0
 
-    for key, expEvent in pairs(ExpEvents) do
+    for key, expEvent in pairs(ExpEvent.Events) do
         if expEvent.Reason == "Kill" then
             totalExpGained = totalExpGained + expEvent.ExpGained
             kills = kills + 1
@@ -255,7 +255,7 @@ local function GetDolmensNeeded(expNeeded)
     local totalExpGained = 0
     local totalDolmensClosed = 0
 
-    for key, expEvent in pairs(ExpEvents) do
+    for key, expEvent in pairs(ExpEvent.Events) do
         if expEvent.IsDolmen then
             totalExpGained = totalExpGained + expEvent.ExpGained
 
@@ -285,7 +285,7 @@ end
 local function GetDungeonRunExp()
     local totalExpGained = 0
 
-    for key, expEvent in pairs(ExpEvents) do
+    for key, expEvent in pairs(ExpEvent.Events) do
         if expEvent.IsDungeon then
             totalExpGained = totalExpGained + expEvent.ExpGained
         end
@@ -365,7 +365,8 @@ local function Update(eventCode, reason, level, previousExp, currentExp, champio
         end
 
         local expGained = currentExp - previousExp
-        CreateExpEvent(currentTimestamp, expGained, reason)
+        
+        ExpEvent.Create(currentTimestamp, expGained, IsPlayerInDungeon, IsPlayerInDolmen, reason)
     end
 
     UpdateVars()
@@ -424,7 +425,9 @@ end
 function GrindTimer.Reset()
     local isChamp = IsUnitChampion("player")
 
-    ExpEvents = {}
+    ExpEvent.Events = {}
+    ExpEvent.EventCount = 0
+
     GrindTimer.SavedVariables.Mode = "Next"
     GrindTimer.SavedVariables.TargetLevel = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
     GrindTimer.SavedVariables.TargetLevelType = isChamp and "Champion" or "Normal"
