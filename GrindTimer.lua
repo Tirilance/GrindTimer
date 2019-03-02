@@ -79,15 +79,6 @@ function ExpEvent.Create(timestamp, expGained, isDungeon, isDolmen, reason)
     return newExpEvent
 end
 
-local function ClearExpiredExpEvents()
-    for key, expEvent in pairs(ExpEvent.Events) do
-        if expEvent:IsExpired() then
-            ExpEvent.Events[key] = nil
-            ExpEvent.EventCount = ExpEvent.EventCount - 1
-        end
-    end
-end
-
 local function ClearDungeonExpEvents()
     for key, expEvent in pairs(ExpEvent.Events) do
         if expEvent.IsDungeon then
@@ -306,38 +297,45 @@ local function UpdateVars()
 
     if ExpEvent.EventCount > 0 then
         for key, expEvent in pairs(ExpEvent.Events) do
-            totalExpGained = totalExpGained + expEvent.ExpGained
+        
+            if expEvent:IsExpired() then
+                ExpEvent.Events[key] = nil
+                ExpEvent.EventCount = ExpEvent.EventCount - 1
 
-            if expEvent.Reason == "Kill" then
-                killExpGained = killExpGained + expEvent.ExpGained
-                recentKillCount = recentKillCount + 1
-            end
+            else
+                totalExpGained = totalExpGained + expEvent.ExpGained
 
-            if expEvent.IsDolmen then
-                dolmenExpGained = dolmenExpGained + expEvent.ExpGained
+                if expEvent.Reason == "Kill" then
+                    killExpGained = killExpGained + expEvent.ExpGained
+                    recentKillCount = recentKillCount + 1
+                end
 
-                if expEvent.Reason == "DolmenClosed" then
-                    dolmensClosed = dolmensClosed + 1
+                if expEvent.IsDolmen then
+                    dolmenExpGained = dolmenExpGained + expEvent.ExpGained
+
+                    if expEvent.Reason == "DolmenClosed" then
+                        dolmensClosed = dolmensClosed + 1
+                    end
+                end
+
+                if expEvent.Timestamp < oldestEventTimestamp then
+                    oldestEventTimestamp = expEvent.Timestamp
+                end
+
+                expGainPerMinute = GetExpGainPerMinute(totalExpGained, oldestEventTimestamp)
+                expGainPerHour = math.floor(expGainPerMinute * 60)
+                levelsPerHour = GetLevelsPerHour(expGainPerHour)
+                hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
+
+                averageKillExp = killExpGained / recentKillCount
+                killsNeeded = math.ceil(expNeeded / averageKillExp)
+                dolmensNeeded = GetDolmensNeeded(expNeeded, dolmenExpGained, dolmensClosed)
+
+                local playerLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
+                if playerLevel ~= SessionStartLevel then
+                    SessionLevels = playerLevel - SessionStartLevel
                 end
             end
-
-            if expEvent.Timestamp < oldestEventTimestamp then
-                oldestEventTimestamp = expEvent.Timestamp
-            end
-        end
-
-        expGainPerMinute = GetExpGainPerMinute(totalExpGained, oldestEventTimestamp)
-        expGainPerHour = math.floor(expGainPerMinute * 60)
-        levelsPerHour = GetLevelsPerHour(expGainPerHour)
-        hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
-
-        averageKillExp = killExpGained / recentKillCount
-        killsNeeded = math.ceil(expNeeded / averageKillExp)
-        dolmensNeeded = GetDolmensNeeded(expNeeded, dolmenExpGained, dolmensClosed)
-
-        local playerLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
-        if playerLevel ~= SessionStartLevel then
-            SessionLevels = playerLevel - SessionStartLevel
         end
     end
 
@@ -363,7 +361,6 @@ end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
     local currentTimestamp = GetTimeStamp()
-    ClearExpiredExpEvents()
 
     if reason == 0 or reason == 24 or reason == 26 or reason == 7 and IsPlayerInDolmen then
         local currentPlayerLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
@@ -469,7 +466,6 @@ function GrindTimer.TimedUpdate()
         local currentTimestamp = GetTimeStamp()
 
         if GetDiffBetweenTimeStamps(currentTimestamp, LastUpdateTimestamp) >= UpdateTimer then
-            ClearExpiredExpEvents()
             UpdateVars()
             GrindTimer.UpdateUIControls()
             LastUpdateTimestamp = currentTimestamp
