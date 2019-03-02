@@ -1,8 +1,8 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.9.6"
-GrindTimer.SavedVariableVersion = "1"
+GrindTimer.Version = "1.10.0"
+GrindTimer.SavedVariableVersion = "2"
 GrindTimer.AccountSavedVariablesVersion = "1"
 GrindTimer.UIInitialized = false
 
@@ -12,6 +12,9 @@ local UpdateTimer = 5 -- Update every 5 seconds
 local DungeonName = nil
 local IsPlayerInDungeon = false
 local IsPlayerInDolmen = false
+local CurrentSessionKills = 0
+local CurrentSessionLevels = 0
+local SessionStartLevel = 0
 
 local AccountDefaults =
 {
@@ -21,8 +24,8 @@ local AccountDefaults =
     Locked = false,
     OffsetX = 400,
     OffsetY = 100,
-    FirstLabelType = 1,
-    SecondLabelType = 2,
+    FirstLabelType = 10,
+    SecondLabelType = 4,
     SecondLabelEnabled = true
 }
 
@@ -39,6 +42,8 @@ local Defaults =
     LastDungeonName = nil,
     DungeonRunsNeeded = 0,
     DolmensNeeded = 0,
+    SessionKills = 0,
+    SessionLevels = 0,
     TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1,
     TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal",
     IsPlayerChampion = IsUnitChampion("player")
@@ -57,6 +62,7 @@ function ExpEvent.Create(timestamp, expGained, isDungeon, isDolmen, reason)
 
     if reason == 0 or reason == 24 or reason == 26 then
         newExpEvent.Reason = "Kill"
+        CurrentSessionKills = CurrentSessionKills + 1
     elseif reason == 7 then
         newExpEvent.Reason = "DolmenClosed"
     else
@@ -328,6 +334,11 @@ local function UpdateVars()
         averageKillExp = killExpGained / recentKillCount
         killsNeeded = math.ceil(expNeeded / averageKillExp)
         dolmensNeeded = GetDolmensNeeded(expNeeded, dolmenExpGained, dolmensClosed)
+
+        local playerLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
+        if playerLevel ~= SessionStartLevel then
+            SessionLevels = playerLevel - SessionStartLevel
+        end
     end
 
     -- Check for INF / IND
@@ -336,7 +347,7 @@ local function UpdateVars()
     averageKillExp = (averageKillExp ~= averageKillExp) and 0 or averageKillExp
     killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
     expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
-    dolmensNeeded = (dolmensNeeded == math.huge or dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
+    dolmensNeeded = (dolmensNeeded == math.huge or dolmensNeeded == -math.huge or dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
 
     GrindTimer.SavedVariables.TargetHours = hours
     GrindTimer.SavedVariables.TargetMinutes = minutes
@@ -346,6 +357,8 @@ local function UpdateVars()
     GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
     GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
     GrindTimer.SavedVariables.DolmensNeeded = FormatNumber(dolmensNeeded)
+    GrindTimer.SavedVariables.SessionKills = FormatNumber(CurrentSessionKills)
+    GrindTimer.SavedVariables.SessionLevels = CurrentSessionLevels
 end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
@@ -382,6 +395,10 @@ local function UpdateDungeonInfo()
 end
 
 local function PlayerActivated(eventCode, initial)
+    if initial then
+        SessionStartLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
+    end
+
     IsPlayerInDolmen = string.match(GetPlayerActiveSubzoneName(), "Dolmen") and true or false
 
     if IsUnitInDungeon("player") then
@@ -403,7 +420,8 @@ end
 local function Initialize(eventCode, addonName)
     if addonName == GrindTimer.Name then
 
-        GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
+        --GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
+        GrindTimer.SavedVariables = ZO_SavedVars:NewCharacterIdSettings("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
         GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.AccountSavedVariablesVersion, "Account", AccountDefaults)
 
         ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
@@ -419,6 +437,10 @@ end
 
 function GrindTimer.Reset()
     local isChamp = IsUnitChampion("player")
+
+    CurrentSessionKills = 0
+    CurrentSessionLevels = 0
+    SessionStartLevel = isChamp and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
 
     ExpEvent.Events = {}
     ExpEvent.EventCount = 0
@@ -436,6 +458,8 @@ function GrindTimer.Reset()
     GrindTimer.SavedVariables.LastDungeonName = nil
     GrindTimer.SavedVariables.DungeonRunsNeeded = 0
     GrindTimer.SavedVariables.DolmensNeeded = 0
+    GrindTimer.SavedVariables.SessionKills = 0
+    GrindTimer.SavedVariables.SessionLevels = 0
     GrindTimer.SavedVariables.IsPlayerChampion = isChamp
 end
 
