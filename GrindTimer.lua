@@ -314,13 +314,9 @@ local function IncrementDungeonRuns()
     DungeonInfo[DungeonName] = { Experience = exp, RunCount = runCount, Average = average }
 end
 
--- Formats numbers to include commas every third digit.
+-- Formats numbers to include separators every third digit.
 local function FormatNumber(num)
-    if string.len(tostring(num)) > 3 then
-        return tostring(math.floor(num)):reverse():gsub("(%d%d%d)","%1,"):gsub(",(%-?)$","%1"):reverse()
-    else
-        return num
-    end
+    return zo_strformat("<<1>>", ZO_LocalizeDecimalNumber(num))
 end
 
 local function UpdateVars()
