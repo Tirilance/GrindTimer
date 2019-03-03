@@ -33,7 +33,7 @@ local function GetLabelStrings()
             local dolmensNeeded = GrindTimer.SavedVariables.DolmensNeeded
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
 
-            if dolmensNeeded == 0 then
+            if dolmensNeeded == "0" then
                 labelStrings[i] = "Label updates upon closing a dolmen."
             else
                 labelStrings[i] = string.format("%s Dolmens until level %s", dolmensNeeded, targetLevel)
