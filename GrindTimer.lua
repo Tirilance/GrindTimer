@@ -345,7 +345,7 @@ local function UpdateVars()
     averageKillExp = (averageKillExp ~= averageKillExp) and 0 or averageKillExp
     killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
     expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
-    dolmensNeeded = (dolmensNeeded == math.huge or dolmensNeeded == -math.huge or dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
+    dolmensNeeded = (dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
 
     GrindTimer.SavedVariables.TargetHours = hours
     GrindTimer.SavedVariables.TargetMinutes = minutes
