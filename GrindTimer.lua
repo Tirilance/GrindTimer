@@ -50,7 +50,12 @@ local Defaults =
 }
 
 -- ExpEvents used to track exp gains.
-local ExpEvent = { EventCount = 0, Events = {}, Timeout = 900 }
+local ExpEvent =
+{
+    EventCount = 0,
+    Events = {},
+    Timeout = 900
+}
 
 function ExpEvent.Create(timestamp, expGained, isDungeon, isDolmen, reason)
     local newExpEvent = {}
@@ -275,8 +280,6 @@ local function FormatNumber(num)
 end
 
 local function UpdateVars()
-    GrindTimer.SavedVariables.IsPlayerChampion = IsUnitChampion("player")
-
     local expNeeded = GetExpNeeded()
     local oldestEventTimestamp = math.huge
 
@@ -361,18 +364,9 @@ end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
     local currentTimestamp = GetTimeStamp()
+    local expGained = currentExp - previousExp
 
-    if reason == 0 or reason == 24 or reason == 26 or reason == 7 and IsPlayerInDolmen then
-        local currentPlayerLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
-
-        if GrindTimer.SavedVariables.TargetLevel == currentPlayerLevel then
-            GrindTimer.SetNewTargetLevel(currentPlayerLevel+1)
-        end
-
-        local expGained = currentExp - previousExp
-        
-        ExpEvent.Create(currentTimestamp, expGained, IsPlayerInDungeon, IsPlayerInDolmen, reason)
-    end
+    ExpEvent.Create(currentTimestamp, expGained, IsPlayerInDungeon, IsPlayerInDolmen, reason)
 
     UpdateVars()
     GrindTimer.UpdateUIControls()
@@ -393,7 +387,9 @@ end
 
 local function PlayerActivated(eventCode, initial)
     if initial then
-        SessionStartLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
+        local isChamp = IsUnitChampion("player")
+        SessionStartLevel = isChamp and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
+        GrindTimer.SavedVariables.IsPlayerChampion = isChamp
     end
 
     IsPlayerInDolmen = string.match(GetPlayerActiveSubzoneName(), "Dolmen") and true or false
@@ -414,6 +410,30 @@ local function ZoneChanged(eventCode, zoneName, subZoneName, isNewSubzone, zoneI
     IsPlayerInDolmen = string.match(subZoneName, "Dolmen") and true or false
 end
 
+local function NormalLevelGained(eventCode, unitTag, newLevel)
+    if unitTag == "player"
+        if GrindTimer.SavedVariables.TargetLevel == newLevel then
+            GrindTimer.SetNewTargetLevel(newLevel + 1)
+        end
+
+        if IsUnitChampion("player") then
+            GrindTimer.SavedVariables.IsPlayerChampion = true
+        end
+
+        SessionLevels = SessionLevels + 1
+    end
+end
+
+local function ChampionLevelGained(eventCode, championPointsGained)
+    local currentChampionLevel = GetPlayerChampionPointsEarned()
+
+    if GrindTimer.SavedVariables.TargetLevel == currentChampionLevel then
+        GrindTimer.SetNewTargetLevel(currentChampionLevel + championPointsGained)
+    end
+    
+    SessionLevels = SessionLevels + 1
+end
+
 local function Initialize(eventCode, addonName)
     if addonName == GrindTimer.Name then
 
@@ -423,6 +443,8 @@ local function Initialize(eventCode, addonName)
 
         ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
 
+        EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_LEVEL_UPDATE, NormalLevelGained)
+        EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_CHAMPION_POINT_GAINED, ChampionLevelGained)
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_EXPERIENCE_GAIN, Update)
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_ZONE_CHANGED, ZoneChanged)
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_PLAYER_ACTIVATED, PlayerActivated)
@@ -433,7 +455,7 @@ local function Initialize(eventCode, addonName)
 end
 
 function GrindTimer.Reset()
-    local isChamp = IsUnitChampion("player")
+    local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
 
     CurrentSessionKills = 0
     CurrentSessionLevels = 0
