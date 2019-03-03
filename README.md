@@ -1,15 +1,17 @@
-# Grind Timer [![GitHub license](https://img.shields.io/github/license/Tirilance/GrindTimer.svg)](https://github.com/Tirilance/GrindTimer/blob/master/LICENSE)
+# Grind Timer
 
 Grind Timer is a simple experience tracking addon for Elder Scrolls Online to track your leveling progress in a variety of metrics.
 
 Any feedback or suggestions on how to improve Grind Timer is appreciated and welcome.
 
-## Features
+## Metrics
 * Estimated time in hours and minutes until your goal
 * Experience needed until your goal
-* Estimated number of kills needed until your goal
 * Estimated experience gain per hour
 * Estimated number of levels gained per hour
+* Levels in current session
+* Estimated number of kills needed until your goal
+* Kills in current session
 * Kills in the last 15 minutes
 * Estimated number dungeon runs needed until goal
 * Estimated number of dolmens needed until goal
