@@ -24,7 +24,7 @@ local function UpdateFonts()
 end
 
 local function UpdateSettingWindowButtons()
-    
+
     local labelButtons = { GrindTimerSettingsWindowFirstLabelDropdownButton,
                             GrindTimerSettingsWindowSecondLabelDropdownButton }
 
@@ -52,7 +52,7 @@ local function UpdateSettingWindowButtons()
 
         elseif labelValues[i] == 7 then
             labelButtons[i]:SetText("Kills until goal")
-        
+
         elseif labelValues[i] == 8 then
             labelButtons[i]:SetText("Levels in current session")
 
@@ -61,7 +61,7 @@ local function UpdateSettingWindowButtons()
 
         elseif labelValues[i] == 10 then
             labelButtons[i]:SetText("Time until goal")
-            
+
         end
     end
 end
@@ -72,7 +72,7 @@ function GrindTimer.InitializeSettingsMenu()
     local secondLabelEnabled = GrindTimer.AccountSavedVariables.SecondLabelEnabled
     local secondLabelChecked = secondLabelEnabled and BSTATE_PRESSED or BSTATE_NORMAL
 
-    GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)    
+    GrindTimerSettingsWindowOpacityEntryBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)
     GrindTimerSettingsWindowOutlineCheckBox:SetState(outlineTextChecked)
     GrindTimerSettingsWindowSecondLabelCheckBox:SetState(secondLabelChecked)
     GrindTimerSettingsWindowSecondLabelDropdownButton:SetEnabled(secondLabelEnabled)
@@ -97,7 +97,7 @@ function GrindTimer.FirstLabelDropdownClicked()
     local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
     local secondDropDownButton = GrindTimerSettingsWindowSecondLabelDropdownButton
     local isMenuClosed = firstDropDownMenu:IsHidden()
-    
+
     -- Hide or show controls that may be overlapped by the dropdown menus.
     GrindTimerSettingsWindowCloseButton:SetHidden(false)
     GrindTimerSettingsWindowOutlineCheckBox:SetHidden(isMenuClosed)
@@ -194,7 +194,7 @@ function GrindTimer.OpacityEntryTextSubmitted(textBox)
     else
         textBox:SetText("0")
     end
-    
+
     GrindTimer.AccountSavedVariables.Opacity = newOpacity
     GrindTimer.UpdateUIControls()
 end
@@ -252,7 +252,7 @@ end
 
 function GrindTimer.SettingsWindowToggled()
     windowHidden = not windowHidden
-    GrindTimerSettingsWindow:SetHidden(windowHidden)    
+    GrindTimerSettingsWindow:SetHidden(windowHidden)
 end
 
 function GrindTimer.SettingsClosed()

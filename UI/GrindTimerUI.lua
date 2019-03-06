@@ -45,7 +45,7 @@ local function GetLabelStrings()
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
 
             if lastDungeonName ~= nil and GrindTimer.HasGainedExpFromDungeon(lastDungeonName) then
-                labelStrings[i] = string.format("%s %s Runs until level %s", dungeonRunsNeeded, lastDungeonName, targetLevel)             
+                labelStrings[i] = string.format("%s %s Runs until level %s", dungeonRunsNeeded, lastDungeonName, targetLevel)
             else
                 labelStrings[i] = "Label updates upon exiting a dungeon."
             end
@@ -132,7 +132,7 @@ local function UpdateButtons()
             GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
             GrindTimerWindowChampionTypeButton:SetHidden(false)
 
-        elseif targetLevelType == "Champion" and controlsExtended then            
+        elseif targetLevelType == "Champion" and controlsExtended then
             GrindTimerWindowChampionTypeButton:SetState(BSTATE_PRESSED)
             GrindTimerWindowChampionTypeButton:SetHidden(false)
 
@@ -181,7 +181,7 @@ function GrindTimer.InitializeUI()
     local grindTimerFragment = ZO_HUDFadeSceneFragment:New(GrindTimerWindow, 0, 0)
     SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerFragment)
     SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerFragment)
-    
+
     InitializeAnimations()
     InitializeUIControls()
     GrindTimer.InitializeSettingsMenu()
@@ -317,7 +317,7 @@ function GrindTimer.NormalTypeButtonClicked(button)
     if GrindTimer.SavedVariables.IsPlayerChampion then
         return
     end
-    
+
     button:SetState(BSTATE_PRESSED)
     GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
 
@@ -341,7 +341,7 @@ end
 function GrindTimer.ChampionTypeButtonClicked(button)
     button:SetState(BSTATE_PRESSED)
     GrindTimerWindowNormalTypeButton:SetState(BSTATE_NORMAL)
-    
+
     local currentText = GrindTimerWindowLevelEntryBox:GetText()
     local currentNumber = tonumber(currentText)
 

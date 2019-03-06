@@ -73,7 +73,7 @@ function ExpEvent.Create(timestamp, expGained, isDungeon, isDolmen, reason)
     else
         newExpEvent.Reason = "Other"
     end
-    
+
     newExpEvent.IsExpired = function(self)
         return GetDiffBetweenTimeStamps(GetTimeStamp(), self.Timestamp) > ExpEvent.Timeout
     end
@@ -116,7 +116,7 @@ local function GetTargetLevelExp(championPoints, isChamp)
             totalExpRequired = totalExpRequired + championPointExp
         end
         totalExpRequired = totalExpRequired - GetPlayerChampionXP() - GetUnitXP("player")
-        
+
     elseif isChamp then
         for i = championPoints, targetLevel-1 do
             local championPointExp = GetNumChampionXPInChampionPoint(i)
@@ -124,7 +124,7 @@ local function GetTargetLevelExp(championPoints, isChamp)
         end
         totalExpRequired = totalExpRequired - GetPlayerChampionXP()
     end
-    
+
     return totalExpRequired
 end
 
@@ -257,7 +257,7 @@ end
 local function IncrementDungeonRuns()
     local dungeonInfo = DungeonInfo[DungeonName]
     local runExp = GetDungeonRunExp()
-    local runCount, exp, average = nil    
+    local runCount, exp, average = nil
 
     if dungeonInfo ~= nil and runExp > 0 then
         runCount = dungeonInfo.RunCount + 1
@@ -288,7 +288,7 @@ local function UpdateVars()
     local expGainPerHour = 0
     local levelsPerHour = 0
     local hours, minutes = 0,0
-    
+
     local killExpGained = 0
     local averageKillExp = 0
     local recentKillCount = 0
@@ -300,7 +300,7 @@ local function UpdateVars()
 
     if ExpEvent.EventCount > 0 then
         for key, expEvent in pairs(ExpEvent.Events) do
-        
+
             if expEvent:IsExpired() then
                 ExpEvent.Events[key] = nil
                 ExpEvent.EventCount = ExpEvent.EventCount - 1
@@ -379,7 +379,7 @@ local function UpdateDungeonInfo()
     if dungeonRunsNeeded ~= nil then
         -- Check for INF
         dungeonRunsNeeded = (dungeonRunsNeeded == math.huge or dungeonRunsNeeded == -math.huge) and 0 or dungeonRunsNeeded
-        
+
         GrindTimer.SavedVariables.DungeonRunsNeeded = FormatNumber(dungeonRunsNeeded)
         GrindTimer.SavedVariables.LastDungeonName = DungeonName
     end
@@ -402,7 +402,7 @@ local function PlayerActivated(eventCode, initial)
         UpdateDungeonInfo()
         ClearDungeonExpEvents()
         IsPlayerInDungeon = false
-        DungeonName = nil        
+        DungeonName = nil
     end
 end
 
@@ -411,7 +411,7 @@ local function ZoneChanged(eventCode, zoneName, subZoneName, isNewSubzone, zoneI
 end
 
 local function NormalLevelGained(eventCode, unitTag, newLevel)
-    if unitTag == "player"
+    if unitTag == "player" then
         if GrindTimer.SavedVariables.TargetLevel == newLevel then
             GrindTimer.SetNewTargetLevel(newLevel + 1)
         end
@@ -430,7 +430,7 @@ local function ChampionLevelGained(eventCode, championPointsGained)
     if GrindTimer.SavedVariables.TargetLevel == currentChampionLevel then
         GrindTimer.SetNewTargetLevel(currentChampionLevel + championPointsGained)
     end
-    
+
     SessionLevels = SessionLevels + 1
 end
 
