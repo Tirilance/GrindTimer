@@ -1,7 +1,7 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.10.1"
+GrindTimer.Version = "1.10.2"
 GrindTimer.SavedVariableVersion = "2"
 GrindTimer.AccountSavedVariablesVersion = "1"
 GrindTimer.UIInitialized = false
@@ -324,42 +324,42 @@ local function UpdateVars()
                 if expEvent.Timestamp < oldestEventTimestamp then
                     oldestEventTimestamp = expEvent.Timestamp
                 end
-
-                expGainPerMinute = GetExpGainPerMinute(totalExpGained, oldestEventTimestamp)
-                expGainPerHour = math.floor(expGainPerMinute * 60)
-                levelsPerHour = GetLevelsPerHour(expGainPerHour)
-                hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
-
-                averageKillExp = killExpGained / recentKillCount
-                killsNeeded = math.ceil(expNeeded / averageKillExp)
-                dolmensNeeded = GetDolmensNeeded(expNeeded, dolmenExpGained, dolmensClosed)
-
-                local playerLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
-                if playerLevel ~= SessionStartLevel then
-                    SessionLevels = playerLevel - SessionStartLevel
-                end
             end
         end
+
+        expGainPerMinute = GetExpGainPerMinute(totalExpGained, oldestEventTimestamp)
+        expGainPerHour = math.floor(expGainPerMinute * 60)
+        levelsPerHour = GetLevelsPerHour(expGainPerHour)
+        hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
+
+        averageKillExp = killExpGained / recentKillCount
+        killsNeeded = math.ceil(expNeeded / averageKillExp)
+        dolmensNeeded = GetDolmensNeeded(expNeeded, dolmenExpGained, dolmensClosed)
+
+        local playerLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
+        if playerLevel ~= SessionStartLevel then
+            SessionLevels = playerLevel - SessionStartLevel
+        end
+
+        -- Check for INF / IND
+        hours = (hours == math.huge or hours == -math.huge) and 0 or hours
+        minutes = (minutes ~= minutes or minutes == math.huge or minutes == -math.huge) and 0 or minutes
+        averageKillExp = (averageKillExp ~= averageKillExp) and 0 or averageKillExp
+        killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
+        expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
+        dolmensNeeded = (dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
+
+        GrindTimer.SavedVariables.TargetHours = hours
+        GrindTimer.SavedVariables.TargetMinutes = minutes
+        GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(expNeeded)
+        GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKillCount)
+        GrindTimer.SavedVariables.KillsNeeded = FormatNumber(killsNeeded)
+        GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
+        GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
+        GrindTimer.SavedVariables.DolmensNeeded = FormatNumber(dolmensNeeded)
+        GrindTimer.SavedVariables.SessionKills = FormatNumber(CurrentSessionKills)
+        GrindTimer.SavedVariables.SessionLevels = CurrentSessionLevels
     end
-
-    -- Check for INF / IND
-    hours = (hours == math.huge or hours == -math.huge) and 0 or hours
-    minutes = (minutes ~= minutes or minutes == math.huge or minutes == -math.huge) and 0 or minutes
-    averageKillExp = (averageKillExp ~= averageKillExp) and 0 or averageKillExp
-    killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
-    expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
-    dolmensNeeded = (dolmensNeeded ~= dolmensNeeded) and 0 or dolmensNeeded
-
-    GrindTimer.SavedVariables.TargetHours = hours
-    GrindTimer.SavedVariables.TargetMinutes = minutes
-    GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(expNeeded)
-    GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKillCount)
-    GrindTimer.SavedVariables.KillsNeeded = FormatNumber(killsNeeded)
-    GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
-    GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
-    GrindTimer.SavedVariables.DolmensNeeded = FormatNumber(dolmensNeeded)
-    GrindTimer.SavedVariables.SessionKills = FormatNumber(CurrentSessionKills)
-    GrindTimer.SavedVariables.SessionLevels = CurrentSessionLevels
 end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
