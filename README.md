@@ -32,6 +32,6 @@ The dolmen metric will only update once you complete a dolmen for best accuracy.
 
 
 ## Installation
-1. Download the .zip from this repository or from [ESOUI](https://www.esoui.com/downloads/info1651-GrindTimer.html)
+1. Download the .zip from releases or from [ESOUI](https://www.esoui.com/downloads/info1651-GrindTimer.html)
 2. Extract the folder in the .zip to C:\Users\Username\Documents\Elder Scrolls Online\live\AddOns
-3. If downloaded from here, rename the folder **GrindTimer-master** to **GrindTimer**.
+3. If downloaded from here, rename the folder to **GrindTimer**.
