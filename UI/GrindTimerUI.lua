@@ -101,11 +101,11 @@ end
 
 local function UpdateLabels()
     GrindTimerWindowLevelTypeLabel:SetHidden(not controlsExtended or (mode == "Next" and true or false))
-    GrindTimerWindowSecondOptionLabel:SetHidden(not GrindTimer.AccountSavedVariables.SecondLabelEnabled)
+    GrindTimerWindowSecondMetricLabel:SetHidden(not GrindTimer.AccountSavedVariables.SecondLabelEnabled)
 
     local firstLabelString, secondLabelString = unpack(GetLabelStrings())
-    GrindTimerWindowFirstOptionLabel:SetText(firstLabelString)
-    GrindTimerWindowSecondOptionLabel:SetText(secondLabelString)
+    GrindTimerWindowFirstMetricLabel:SetText(firstLabelString)
+    GrindTimerWindowSecondMetricLabel:SetText(secondLabelString)
 end
 
 local function UpdateButtons()
@@ -164,7 +164,7 @@ local function InitializeUIControls()
     for key, control in pairs(extendedControls) do
         control:SetHidden(true)
     end
-    GrindTimerWindow:SetDimensions(345, 70)
+    GrindTimerWindow:SetDimensions(345, 75)
 
     local locked = GrindTimer.AccountSavedVariables.Locked
     local lockButtonState = locked and BSTATE_PRESSED or BSTATE_NORMAL
@@ -267,7 +267,7 @@ function GrindTimer.LevelEntryTextSubmitted(textBox)
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
 
     if currentText ~= nil and currentText ~= "" then
-        -- Player level is lower than target normal level.
+        -- Target normal level is lower than current normal level.
         if targetLevelType == "Normal" and not isChamp and currentNumber <= GetUnitLevel("player") then
             GrindTimer.SetNewTargetLevel(GetUnitLevel("player")+1)
 

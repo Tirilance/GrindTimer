@@ -114,8 +114,8 @@ function GrindTimer.FirstLabelDropdownClicked()
     end
 end
 
-function GrindTimer.FirstLabelDropdownOptionClicked(option)
-    GrindTimer.AccountSavedVariables.FirstLabelType = option
+function GrindTimer.FirstLabelDropdownOptionClicked(selectedMetric)
+    GrindTimer.AccountSavedVariables.FirstLabelType = selectedMetric
     GrindTimer.UpdateUIControls()
 
     -- When a dropdown option is clicked, hide the dropdown menu and reveal any hidden overlapped controls.
@@ -143,8 +143,8 @@ function GrindTimer.SecondLabelDropdownClicked()
     GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
 end
 
-function GrindTimer.SecondLabelDropdownOptionClicked(option)
-    GrindTimer.AccountSavedVariables.SecondLabelType = option
+function GrindTimer.SecondLabelDropdownOptionClicked(selectedMetric)
+    GrindTimer.AccountSavedVariables.SecondLabelType = selectedMetric
     GrindTimer.UpdateUIControls()
 
     -- When a dropdown option is clicked, hide the dropdown menu and reveal any hidden overlapped controls.
