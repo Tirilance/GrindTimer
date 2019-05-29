@@ -1,27 +1,4 @@
-local fontControls = {}
 local windowHidden = true
-
-local function UpdateFonts()
-    local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
-    local outlineFont = "$(BOLD_FONT)|$(KB_18)|outline"
-    local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
-
-    for key, control in pairs(fontControls) do
-        -- Apply color to font controls
-        if control:GetType() == CT_BUTTON then
-            control:SetNormalFontColor(r, g, b, 1)
-        else
-            control:SetColor(r, g, b, 1)
-        end
-
-        -- Apply font to font controls
-        if GrindTimer.AccountSavedVariables.OutlineText then
-            control:SetFont(outlineFont)
-        else
-            control:SetFont(normalFont)
-        end
-    end
-end
 
 local function UpdateSettingWindowButtons()
 
@@ -66,6 +43,10 @@ local function UpdateSettingWindowButtons()
     end
 end
 
+function GrindTimer.UpdateSettingsWindow()
+    UpdateSettingWindowButtons()
+end
+
 function GrindTimer.InitializeSettingsMenu()
     local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
     local outlineTextChecked = GrindTimer.AccountSavedVariables.OutlineText and BSTATE_PRESSED or BSTATE_NORMAL
@@ -79,17 +60,12 @@ function GrindTimer.InitializeSettingsMenu()
     GrindTimerSettingsWindowColorSelectButtonColorPickerTexture:SetColor(r, g, b, 1)
 
     UpdateSettingWindowButtons()
-    UpdateFonts()
 
     local grindTimerSettingsFragment = ZO_HUDFadeSceneFragment:New(GrindTimerSettingsWindow, 0, 0)
     SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerSettingsFragment)
     SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerSettingsFragment)
 
     GrindTimerSettingsWindow:SetHidden(true)
-end
-
-function GrindTimer.AddToFontControlsArray(control)
-    table.insert(fontControls, control)
 end
 
 function GrindTimer.FirstLabelDropdownClicked()
@@ -114,6 +90,40 @@ function GrindTimer.FirstLabelDropdownClicked()
     end
 end
 
+function GrindTimer.SecondLabelDropdownClicked()
+    local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
+    local isMenuClosed = secondDropDownMenu:IsHidden()
+
+    -- Hide or show controls that may be overlapped by the dropdown menus.
+    secondDropDownMenu:SetHidden(not isMenuClosed)
+    GrindTimerSettingsWindowCloseButton:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowOpacityEntryBox:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
+end
+
+function GrindTimer.MetricOptionClicked(targetLabel, selectedMetric)
+    if source == 1 then
+        GrindTimer.AccountSavedVariables.FirstLabelType = selectedMetric
+
+        local firstDropDownMenu = GrindTimerSettingsWindowFirstLabelDropdownOptions
+        firstDropDownMenu:SetHidden(true)
+    elseif source == 2 then
+        GrindTimer.AccountSavedVariables.SecondLabelType = selectedMetric
+
+        local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
+        secondDropDownMenu:SetHidden(true)
+    end
+    
+    GrindTimer.UpdateUIControls()
+
+    GrindTimerSettingsWindowOpacityEntryBox:SetHidden(false)
+    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(false)
+    GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
+
+    UpdateSettingWindowButtons()
+end
+
 function GrindTimer.FirstLabelDropdownOptionClicked(selectedMetric)
     GrindTimer.AccountSavedVariables.FirstLabelType = selectedMetric
     GrindTimer.UpdateUIControls()
@@ -129,18 +139,6 @@ function GrindTimer.FirstLabelDropdownOptionClicked(selectedMetric)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
 
     UpdateSettingWindowButtons()
-end
-
-function GrindTimer.SecondLabelDropdownClicked()
-    local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
-    local isMenuClosed = secondDropDownMenu:IsHidden()
-
-    -- Hide or show controls that may be overlapped by the dropdown menus.
-    secondDropDownMenu:SetHidden(not isMenuClosed)
-    GrindTimerSettingsWindowCloseButton:SetHidden(isMenuClosed)
-    GrindTimerSettingsWindowOpacityEntryBox:SetHidden(isMenuClosed)
-    GrindTimerSettingsWindowOutlineCheckBox:SetHidden(isMenuClosed)
-    GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
 end
 
 function GrindTimer.SecondLabelDropdownOptionClicked(selectedMetric)

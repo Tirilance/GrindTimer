@@ -1,8 +1,12 @@
-local extendedControls = {} -- UI controls affected by extending or retracting the window.
+local extendedControls = {} -- UI controls modified by extending or retracting the window.
+local fontControls = {} -- UI controls modified when changing font size.
+
 local controlsExtended = false
 local labelsInitialized = false
 local extendAnimationTimeline
 
+local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
+local outlineFont = "$(BOLD_FONT)|$(KB_18)|outline"
 local function InitializeAnimations()
     extendAnimationTimeline = ANIMATION_MANAGER:CreateTimeline()
     extendAnimationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
@@ -99,9 +103,36 @@ local function UpdateUIOpacity()
     GrindTimerWindowLevelEntryBoxBackdrop:SetAlpha(opacity)
 end
 
+local function UpdateFonts()
+    local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
+
+    for key, control in pairs(fontControls) do
+        -- Apply color to font controls
+        if control:GetType() == CT_BUTTON then
+            control:SetNormalFontColor(r, g, b, 1)
+        else
+            control:SetColor(r, g, b, 1)
+        end
+
+        -- Apply font to font controls
+        if GrindTimer.AccountSavedVariables.OutlineText then
+            control:SetFont(outlineFont)
+        else
+            control:SetFont(normalFont)
+        end
+    end
+
+end
+
 local function UpdateLabels()
     GrindTimerWindowLevelTypeLabel:SetHidden(not controlsExtended or (mode == "Next" and true or false))
     GrindTimerWindowSecondMetricLabel:SetHidden(not GrindTimer.AccountSavedVariables.SecondLabelEnabled)
+    if not controlsExtended then
+        GrindTimerWindowLevelTypeLabel:SetHidden(true)
+    elseif GrindTimer.SavedVariables.Mode == "Target" then
+        GrindTimerWindowLevelTypeLabel:SetHidden(false)
+    end
+
 
     local firstLabelString, secondLabelString = unpack(GetLabelStrings())
     GrindTimerWindowFirstMetricLabel:SetText(firstLabelString)
@@ -229,7 +260,13 @@ end
 -- Hides or shows the options normally hidden by the collapsed extender button.
 function GrindTimer.UpdateExtendedControls()
     for key, control in pairs(extendedControls) do
+        if control == GrindTimerWindowLevelTypeLabel then
+            if GrindTimer.AccountSavedVariables.Mode == "Target" then
+                control:SetHidden(controlsExtended)
+            end
+        else
         control:SetHidden(controlsExtended)
+    end
     end
     controlsExtended = not controlsExtended
     GrindTimer.UpdateUIControls()
@@ -292,6 +329,7 @@ end
 function GrindTimer.NextModeButtonClicked(button)
     button:SetState(BSTATE_PRESSED)
     GrindTimerWindowTargetModeButton:SetState(BSTATE_NORMAL)
+    GrindTimerWindowLevelTypeLabel:SetHidden(true)
 
     GrindTimer.SavedVariables.Mode = "Next"
     local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
@@ -303,6 +341,7 @@ end
 function GrindTimer.TargetModeButtonClicked(button)
     button:SetState(BSTATE_PRESSED)
     GrindTimerWindowNextModeButton:SetState(BSTATE_NORMAL)
+    GrindTimerWindowLevelTypeLabel:SetHidden(false)
 
     GrindTimer.SavedVariables.Mode = "Target"
     local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1

@@ -26,17 +26,17 @@
                     </OnClicked>
                 </Button>
 
-                <Label name="$(parent)FirstMetricLabel" width="325" height="25" inheritAlpha="false" font="ZoFontGameShadow" color="A8A8A8" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="0 Hours 0 Minutes estimated until level up">
+                <Label name="$(parent)FirstMetricLabel" width="325" height="25" inheritAlpha="false" font="ZoFontGameShadow" color="A8A8A8" wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" mouseEnabled="true" text="0 Hours 0 Minutes estimated until level up">
                     <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP"/>
                     <OnInitialized>
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 0, true)
                     </OnInitialized>
                 </Label>
 
-                <Label name="$(parent)SecondMetricLabel" width="325" height="25" inheritAlpha="false" font="ZoFontGameShadow" color="A8A8A8" wrapMode="TRUNCATE" verticalAlignment="BOTTOM" horizontalAlignment="CENTER" text="0 Experience needed until level 0">
+                <Label name="$(parent)SecondMetricLabel" width="325" height="25" inheritAlpha="false" font="ZoFontGameShadow" color="A8A8A8" wrapMode="TRUNCATE" verticalAlignment="BOTTOM" horizontalAlignment="CENTER" mouseEnabled="true" text="0 Experience needed until level 0">
                     <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="25"/>
                     <OnInitialized>
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 0, true)
                     </OnInitialized>
                 </Label>
 
@@ -49,8 +49,7 @@
                 <Label name="$(parent)ModeLabel" width="25" height="25" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="A8A8A8" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Mode">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT"  offsetX="10" offsetY="50"/>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Label>
 
@@ -62,8 +61,7 @@
                         GrindTimer.NextModeButtonClicked(self)
                     </OnClicked>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Button>
 
@@ -75,8 +73,7 @@
                         GrindTimer.TargetModeButtonClicked(self)
                     </OnClicked>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Button>
 
@@ -84,8 +81,7 @@
                 <Label name="$(parent)LevelTypeLabel" width="25" height="25" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="A8A8A8" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Level Type">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="120" offsetY="50"/>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Label>
 
@@ -97,8 +93,7 @@
                         GrindTimer.NormalTypeButtonClicked(self)
                     </OnClicked>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Button>
 
@@ -110,8 +105,7 @@
                         GrindTimer.ChampionTypeButtonClicked(self)
                     </OnClicked>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Button>
                 
@@ -119,8 +113,7 @@
                 <Label name="$(parent)LevelEntryLabel" inheritAlpha="false" hidden="true" height="25" font="ZoFontGameShadow" color="A8A8A8" text="Level">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="235" offsetY="80"/>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Label>
 
@@ -145,8 +138,7 @@
                         GrindTimer.LevelEntryTextChanged(self)
                     </OnTextChanged>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                     <Controls>
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
@@ -160,7 +152,7 @@
                     <Dimensions x="500" y="5"/>
                     <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="125"/>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, false)
                     </OnInitialized>
                 </Texture>
 
@@ -170,7 +162,6 @@
                     <Textures normal="esoui/art/buttons/gamepad/gp_downarrow.dds" pressed="esoui/art/buttons/gamepad/gp_uparrow.dds"/>
                     <OnClicked>
                         GrindTimer.ExtendButtonClicked()
-                        GrindTimer.AddToFontControlsArray(self)
                     </OnClicked>
                 </Button>
 
@@ -187,8 +178,7 @@
                         GrindTimer.SettingsButtonClicked()
                     </OnClicked>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Button>
 
@@ -205,8 +195,9 @@
                         GrindTimer.ResetButtonClicked()
                     </OnClicked>
                     <OnInitialized>
-                        GrindTimer.AddToExtendedControlsArray(self)
-                        GrindTimer.AddToFontControlsArray(self)
+                        GrindTimer.AddControlsToTable(self, 1, true)
+                    </OnInitialized>
+                </Button>
                     </OnInitialized>
                 </Button>
             </Controls>
