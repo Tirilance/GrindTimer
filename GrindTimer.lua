@@ -9,7 +9,7 @@ GrindTimer.UIInitialized = false
 local DungeonInfo = {}
 local LastUpdateTimestamp = GetTimeStamp()
 local UpdateTimer = 5 -- Update every 5 seconds
-local DungeonName = nil
+local DungeonName
 local IsPlayerInDungeon = false
 local IsPlayerInDolmen = false
 local CurrentSessionKills = 0
@@ -351,16 +351,18 @@ local function UpdateVars()
 
         GrindTimer.SavedVariables.TargetHours = hours
         GrindTimer.SavedVariables.TargetMinutes = minutes
-        GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(expNeeded)
         GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKillCount)
         GrindTimer.SavedVariables.KillsNeeded = FormatNumber(killsNeeded)
         GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
         GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
         GrindTimer.SavedVariables.DolmensNeeded = FormatNumber(dolmensNeeded)
         GrindTimer.SavedVariables.SessionKills = FormatNumber(CurrentSessionKills)
+    end
+
+    -- Update these metrics even without any active ExpEvents
+    GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(expNeeded)
         GrindTimer.SavedVariables.SessionLevels = CurrentSessionLevels
     end
-end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
     local currentTimestamp = GetTimeStamp()
