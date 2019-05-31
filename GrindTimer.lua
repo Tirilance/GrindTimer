@@ -31,7 +31,7 @@ local AccountDefaults =
 
 local Defaults =
 {
-    Mode = "Next",
+    Mode = 1,
     TargetHours = 0,
     TargetMinutes = 0,
     TargetExpRemaining = IsUnitChampion("player") and GetNumChampionXPInChampionPoint(GetPlayerChampionPointsEarned()) - GetPlayerChampionXP() or GetUnitXPMax("player") - GetUnitXP("player"),
@@ -45,7 +45,7 @@ local Defaults =
     SessionKills = 0,
     SessionLevels = 0,
     TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1,
-    TargetLevelType = IsUnitChampion("player") and "Champion" or "Normal",
+    TargetLevelType = IsUnitChampion("player") and 2 or 1,
     IsPlayerChampion = IsUnitChampion("player")
 }
 
@@ -99,14 +99,14 @@ local function GetTargetLevelExp(championPoints, isChamp)
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
     local totalExpRequired = 0
 
-    if not isChamp and targetLevelType == "Normal" then
+    if not isChamp and targetLevelType == 1 then
         for i = level, targetLevel-1 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
         end
         totalExpRequired = totalExpRequired - GetUnitXP("player")
 
-    elseif not isChamp and targetLevelType == "Champion" then
+    elseif not isChamp and targetLevelType == 2 then
         for i = level, 49 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
@@ -135,7 +135,7 @@ local function GetExpNeeded()
     local maxExp = isChamp and GetNumChampionXPInChampionPoint(championPoints) or GetUnitXPMax("player")
     local expNeeded = 0
 
-    if GrindTimer.SavedVariables.Mode == "Next" then
+    if GrindTimer.SavedVariables.Mode == 1 then
         expNeeded = maxExp - currentExp
     else
         expNeeded = GetTargetLevelExp(championPoints, isChamp)
@@ -466,9 +466,9 @@ function GrindTimer.Reset()
     ExpEvent.Events = {}
     ExpEvent.EventCount = 0
 
-    GrindTimer.SavedVariables.Mode = "Next"
+    GrindTimer.SavedVariables.Mode = 1
     GrindTimer.SavedVariables.TargetLevel = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
-    GrindTimer.SavedVariables.TargetLevelType = isChamp and "Champion" or "Normal"
+    GrindTimer.SavedVariables.TargetLevelType = isChamp and 2 or 1
     GrindTimer.SavedVariables.TargetHours = 0
     GrindTimer.SavedVariables.TargetMinutes = 0
     GrindTimer.SavedVariables.KillsNeeded = 0
