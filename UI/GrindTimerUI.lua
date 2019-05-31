@@ -479,7 +479,7 @@ function GrindTimer.MetricContextMenuButtonClicked(selectedMetric)
         GrindTimer.AccountSavedVariables.SecondLabelType = selectedMetric
     end
 
-    UpdateLabels()
+    GrindTimer.UpdateMetricLabels()
     GrindTimer.UpdateSettingsWindowButtons()
 end
 
