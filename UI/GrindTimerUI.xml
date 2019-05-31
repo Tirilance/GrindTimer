@@ -2,7 +2,7 @@
     <Font name="ZoFontGameShadow" font="$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"/>
     <Controls>
         <TopLevelControl name="GrindTimerWindow" hidden="false" inheritAlpha="false" mouseEnabled="true" movable="true" clampedToScreen="true" layer="0">
-            <Dimensions x="345" y="75"/>
+            <Dimensions x="385" y="75"/>
             <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT" offsetX="400" offsetY="100"/>
             <OnMoveStop>
                 GrindTimer.SaveWindowPosition(self)
@@ -109,15 +109,15 @@
                     </OnInitialized>
                 </Button>
                 
-                <!-- Level Entry Controls -->
-                <Label name="$(parent)LevelEntryLabel" inheritAlpha="false" hidden="true" height="25" font="ZoFontGameShadow" color="A8A8A8" text="Level">
+                <!-- Level TextBox Controls -->
+                <Label name="$(parent)LevelTextBoxLabel" inheritAlpha="false" hidden="true" height="25" font="ZoFontGameShadow" color="A8A8A8" text="Level">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="235" offsetY="80"/>
                     <OnInitialized>
                         GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Label>
 
-                <EditBox name="$(parent)LevelEntryBox" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="1E90FF" editEnabled="true" horizontalAlignment="2" verticalAlignment="2" maxInputCharacters="4" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText">
+                <EditBox name="$(parent)LevelTextBox" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="1E90FF" editEnabled="true" horizontalAlignment="2" verticalAlignment="2" maxInputCharacters="4" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText">
                     <Dimensions x="50" y="31"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="285" offsetY="80"/>
                     <OnMouseDown>
@@ -125,18 +125,13 @@
                     </OnMouseDown>
                     <OnEnter>
                         self:LoseFocus()
-                        GrindTimer.LevelEntryTextSubmitted(self)
                     </OnEnter>
                     <OnEscape>
                         self:LoseFocus()
-                        GrindTimer.LevelEntryTextSubmitted(self)
                     </OnEscape>
                     <OnFocusLost>
-                        GrindTimer.LevelEntryTextSubmitted(self)
+                        GrindTimer.LevelTextBoxSubmitted(self, 0, 3600)
                     </OnFocusLost>
-                    <OnTextChanged>
-                        GrindTimer.LevelEntryTextChanged(self)
-                    </OnTextChanged>
                     <OnInitialized>
                         GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
