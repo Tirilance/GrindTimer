@@ -114,7 +114,7 @@
                         GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Button>
-                
+
                 <!-- Level TextBox Controls -->
                 <Label name="$(parent)LevelTextBoxLabel" inheritAlpha="false" hidden="true" height="25" font="ZoFontGameShadow" color="A8A8A8" text="Level">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="235" offsetY="80"/>
@@ -136,7 +136,7 @@
                         self:LoseFocus()
                     </OnEscape>
                     <OnFocusLost>
-                        GrindTimer.LevelTextBoxSubmitted(self, 0, 3600)
+                        GrindTimer.LevelTextBoxSubmitted(self, 0, 50, 3600)
                     </OnFocusLost>
                     <OnInitialized>
                         GrindTimer.AddControlsToTable(self, 1, true)

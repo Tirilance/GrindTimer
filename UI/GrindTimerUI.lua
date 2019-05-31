@@ -213,6 +213,7 @@ local function UpdateFonts()
     local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
 
     for key, control in pairs(fontControls) do
+
         -- Apply color to controls with text
         if control:GetType() == CT_BUTTON then
             control:SetNormalFontColor(r, g, b, 1)
@@ -426,33 +427,34 @@ function GrindTimer.ExtendButtonClicked()
     GrindTimer.UpdateUIControls()
 end
 
-function GrindTimer.LevelTextBoxSubmitted(textBox, minValue, maxValue)
-    local currentNumber = tonumber(textBox:GetText())
-
-    if not currentNumber or currentNumber < minValue then
-        currentNumber = minValue
-        textBox:SetText(minValue)
-    elseif currentNumber > maxValue then
-        currentNumber = maxValue
-        textBox:SetText(maxValue)
-    end
-
+function GrindTimer.LevelTextBoxSubmitted(textBox, minValue, maxNormalValue, maxChampionValue)
     local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
 
-        -- Target normal level is lower than current normal level.
-    if targetLevelType == 1 and not isChamp and currentNumber <= GetUnitLevel("player") then
-        GrindTimer.SetNewTargetLevel(GetUnitLevel("player")+1)
+    local minNormalValue = GetUnitLevel("player") + 1
+    local minChampionValue = GetPlayerChampionPointsEarned() + 1
 
-        -- Target champion level is lower than current champion level.
-    elseif targetLevelType == 2 and currentNumber <= GetPlayerChampionPointsEarned() then
-        GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned()+1)
-    else
-        GrindTimer.SetNewTargetLevel(currentNumber)
+    local currentNumber = tonumber(textBox:GetText())
+
+    if targetLevelType == 1 then
+        if not currentNumber or currentNumber < minNormalValue then
+            currentNumber = minNormalValue
+            textBox:SetText(minNormalValue)
+        elseif currentNumber > maxNormalValue then
+            currentNumber = maxNormalValue
+            textBox:SetText(maxNormalValue)
+        end
+    elseif targetLevelType == 2 then
+        if not currentNumber or currentNumber < minChampionValue then
+            currentNumber = minChampionValue
+            textBox:SetText(minChampionValue)
+        elseif currentNumber > maxChampionValue then
+            currentNumber = maxChampionValue
+            textBox:SetText(maxChampionValue)
+        end
     end
 
-    textBox:SetText(GrindTimer.SavedVariables.TargetLevel)
-
+    GrindTimer.SetNewTargetLevel(currentNumber)
     GrindTimer.UpdateMetricLabels()
 end
 
