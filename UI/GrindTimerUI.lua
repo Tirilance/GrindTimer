@@ -350,7 +350,7 @@ end
 
 function GrindTimer.AddControlsToTable(control, destTable, updateFont)
     if destTable == 1 then
-    table.insert(extendedControls, control)
+        table.insert(extendedControls, control)
     elseif destTable == 2 then
         table.insert(contextControls, control)
     end
@@ -392,7 +392,7 @@ function GrindTimer.UpdateUIControls()
 
     if fontUpdateFlag then
         UpdateFonts()
-end
+    end
 end
 
 function GrindTimer.UpdateMetricLabels()
@@ -409,7 +409,7 @@ function GrindTimer.UpdateMetricLabels()
     if firstLabelWidth >= windowWidth or secondLabelWidth >= windowWidth then
         RescaleUI()
     end
-    end
+end
 
 function GrindTimer.ToggleDisplay()
     GrindTimerWindow:SetHidden(not GrindTimerWindow:IsHidden())
@@ -424,7 +424,7 @@ function GrindTimer.ExtendButtonClicked()
 
     windowExtended = not windowExtended
     GrindTimer.UpdateUIControls()
-    end
+end
 
 function GrindTimer.LevelTextBoxSubmitted(textBox, minValue, maxValue)
     local currentNumber = tonumber(textBox:GetText())
@@ -435,26 +435,26 @@ function GrindTimer.LevelTextBoxSubmitted(textBox, minValue, maxValue)
     elseif currentNumber > maxValue then
         currentNumber = maxValue
         textBox:SetText(maxValue)
-end
+    end
 
     local isChamp = GrindTimer.SavedVariables.IsPlayerChampion
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
 
         -- Target normal level is lower than current normal level.
     if targetLevelType == 1 and not isChamp and currentNumber <= GetUnitLevel("player") then
-            GrindTimer.SetNewTargetLevel(GetUnitLevel("player")+1)
+        GrindTimer.SetNewTargetLevel(GetUnitLevel("player")+1)
 
         -- Target champion level is lower than current champion level.
     elseif targetLevelType == 2 and currentNumber <= GetPlayerChampionPointsEarned() then
-            GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned()+1)
-        else
+        GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned()+1)
+    else
         GrindTimer.SetNewTargetLevel(currentNumber)
-        end
+    end
 
-        textBox:SetText(GrindTimer.SavedVariables.TargetLevel)
+    textBox:SetText(GrindTimer.SavedVariables.TargetLevel)
 
     GrindTimer.UpdateMetricLabels()
-    end
+end
 
 function GrindTimer.MetricLabelClicked(targetLabel, button, upInside)
     local contextMenu = GrindTimerWindowMetricContextMenu

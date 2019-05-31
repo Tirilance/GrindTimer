@@ -111,11 +111,11 @@ function GrindTimer.SettingsMetricOptionClicked(targetLabel, selectedMetric)
         GrindTimerSettingsWindowSecondLabelDropdownButton:SetHidden(false)
     elseif targetLabel == 2 then
         GrindTimer.AccountSavedVariables.SecondLabelType = selectedMetric
-        
+
         GrindTimerSettingsWindowSecondLabelDropdownOptions:SetHidden(true)
         GrindTimerSettingsWindowCloseButton:SetHidden(false)
     end
-    
+
     GrindTimer.UpdateMetricLabels()
 
     GrindTimerSettingsWindowOpacityTextBox:SetHidden(false)
@@ -218,7 +218,7 @@ function GrindTimer.ColorPickerOpen(texture)
 
     local currentR, currentG, currentB = unpack(GrindTimer.AccountSavedVariables.TextColor)
     COLOR_PICKER:Show(ColorSelected, currentR, currentG, currentB)
-            end
+end
 
 function GrindTimer.FontSizeValueChanged(slider, value)
     GrindTimerSettingsWindowFontSizeSliderTextBox:SetText(value)
@@ -226,7 +226,7 @@ function GrindTimer.FontSizeValueChanged(slider, value)
 
     GrindTimer.SetFontUpdateFlag()
     GrindTimer.UpdateUIControls()
-        end
+end
 
 function GrindTimer.FontSizeTextSubmitted(textBox, minValue, maxValue)
     local currentNumber = tonumber(textBox:GetText())
