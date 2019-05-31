@@ -166,7 +166,7 @@
                     </OnClicked>
                 </Button>
 
-                <Button name="$(parent)SettingsButton" inheritAlpha="false" hidden="true" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Options">
+                <Button name="$(parent)SettingsButton" inheritAlpha="false" hidden="true" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Settings">
                     <Dimensions x="65" y="25"/>
                     <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="-10"/>
                     <FontColors disabledColor="700000" mouseOverColor="FFFFFF" pressedColor="909090" normalColor="A8A8A8"/>

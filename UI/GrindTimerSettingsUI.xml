@@ -10,7 +10,7 @@
             <Controls>
                 <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop"/>
 
-                <Label name="$(parent)LabelsLabel" font="ZoFontWinH1" text="Grind Timer Options" color="FFFFFF">
+                <Label name="$(parent)LabelsLabel" font="ZoFontWinH1" text="Grind Timer Settings" color="FFFFFF">
                     <Anchor point="TOP" relativeTo="($parent)" relativePoint="TOP"/>
                 </Label>
 
@@ -34,7 +34,7 @@
                         GrindTimer.SettingsFirstLabelDropdownClicked()
                     </OnClicked>
                 </Button>
-                
+
                 <Label name="$(parent)FirstLabelDropdownOptions" hidden="true">
                     <Dimensions x="200" y="296"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="170" offsetY="95"/>
