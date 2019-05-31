@@ -1,9 +1,9 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.10.2"
-GrindTimer.SavedVariableVersion = "2"
-GrindTimer.AccountSavedVariablesVersion = "1"
+GrindTimer.Version = "1.11.0"
+GrindTimer.SavedVariableVersion = "3"
+GrindTimer.AccountSavedVariablesVersion = "2"
 GrindTimer.UIInitialized = false
 
 local DungeonInfo = {}
