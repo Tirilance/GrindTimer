@@ -24,10 +24,10 @@ The dolmen metric will only update once you complete a dolmen for best accuracy.
 
 ## Screenshots
 <p align="center">
-  <img src="https://i.imgur.com/kOQpmnu.png" width="400"/>
-  <img src="https://i.imgur.com/7RbMLn1.png" width="400"/>
-  <img src="https://i.imgur.com/qnIwUxt.png" width="400"/>
-  <img src="https://i.imgur.com/cH7mMoy.png" width="400"/>
+  <img src="https://i.imgur.com/coqvb3K.jpg" width="400"/>
+  <img src="https://i.imgur.com/m2I207U.jpg" width="400"/>
+  <img src="https://i.imgur.com/ESPjQxV.jpg" width="400"/>
+  <img src="https://i.imgur.com/M1y3Tuj.jpg" width="400"/>
 </p>
 
 
