@@ -4,7 +4,9 @@ local fontControls = {} -- UI controls modified when changing font size.
 
 local windowExtended = false
 local fontUpdateFlag = true
+
 local extendAnimationTimeline
+local lastClickedLabel
 
 local function UpdateExtendAnimationDimensions(width, height)
     extendAnimation:SetStartAndEndHeight(height, height * 2.5)
@@ -454,7 +456,29 @@ end
     GrindTimer.UpdateMetricLabels()
     end
 
-    GrindTimer.UpdateUIControls()
+function GrindTimer.MetricLabelClicked(targetLabel, button, upInside)
+    local contextMenu = GrindTimerWindowMetricContextMenu
+    local isHidden = contextMenu:IsHidden()
+
+    if button == 2 and upInside and isHidden then
+        lastClickedLabel = targetLabel
+        contextMenu:SetHidden(false)
+    elseif not contextMenu:IsHidden() then
+        contextMenu:SetHidden(true)
+    end
+end
+
+function GrindTimer.MetricContextMenuButtonClicked(selectedMetric)
+    GrindTimerWindowMetricContextMenu:SetHidden(true)
+
+    if lastClickedLabel == 1 then
+        GrindTimer.AccountSavedVariables.FirstLabelType = selectedMetric
+    elseif lastClickedLabel == 2 then
+        GrindTimer.AccountSavedVariables.SecondLabelType = selectedMetric
+    end
+
+    UpdateLabels()
+    GrindTimer.UpdateSettingsWindowButtons()
 end
 
 function GrindTimer.NextModeButtonClicked(button)

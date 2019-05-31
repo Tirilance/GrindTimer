@@ -31,6 +31,9 @@
                     <OnInitialized>
                         GrindTimer.AddControlsToTable(self, 0, true)
                     </OnInitialized>
+                    <OnMouseUp>
+                        GrindTimer.MetricLabelClicked(1, button, upInside)
+                    </OnMouseUp>
                 </Label>
 
                 <Label name="$(parent)SecondMetricLabel" width="325" height="25" inheritAlpha="false" font="ZoFontGameShadow" color="A8A8A8" wrapMode="TRUNCATE" verticalAlignment="BOTTOM" horizontalAlignment="CENTER" mouseEnabled="true" text="0 Experience needed until level 0">
@@ -38,6 +41,9 @@
                     <OnInitialized>
                         GrindTimer.AddControlsToTable(self, 0, true)
                     </OnInitialized>
+                    <OnMouseUp>
+                        GrindTimer.MetricLabelClicked(2, button, upInside)
+                    </OnMouseUp>
                 </Label>
 
                 <Texture name="$(parent)TopDivider" inheritAlpha="false" textureFile="/esoui/art/miscellaneous/horizontaldivider.dds" tier="HIGH">
@@ -193,8 +199,129 @@
                         GrindTimer.AddControlsToTable(self, 1, true)
                     </OnInitialized>
                 </Button>
+
+                <Label name="$(parent)MetricContextMenu" hidden="true" inheritAlpha="false" mouseEnabled="true" movable="false">
+                    <Dimensions x="200" y="296"/>
+                    <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="215" offsetY="0"/>
+                    <Controls>
+                        <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop" mouseEnabled="true"/>
+                        <Label name="$(parent)ScalingLabel" hidden="true" inheritAlpha="false" font="ZoFontGameShadow" text="Dolmens closed until goal">
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 0, true)
+                            </OnInitialized>
+                        </Label>
+                        <Button name="$(parent)Option1" inheritAlpha="false" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Dolmens closed until goal" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="0"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(1)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option2" layer="1" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Dungeon runs until goal" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="30"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(2)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
                     </OnInitialized>
                 </Button>
+                        <Button name="$(parent)Option3" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Experience per hour" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="60"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(3)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option4" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Experience until goal" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="90"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(4)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option5" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Kills in current session" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="120"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(5)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option6" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Kills in last 15 minutes" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="150"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(6)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option7" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Kills until goal" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="180"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(7)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option8" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Levels in current session" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="210"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(8)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option9" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Levels per hour" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="240"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(9)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                        <Button name="$(parent)Option10" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadow" text="Time until goal" horizontalAlignment="LEFT">
+                            <Dimensions x="200" y="30"/>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="270"/>
+                            <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
+                            <OnClicked>
+                                GrindTimer.MetricContextMenuButtonClicked(10)
+                            </OnClicked>
+                            <OnInitialized>
+                                GrindTimer.AddControlsToTable(self, 2, true)
+                            </OnInitialized>
+                        </Button>
+                    </Controls>
+                </Label>
             </Controls>
         </TopLevelControl>
     </Controls>
