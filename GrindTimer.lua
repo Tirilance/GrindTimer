@@ -21,6 +21,7 @@ local AccountDefaults =
     Opacity = 1,
     OutlineText = false,
     TextColor = { 0.65, 0.65, 0.65 },
+    FontSize = 18,
     Locked = false,
     OffsetX = 400,
     OffsetY = 100,
@@ -371,7 +372,7 @@ local function Update(eventCode, reason, level, previousExp, currentExp, champio
     ExpEvent.Create(currentTimestamp, expGained, IsPlayerInDungeon, IsPlayerInDolmen, reason)
 
     UpdateVars()
-    GrindTimer.UpdateUIControls()
+    GrindTimer.UpdateMetricLabels()
     LastUpdateTimestamp = currentTimestamp
 end
 
@@ -491,7 +492,7 @@ function GrindTimer.TimedUpdate()
 
         if GetDiffBetweenTimeStamps(currentTimestamp, LastUpdateTimestamp) >= UpdateTimer then
             UpdateVars()
-            GrindTimer.UpdateUIControls()
+            GrindTimer.UpdateMetricLabels()
             LastUpdateTimestamp = currentTimestamp
         end
     end

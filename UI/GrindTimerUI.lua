@@ -3,19 +3,21 @@ local contextControls = {} -- Right click context menu buttons for selecting met
 local fontControls = {} -- UI controls modified when changing font size.
 
 local windowExtended = false
+local fontUpdateFlag = true
 local extendAnimationTimeline
 
-local normalFont = "$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"
-local outlineFont = "$(BOLD_FONT)|$(KB_18)|outline"
+local function UpdateExtendAnimationDimensions(width, height)
+    extendAnimation:SetStartAndEndHeight(height, height * 2.5)
+    extendAnimation:SetStartAndEndWidth(width, width)
+end
+
 local function InitializeAnimations()
     extendAnimationTimeline = ANIMATION_MANAGER:CreateTimeline()
     extendAnimationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
     extendAnimation = extendAnimationTimeline:InsertAnimation(ANIMATION_SIZE, GrindTimerWindow)
 
-    local width = GrindTimerWindow:GetWidth()
-    local startHeight = GrindTimerWindow:GetHeight()
-    extendAnimation:SetStartAndEndHeight(startHeight, 175)
-    extendAnimation:SetStartAndEndWidth(width, width)
+    UpdateExtendAnimationDimensions(GrindTimerWindow:GetWidth(), GrindTimerWindow:GetHeight())
+
     extendAnimation:SetDuration(500)
     extendAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
 
@@ -95,6 +97,108 @@ local function GetLabelStrings()
     return labelStrings
 end
 
+local function RescaleUI()
+    local firstLabelWidth = GrindTimerWindowFirstMetricLabel:GetWidth()
+    local secondLabelWidth = GrindTimerWindowSecondMetricLabel:GetWidth()
+    local labelHeight = GrindTimerWindowFirstMetricLabel:GetHeight()
+
+    local contextMenuWidth = GrindTimerWindowMetricContextMenuScalingLabel:GetWidth() + 10
+
+    local biggestLabelWidth = (firstLabelWidth > secondLabelWidth) and firstLabelWidth or secondLabelWidth
+
+    local windowWidth = biggestLabelWidth + 20
+    local windowHeight = labelHeight * 2 + 30
+    local windowHeightExtended = windowHeight * 2.5
+
+    if windowExtended then
+        GrindTimer.ExtendButtonClicked()
+    end
+
+    GrindTimerWindow:SetDimensions(windowWidth, windowHeight)
+    GrindTimerWindowBackdrop:SetDimensions(windowWidth, windowHeight)
+    UpdateExtendAnimationDimensions(windowWidth, windowHeight)
+
+    GrindTimerWindowLockButton:ClearAnchors()
+    GrindTimerWindowLockButton:SetAnchor(TOPRIGHT, GrindTimerWindow, TOPRIGHT, -15, windowHeight * 0.80)
+
+    GrindTimerWindowSecondMetricLabel:ClearAnchors()
+    GrindTimerWindowSecondMetricLabel:SetAnchor(TOP, GrindTimerWindow, TOP, 0, labelHeight)
+
+    GrindTimerWindowTopDivider:SetWidth(windowWidth * 1.45)
+    GrindTimerWindowTopDivider:ClearAnchors()
+    GrindTimerWindowTopDivider:SetAnchor(TOP, GrindTimerWindow, TOP, 0, windowHeight * 0.75)
+
+    GrindTimerWindowModeLabel:SetWidth(windowWidth * 0.15)
+    GrindTimerWindowModeLabel:ClearAnchors()
+    GrindTimerWindowModeLabel:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, 10, windowHeightExtended * 0.29)
+
+    GrindTimerWindowNextModeButton:SetWidth(windowWidth * 0.29)
+    GrindTimerWindowNextModeButton:SetHeight(labelHeight)
+    GrindTimerWindowNextModeButton:ClearAnchors()
+    GrindTimerWindowNextModeButton:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, 10, windowHeightExtended * 0.43)
+
+    GrindTimerWindowTargetModeButton:SetWidth(windowWidth * 0.30)
+    GrindTimerWindowTargetModeButton:SetHeight(labelHeight)
+    GrindTimerWindowTargetModeButton:ClearAnchors()
+    GrindTimerWindowTargetModeButton:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, 10, windowHeightExtended * 0.57)
+
+    GrindTimerWindowLevelTypeLabel:SetWidth(windowWidth * 0.26)
+    GrindTimerWindowLevelTypeLabel:SetHeight(labelHeight)
+    GrindTimerWindowLevelTypeLabel:ClearAnchors()
+    GrindTimerWindowLevelTypeLabel:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, windowWidth * 0.35, windowHeightExtended * 0.29)
+
+    GrindTimerWindowNormalTypeButton:SetWidth(windowWidth * 0.29)
+    GrindTimerWindowNormalTypeButton:SetHeight(labelHeight)
+    GrindTimerWindowNormalTypeButton:ClearAnchors()
+    GrindTimerWindowNormalTypeButton:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, windowWidth * 0.35, windowHeightExtended * 0.43)
+
+    GrindTimerWindowChampionTypeButton:SetWidth(windowWidth * 0.29)
+    GrindTimerWindowChampionTypeButton:SetHeight(labelHeight)
+    GrindTimerWindowChampionTypeButton:ClearAnchors()
+    GrindTimerWindowChampionTypeButton:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, windowWidth * 0.35, windowHeightExtended * 0.57)
+
+    GrindTimerWindowLevelTextBoxLabel:SetWidth(windowWidth * 0.14)
+    GrindTimerWindowLevelTextBoxLabel:SetHeight(labelHeight)
+    GrindTimerWindowLevelTextBoxLabel:ClearAnchors()
+    GrindTimerWindowLevelTextBoxLabel:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, windowWidth * 0.68, windowHeightExtended * 0.46)
+
+    GrindTimerWindowLevelTextBox:SetWidth(windowWidth * 0.14)
+    GrindTimerWindowLevelTextBox:ClearAnchors()
+    GrindTimerWindowLevelTextBox:SetAnchor(TOPLEFT, GrindTimerWindow, TOPLEFT, windowWidth * 0.83, windowHeightExtended * 0.46)
+
+    GrindTimerWindowLevelTextBoxBackdrop:SetWidth(windowWidth * 0.14)
+    GrindTimerWindowLevelTextBoxBackdrop:ClearAnchors()
+    GrindTimerWindowLevelTextBoxBackdrop:SetAnchor(TOPLEFT, GrindTimerWindowLevelTextBox, TOPLEFT, -5, -2)
+
+    GrindTimerWindowBottomDivider:SetWidth(windowWidth * 1.45)
+    GrindTimerWindowBottomDivider:ClearAnchors()
+    GrindTimerWindowBottomDivider:SetAnchor(TOP, GrindTimerWindow, TOP, 0, windowHeightExtended * 0.71)
+
+    GrindTimerWindowSettingsButton:SetWidth(windowWidth * 0.19)
+    GrindTimerWindowSettingsButton:SetHeight(labelHeight)
+    GrindTimerWindowSettingsButton:ClearAnchors()
+    GrindTimerWindowSettingsButton:SetAnchor(BOTTOMLEFT, GrindTimerWindow, BOTTOMLEFT, 10, -10)
+
+    GrindTimerWindowSettingsButtonBackdrop:SetWidth(windowWidth * 0.19)
+    GrindTimerWindowSettingsButtonBackdrop:SetHeight(labelHeight)
+
+    GrindTimerWindowResetButton:SetWidth(windowWidth * 0.19)
+    GrindTimerWindowResetButton:SetHeight(labelHeight)
+    GrindTimerWindowResetButton:ClearAnchors()
+    GrindTimerWindowResetButton:SetAnchor(BOTTOMRIGHT, GrindTimerWindow, BOTTOMRIGHT, -10, -10)
+
+    GrindTimerWindowResetButtonBackdrop:SetWidth(windowWidth * 0.19)
+    GrindTimerWindowResetButtonBackdrop:SetHeight(labelHeight)
+
+    GrindTimerWindowMetricContextMenu:SetWidth(contextMenuWidth)
+    GrindTimerWindowMetricContextMenu:ClearAnchors()
+    GrindTimerWindowMetricContextMenu:SetAnchor(TOPRIGHT, GrindTimerWindow, TOPRIGHT, contextMenuWidth + 15, 0)
+
+    for key, control in pairs(contextControls) do
+        control:SetWidth(contextMenuWidth)
+    end
+end
+
 local function UpdateUIOpacity()
     local opacity = GrindTimer.AccountSavedVariables.Opacity
     GrindTimerWindow:SetAlpha(opacity)
@@ -107,21 +211,28 @@ local function UpdateFonts()
     local r, g, b = unpack(GrindTimer.AccountSavedVariables.TextColor)
 
     for key, control in pairs(fontControls) do
-        -- Apply color to font controls
+        -- Apply color to controls with text
         if control:GetType() == CT_BUTTON then
             control:SetNormalFontColor(r, g, b, 1)
         else
             control:SetColor(r, g, b, 1)
         end
 
-        -- Apply font to font controls
+        -- Apply font to controls with text
+        local fontSize = GrindTimer.AccountSavedVariables.FontSize
+
         if GrindTimer.AccountSavedVariables.OutlineText then
+            local outlineFont = string.format("$(BOLD_FONT)|$(KB_%s)|outline", fontSize)
             control:SetFont(outlineFont)
         else
+            local normalFont = string.format("$(BOLD_FONT)|$(KB_%s)|soft-shadow-thin", fontSize)
             control:SetFont(normalFont)
         end
     end
 
+    fontUpdateFlag = false
+
+    RescaleUI()
 end
 
 local function UpdateLabels()
@@ -231,6 +342,9 @@ function GrindTimer.InitializeUI()
     GrindTimer.UIInitialized = true
 end
 
+function GrindTimer.SetFontUpdateFlag()
+    fontUpdateFlag = true
+end
 
 function GrindTimer.AddControlsToTable(control, destTable, updateFont)
     if destTable == 1 then
@@ -268,25 +382,30 @@ function GrindTimer.ToggleWindowLock(lockButton)
 end
 
 function GrindTimer.UpdateUIControls()
+    GrindTimer.UpdateMetricLabels()
     UpdateLabels()
     UpdateButtons()
     UpdateLevelTextBox()
     UpdateUIOpacity()
+
+    if fontUpdateFlag then
+        UpdateFonts()
+end
 end
 
-function GrindTimer.ToggleDisplay()
-    GrindTimerWindow:SetHidden(not GrindTimerWindow:IsHidden())
-end
+function GrindTimer.UpdateMetricLabels()
+    GrindTimerWindowSecondMetricLabel:SetHidden(not GrindTimer.AccountSavedVariables.SecondLabelEnabled)
 
--- Hides or shows the options normally hidden by the collapsed extender button.
-function GrindTimer.UpdateExtendedControls()
-    for key, control in pairs(extendedControls) do
-        if control == GrindTimerWindowLevelTypeLabel then
-            if GrindTimer.AccountSavedVariables.Mode == "Target" then
-                control:SetHidden(controlsExtended)
-            end
-        else
-        control:SetHidden(controlsExtended)
+    local firstLabelString, secondLabelString = unpack(GetLabelStrings())
+    GrindTimerWindowFirstMetricLabel:SetText(firstLabelString)
+    GrindTimerWindowSecondMetricLabel:SetText(secondLabelString)
+
+    local firstLabelWidth = GrindTimerWindowFirstMetricLabel:GetWidth()
+    local secondLabelWidth = GrindTimerWindowSecondMetricLabel:GetWidth()
+    local windowWidth = GrindTimerWindow:GetWidth()
+
+    if firstLabelWidth >= windowWidth or secondLabelWidth >= windowWidth then
+        RescaleUI()
     end
     end
 
@@ -331,11 +450,8 @@ end
         end
 
         textBox:SetText(GrindTimer.SavedVariables.TargetLevel)
-    else
-        -- If text is somehow invalid after LevelEntryTextChanged checks or just empty, reset target level and set it again.
-        local newTarget = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
-        GrindTimer.SetNewTargetLevel(newTarget)
-        textBox:SetText(newTarget)
+
+    GrindTimer.UpdateMetricLabels()
     end
 
     GrindTimer.UpdateUIControls()

@@ -48,12 +48,15 @@ function GrindTimer.InitializeSettingsMenu()
     local outlineTextChecked = GrindTimer.AccountSavedVariables.OutlineText and BSTATE_PRESSED or BSTATE_NORMAL
     local secondLabelEnabled = GrindTimer.AccountSavedVariables.SecondLabelEnabled
     local secondLabelChecked = secondLabelEnabled and BSTATE_PRESSED or BSTATE_NORMAL
+    local fontSize = GrindTimer.AccountSavedVariables.FontSize
 
     GrindTimerSettingsWindowOpacityTextBox:SetText(GrindTimer.AccountSavedVariables.Opacity * 100)
     GrindTimerSettingsWindowOutlineCheckBox:SetState(outlineTextChecked)
     GrindTimerSettingsWindowSecondLabelCheckBox:SetState(secondLabelChecked)
     GrindTimerSettingsWindowSecondLabelDropdownButton:SetEnabled(secondLabelEnabled)
     GrindTimerSettingsWindowColorSelectButtonColorPickerTexture:SetColor(r, g, b, 1)
+    GrindTimerSettingsWindowFontSizeSlider:SetValue(fontSize)
+    GrindTimerSettingsWindowFontSizeSliderTextBox:SetText(fontSize)
 
     GrindTimer.UpdateSettingsWindowButtons()
 
@@ -75,6 +78,7 @@ function GrindTimer.SettingsFirstLabelDropdownClicked()
     GrindTimerSettingsWindowOutlineCheckBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowOpacityTextBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowFontSizeSlider:SetHidden(isMenuClosed)
 
     if isMenuClosed then
         firstDropDownMenu:SetHidden(false)
@@ -96,6 +100,7 @@ function GrindTimer.SettingsSecondLabelDropdownClicked()
     GrindTimerSettingsWindowOpacityTextBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowOutlineCheckBox:SetHidden(isMenuClosed)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(isMenuClosed)
+    GrindTimerSettingsWindowFontSizeSlider:SetHidden(isMenuClosed)
 end
 
 function GrindTimer.SettingsMetricOptionClicked(targetLabel, selectedMetric)
@@ -111,18 +116,19 @@ function GrindTimer.SettingsMetricOptionClicked(targetLabel, selectedMetric)
         GrindTimerSettingsWindowCloseButton:SetHidden(false)
     end
     
-    GrindTimer.UpdateUIControls()
+    GrindTimer.UpdateMetricLabels()
 
     GrindTimerSettingsWindowOpacityTextBox:SetHidden(false)
     GrindTimerSettingsWindowOutlineCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
+    GrindTimerSettingsWindowFontSizeSlider:SetHidden(false)
 
     GrindTimer.UpdateSettingsWindowButtons()
 end
 
 function GrindTimer.FirstLabelDropdownOptionClicked(selectedMetric)
     GrindTimer.AccountSavedVariables.FirstLabelType = selectedMetric
-    GrindTimer.UpdateUIControls()
+    GrindTimer.UpdateMetricLabels()
 
     -- When a dropdown option is clicked, hide the dropdown menu and reveal any hidden overlapped controls.
     local firstDropDownMenu = GrindTimerSettingsWindowFirstLabelDropdownOptions
@@ -139,7 +145,7 @@ end
 
 function GrindTimer.SecondLabelDropdownOptionClicked(selectedMetric)
     GrindTimer.AccountSavedVariables.SecondLabelType = selectedMetric
-    GrindTimer.UpdateUIControls()
+    GrindTimer.UpdateMetricLabels()
 
     -- When a dropdown option is clicked, hide the dropdown menu and reveal any hidden overlapped controls.
     local secondDropDownMenu = GrindTimerSettingsWindowSecondLabelDropdownOptions
@@ -180,6 +186,7 @@ function GrindTimer.SecondLabelCheckBoxChecked(checkBox)
         checkBox:SetState(BSTATE_PRESSED)
     end
 
+    GrindTimer.SetFontUpdateFlag()
     GrindTimer.UpdateUIControls()
 end
 
@@ -194,6 +201,7 @@ function GrindTimer.OutlineTextCheckBoxChecked(checkBox)
         GrindTimer.AccountSavedVariables.OutlineText = true
     end
 
+    GrindTimer.SetFontUpdateFlag()
     GrindTimer.UpdateUIControls()
 end
 
@@ -202,19 +210,40 @@ function GrindTimer.ColorPickerOpen(texture)
     local function ColorSelected(r, g, b)
         texture:SetColor(r, g, b, 1)
 
-        for key, control in pairs(fontControls) do
-            if control:GetType() == CT_BUTTON then
-                control:SetNormalFontColor(r, g, b, 1)
-            else
-                control:SetColor(r, g, b, 1)
-            end
-        end
-
         GrindTimer.AccountSavedVariables.TextColor = {r, g, b}
+
+        GrindTimer.SetFontUpdateFlag()
+        GrindTimer.UpdateUIControls()
     end
 
     local currentR, currentG, currentB = unpack(GrindTimer.AccountSavedVariables.TextColor)
     COLOR_PICKER:Show(ColorSelected, currentR, currentG, currentB)
+            end
+
+function GrindTimer.FontSizeValueChanged(slider, value)
+    GrindTimerSettingsWindowFontSizeSliderTextBox:SetText(value)
+    GrindTimer.AccountSavedVariables.FontSize = value
+
+    GrindTimer.SetFontUpdateFlag()
+    GrindTimer.UpdateUIControls()
+        end
+
+function GrindTimer.FontSizeTextSubmitted(textBox, minValue, maxValue)
+    local currentNumber = tonumber(textBox:GetText())
+
+    if not currentNumber or currentNumber < minValue then
+        currentNumber = minValue
+        textBox:SetText(minValue)
+    elseif currentNumber > maxValue then
+        currentNumber = maxValue
+        textBox:SetText(maxValue)
+    end
+
+    GrindTimerSettingsWindowFontSizeSlider:SetValue(currentNumber)
+    GrindTimer.AccountSavedVariables.FontSize = currentNumber
+
+    GrindTimer.SetFontUpdateFlag()
+    GrindTimer.UpdateUIControls()
 end
 
 function GrindTimer.SettingsWindowShown()
@@ -238,6 +267,7 @@ function GrindTimer.SettingsCloseButtonClicked()
     GrindTimerSettingsWindowOpacityTextBox:SetHidden(false)
     GrindTimerSettingsWindowOutlineCheckBox:SetHidden(false)
     GrindTimerSettingsWindowColorSelectButton:SetHidden(false)
+    GrindTimerSettingsWindowFontSizeSlider:SetHidden(false)
     GrindTimerSettingsWindow:SetHidden(true)
     windowHidden = true
 end
