@@ -108,7 +108,7 @@ local function RescaleUI()
 
     local biggestLabelWidth = (firstLabelWidth > secondLabelWidth) and firstLabelWidth or secondLabelWidth
 
-    local windowWidth = biggestLabelWidth + 20
+    local windowWidth = (biggestLabelWidth + 50)
     local windowHeight = labelHeight * 2 + 30
     local windowHeightExtended = windowHeight * 2.5
 
