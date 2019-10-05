@@ -12,6 +12,8 @@ UI/GrindTimerUI.xml
 UI/GrindTimerSettingsUI.xml
 bindings.xml
 
+# Grind Timer is on GitHub at https://github.com/Tirilance/GrindTimer
+
 # This Add-on is not created by, affiliated with or sponsored by ZeniMax
 # Media Inc. or its affiliates. The Elder Scrolls® and related logos are
 # registered trademarks or trademarks of ZeniMax Media Inc. in the United
