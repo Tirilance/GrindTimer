@@ -9,13 +9,13 @@ GrindTimer.UIInitialized = false
 GrindTimer.ModeType =
 {
     Next = 1,
-    Target = 2,
+    Target = 2
 }
 
 GrindTimer.TargetLevelType =
 {
     Normal = 1,
-    Champion = 2,
+    Champion = 2
 }
 
 local DungeonInfo = {}
