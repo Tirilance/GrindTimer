@@ -25,7 +25,7 @@ local function InitializeAnimations()
 
     for key, control in pairs(extendedControls) do
         local fadeAnimation = extendAnimationTimeline:InsertAnimation(ANIMATION_ALPHA, control)
-        fadeAnimation:SetAlphaValues(0,1)
+        fadeAnimation:SetAlphaValues(0, 1)
         fadeAnimation:SetDuration(500)
         fadeAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
     end
@@ -34,7 +34,7 @@ end
 local function GetLabelStrings()
     local labelStrings = { "", "" }
     local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
-                        GrindTimer.AccountSavedVariables.SecondLabelType }
+                          GrindTimer.AccountSavedVariables.SecondLabelType }
 
     for i in ipairs(labelStrings) do
         if labelValues[i] == 1 then
@@ -489,7 +489,7 @@ function GrindTimer.NextModeButtonClicked(button)
     GrindTimerWindowLevelTypeLabel:SetHidden(true)
 
     GrindTimer.SavedVariables.Mode = 1
-    local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1
 
     GrindTimer.SetNewTargetLevel(targetLevel)
     GrindTimer.UpdateUIControls()
@@ -501,7 +501,7 @@ function GrindTimer.TargetModeButtonClicked(button)
     GrindTimerWindowLevelTypeLabel:SetHidden(false)
 
     GrindTimer.SavedVariables.Mode = 2
-    local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1
 
     GrindTimerWindowLevelTextBox:SetText(targetLevel)
     GrindTimer.SavedVariables.TargetLevelType = GrindTimer.SavedVariables.IsPlayerChampion and 2 or 1
@@ -523,7 +523,7 @@ function GrindTimer.NormalTypeButtonClicked(button)
     if currentNumber ~= nil and currentNumber > 50 then
         GrindTimerWindowLevelTextBox:SetText("50")
     elseif currentText == "" or currentNumber < GetUnitLevel("player") then
-        local newTargetLevel = GetUnitLevel("player")+1
+        local newTargetLevel = GetUnitLevel("player") + 1
         GrindTimerWindowLevelTextBox:SetText(newTargetLevel)
     end
 
@@ -544,8 +544,8 @@ function GrindTimer.ChampionTypeButtonClicked(button)
     GrindTimer.SavedVariables.TargetLevelType = 2
 
     if currentNumber ~= nil and currentNumber <= GetPlayerChampionPointsEarned() then
-        GrindTimerWindowLevelTextBox:SetText(GetPlayerChampionPointsEarned()+1)
-        GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned()+1)
+        GrindTimerWindowLevelTextBox:SetText(GetPlayerChampionPointsEarned() + 1)
+        GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned() + 1)
     elseif currentNumber ~= nil then
         GrindTimer.SetNewTargetLevel(currentText)
     end

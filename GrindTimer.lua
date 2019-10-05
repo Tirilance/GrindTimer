@@ -35,7 +35,8 @@ local Defaults =
     Mode = 1,
     TargetHours = 0,
     TargetMinutes = 0,
-    TargetExpRemaining = IsUnitChampion("player") and GetNumChampionXPInChampionPoint(GetPlayerChampionPointsEarned()) - GetPlayerChampionXP() or GetUnitXPMax("player") - GetUnitXP("player"),
+    TargetExpRemaining = IsUnitChampion("player") and GetNumChampionXPInChampionPoint(GetPlayerChampionPointsEarned()) - GetPlayerChampionXP() or
+        GetUnitXPMax("player") - GetUnitXP("player"),
     KillsNeeded = 0,
     LevelsPerHour = 0,
     ExpPerHour = 0,
@@ -45,7 +46,7 @@ local Defaults =
     DolmensNeeded = 0,
     SessionKills = 0,
     SessionLevels = 0,
-    TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1,
+    TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1,
     TargetLevelType = IsUnitChampion("player") and 2 or 1,
     IsPlayerChampion = IsUnitChampion("player")
 }
@@ -101,7 +102,7 @@ local function GetTargetLevelExp(championPoints, isChamp)
     local totalExpRequired = 0
 
     if not isChamp and targetLevelType == 1 then
-        for i = level, targetLevel-1 do
+        for i = level, targetLevel - 1 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
         end
@@ -112,14 +113,14 @@ local function GetTargetLevelExp(championPoints, isChamp)
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
         end
-        for i = championPoints, targetLevel-1 do
+        for i = championPoints, targetLevel - 1 do
             local championPointExp = GetNumChampionXPInChampionPoint(i)
             totalExpRequired = totalExpRequired + championPointExp
         end
         totalExpRequired = totalExpRequired - GetPlayerChampionXP() - GetUnitXP("player")
 
     elseif isChamp then
-        for i = championPoints, targetLevel-1 do
+        for i = championPoints, targetLevel - 1 do
             local championPointExp = GetNumChampionXPInChampionPoint(i)
             totalExpRequired = totalExpRequired + championPointExp
         end
@@ -148,7 +149,7 @@ local function GetExpGainPerMinute(totalExpGained, oldestEventTimestamp)
     local timeDiff = GetDiffBetweenTimeStamps(GetTimeStamp(), oldestEventTimestamp)
     timeDiff = (timeDiff == 0) and 1 or timeDiff
 
-    local expGainPerMinute = totalExpGained / (timeDiff/60)
+    local expGainPerMinute = totalExpGained / (timeDiff / 60)
     return expGainPerMinute
 end
 
@@ -163,7 +164,7 @@ local function GetLevelsPerHour(expGainPerHour)
 
     if isChamp then
         -- Champion levels gained in the next hour.
-        for i = championPoints, championPoints+1000 do
+        for i = championPoints, championPoints + 1000 do
             local expInLevel = GetNumChampionXPInChampionPoint(i)
             if i == championPoints then
                 expNeeded = expInLevel - GetPlayerChampionXP()
@@ -195,7 +196,7 @@ local function GetLevelsPerHour(expGainPerHour)
         end
         -- Champion levels surpassing level 50 in the next hour.
         if expGainPerHour >= 0 then
-            for i = championPoints, championPoints+1000 do
+            for i = championPoints, championPoints + 1000 do
                 local expInLevel = GetNumChampionXPInChampionPoint(i)
                 expGainPerHour = expGainPerHour - expInLevel
 
@@ -217,7 +218,7 @@ local function GetLevelTimeRemaining(expGainPerMinute, expRemaining)
 
     if rawMinutesToLevel > 60 then
         hoursToLevel = math.floor(rawMinutesToLevel / 60)
-        minutesToLevel = rawMinutesToLevel - math.floor(rawMinutesToLevel/60) * 60
+        minutesToLevel = rawMinutesToLevel - math.floor(rawMinutesToLevel / 60) * 60
     else
         minutesToLevel = rawMinutesToLevel
     end
@@ -288,7 +289,7 @@ local function UpdateVars()
     local expGainPerMinute = 0
     local expGainPerHour = 0
     local levelsPerHour = 0
-    local hours, minutes = 0,0
+    local hours, minutes = 0, 0
 
     local killExpGained = 0
     local averageKillExp = 0
@@ -362,8 +363,8 @@ local function UpdateVars()
 
     -- Update these metrics even without any active ExpEvents
     GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(expNeeded)
-        GrindTimer.SavedVariables.SessionLevels = CurrentSessionLevels
-    end
+    GrindTimer.SavedVariables.SessionLevels = CurrentSessionLevels
+end
 
 local function Update(eventCode, reason, level, previousExp, currentExp, championPoints)
     local currentTimestamp = GetTimeStamp()
@@ -439,8 +440,6 @@ end
 
 local function Initialize(eventCode, addonName)
     if addonName == GrindTimer.Name then
-
-        --GrindTimer.SavedVariables = ZO_SavedVars:New("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
         GrindTimer.SavedVariables = ZO_SavedVars:NewCharacterIdSettings("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
         GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.AccountSavedVariablesVersion, "Account", AccountDefaults)
 
@@ -468,7 +467,7 @@ function GrindTimer.Reset()
     ExpEvent.EventCount = 0
 
     GrindTimer.SavedVariables.Mode = 1
-    GrindTimer.SavedVariables.TargetLevel = isChamp and GetPlayerChampionPointsEarned()+1 or GetUnitLevel("player")+1
+    GrindTimer.SavedVariables.TargetLevel = isChamp and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1
     GrindTimer.SavedVariables.TargetLevelType = isChamp and 2 or 1
     GrindTimer.SavedVariables.TargetHours = 0
     GrindTimer.SavedVariables.TargetMinutes = 0

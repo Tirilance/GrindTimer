@@ -3,10 +3,10 @@ local windowHidden = true
 function GrindTimer.UpdateSettingsWindowButtons()
 
     local labelButtons = { GrindTimerSettingsWindowFirstLabelDropdownButton,
-                            GrindTimerSettingsWindowSecondLabelDropdownButton }
+                           GrindTimerSettingsWindowSecondLabelDropdownButton }
 
     local labelValues = { GrindTimer.AccountSavedVariables.FirstLabelType,
-                            GrindTimer.AccountSavedVariables.SecondLabelType }
+                          GrindTimer.AccountSavedVariables.SecondLabelType }
 
     for i in ipairs(labelButtons) do
         if labelValues[i] == 1 then
