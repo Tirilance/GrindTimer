@@ -6,13 +6,13 @@ GrindTimer.SavedVariableVersion = "3"
 GrindTimer.AccountSavedVariablesVersion = "2"
 GrindTimer.UIInitialized = false
 
-GrindTimer.ModeType =
+GrindTimer.Mode =
 {
     Next = 1,
     Target = 2
 }
 
-GrindTimer.TargetLevelType =
+GrindTimer.Target =
 {
     Normal = 1,
     Champion = 2
@@ -66,6 +66,13 @@ local Defaults =
 -- ExpEvents used to track exp gains.
 local ExpEvent =
 {
+    EventReason =
+    {
+        Kill = 1,
+        Dolmen = 2,
+        Other = 3
+    },
+
     EventCount = 0,
     Events = {},
     Timeout = 900
@@ -80,12 +87,12 @@ function ExpEvent.Create(timestamp, expGained, isDungeon, isDolmen, reason)
     newExpEvent.IsDolmen = isDolmen
 
     if reason == 0 or reason == 24 or reason == 26 then
-        newExpEvent.Reason = "Kill"
+        newExpEvent.Reason = ExpEvent.EventReason.Kill
         CurrentSessionKills = CurrentSessionKills + 1
     elseif reason == 7 then
-        newExpEvent.Reason = "DolmenClosed"
+        newExpEvent.Reason = ExpEvent.EventReason.Dolmen
     else
-        newExpEvent.Reason = "Other"
+        newExpEvent.Reason = ExpEvent.EventReason.Other
     end
 
     newExpEvent.IsExpired = function(self)
@@ -113,14 +120,14 @@ local function GetTargetLevelExp(championPoints, isChamp)
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
     local totalExpRequired = 0
 
-    if not isChamp and targetLevelType == GrindTimer.TargetLevelType.Normal then
+    if not isChamp and targetLevelType == GrindTimer.Target.Normal then
         for i = level, targetLevel - 1 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
         end
         totalExpRequired = totalExpRequired - GetUnitXP("player")
 
-    elseif not isChamp and targetLevelType == GrindTimer.TargetLevelType.Champion then
+    elseif not isChamp and targetLevelType == GrindTimer.Target.Champion then
         for i = level, 49 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
@@ -149,7 +156,7 @@ local function GetExpNeeded()
     local maxExp = isChamp and GetNumChampionXPInChampionPoint(championPoints) or GetUnitXPMax("player")
     local expNeeded = 0
 
-    if GrindTimer.SavedVariables.Mode == GrindTimer.ModeType.Next then
+    if GrindTimer.SavedVariables.Mode == GrindTimer.Mode.Next then
         expNeeded = maxExp - currentExp
     else
         expNeeded = GetTargetLevelExp(championPoints, isChamp)
@@ -322,7 +329,7 @@ local function UpdateVars()
             else
                 totalExpGained = totalExpGained + expEvent.ExpGained
 
-                if expEvent.Reason == "Kill" then
+                if expEvent.Reason == ExpEvent.EventReason.Kill then
                     killExpGained = killExpGained + expEvent.ExpGained
                     recentKillCount = recentKillCount + 1
                 end
@@ -330,7 +337,7 @@ local function UpdateVars()
                 if expEvent.IsDolmen then
                     dolmenExpGained = dolmenExpGained + expEvent.ExpGained
 
-                    if expEvent.Reason == "DolmenClosed" then
+                    if expEvent.Reason == ExpEvent.Reason.Dolmen then
                         dolmensClosed = dolmensClosed + 1
                     end
                 end
@@ -478,9 +485,9 @@ function GrindTimer.Reset()
     ExpEvent.Events = {}
     ExpEvent.EventCount = 0
 
-    GrindTimer.SavedVariables.Mode = GrindTimer.ModeType.Next
+    GrindTimer.SavedVariables.Mode = GrindTimer.Mode.Next
     GrindTimer.SavedVariables.TargetLevel = isChamp and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1
-    GrindTimer.SavedVariables.TargetLevelType = isChamp and GrindTimer.TargetLevelType.Champion or GrindTimer.TargetLevelType.Normal
+    GrindTimer.SavedVariables.TargetLevelType = isChamp and GrindTimer.Target.Champion or GrindTimer.Target.Normal
     GrindTimer.SavedVariables.TargetHours = 0
     GrindTimer.SavedVariables.TargetMinutes = 0
     GrindTimer.SavedVariables.KillsNeeded = 0

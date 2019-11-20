@@ -245,7 +245,7 @@ local function UpdateLabels()
     GrindTimerWindowLevelTextBoxLabel:SetHidden(isHidden)
     GrindTimerWindow:SetHidden()
 
-    if GrindTimer.SavedVariables.Mode == GrindTimer.ModeType.Next or isHidden then
+    if GrindTimer.SavedVariables.Mode == GrindTimer.Mode.Next or isHidden then
         GrindTimerWindowLevelTypeLabel:SetHidden(true)
     else
         GrindTimerWindowLevelTypeLabel:SetHidden(false)
@@ -259,7 +259,7 @@ local function UpdateButtons()
 
     GrindTimerWindowExtendButton:SetState(windowExtended and BSTATE_PRESSED or BSTATE_NORMAL)
 
-    if mode == GrindTimer.ModeType.Next then
+    if mode == GrindTimer.Mode.Next then
         GrindTimerWindowNextModeButton:SetState(BSTATE_PRESSED)
         GrindTimerWindowNextModeButton:SetHidden(isHidden)
 
@@ -272,21 +272,21 @@ local function UpdateButtons()
         GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
         GrindTimerWindowChampionTypeButton:SetHidden(true)
 
-    elseif mode == GrindTimer.ModeType.Target then
+    elseif mode == GrindTimer.Mode.Target then
         GrindTimerWindowNextModeButton:SetState(BSTATE_NORMAL)
         GrindTimerWindowNextModeButton:SetHidden(isHidden)
 
         GrindTimerWindowTargetModeButton:SetState(BSTATE_PRESSED)
         GrindTimerWindowTargetModeButton:SetHidden(isHidden)
 
-        if targetLevelType == GrindTimer.TargetLevelType.Normal then
+        if targetLevelType == GrindTimer.Target.Normal then
             GrindTimerWindowNormalTypeButton:SetState(BSTATE_PRESSED)
             GrindTimerWindowNormalTypeButton:SetHidden(isHidden)
 
             GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
             GrindTimerWindowChampionTypeButton:SetHidden(isHidden)
 
-        elseif targetLevelType == GrindTimer.TargetLevelType.Champion then
+        elseif targetLevelType == GrindTimer.Target.Champion then
             GrindTimerWindowChampionTypeButton:SetState(BSTATE_PRESSED)
             GrindTimerWindowChampionTypeButton:SetHidden(isHidden)
 
@@ -308,11 +308,11 @@ local function UpdateLevelTextBox()
     local mode = GrindTimer.SavedVariables.Mode
     local isHidden = not windowExtended
 
-    if mode == GrindTimer.ModeType.Next then
+    if mode == GrindTimer.Mode.Next then
         GrindTimerWindowLevelTextBox:SetHidden(true)
         GrindTimerWindowLevelTextBoxLabel:SetHidden(true)
 
-    elseif mode == GrindTimer.ModeType.Target then
+    elseif mode == GrindTimer.Mode.Target then
         GrindTimerWindowLevelTextBox:SetHidden(isHidden)
         GrindTimerWindowLevelTextBoxLabel:SetHidden(isHidden)
         GrindTimerWindowLevelTextBox:SetText(GrindTimer.SavedVariables.TargetLevel)
@@ -433,7 +433,7 @@ function GrindTimer.LevelTextBoxSubmitted(textBox, minValue, maxNormalValue, max
 
     local currentNumber = tonumber(textBox:GetText())
 
-    if targetLevelType == GrindTimer.TargetLevelType.Normal then
+    if targetLevelType == GrindTimer.Target.Normal then
         if not currentNumber or currentNumber < minNormalValue then
             currentNumber = minNormalValue
             textBox:SetText(minNormalValue)
@@ -441,7 +441,7 @@ function GrindTimer.LevelTextBoxSubmitted(textBox, minValue, maxNormalValue, max
             currentNumber = maxNormalValue
             textBox:SetText(maxNormalValue)
         end
-    elseif targetLevelType == GrindTimer.TargetLevelType.Champion then
+    elseif targetLevelType == GrindTimer.Target.Champion then
         if not currentNumber or currentNumber < minChampionValue then
             currentNumber = minChampionValue
             textBox:SetText(minChampionValue)
@@ -485,7 +485,7 @@ function GrindTimer.NextModeButtonClicked(button)
     GrindTimerWindowTargetModeButton:SetState(BSTATE_NORMAL)
     GrindTimerWindowLevelTypeLabel:SetHidden(true)
 
-    GrindTimer.SavedVariables.Mode = GrindTimer.ModeType.Next
+    GrindTimer.SavedVariables.Mode = GrindTimer.Mode.Next
     local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1
 
     GrindTimer.SetNewTargetLevel(targetLevel)
@@ -497,11 +497,11 @@ function GrindTimer.TargetModeButtonClicked(button)
     GrindTimerWindowNextModeButton:SetState(BSTATE_NORMAL)
     GrindTimerWindowLevelTypeLabel:SetHidden(false)
 
-    GrindTimer.SavedVariables.Mode = GrindTimer.ModeType.Target
+    GrindTimer.SavedVariables.Mode = GrindTimer.Mode.Target
     local targetLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1
 
     GrindTimerWindowLevelTextBox:SetText(targetLevel)
-    GrindTimer.SavedVariables.TargetLevelType = GrindTimer.SavedVariables.IsPlayerChampion and GrindTimer.TargetLevelType.Champion or GrindTimer.TargetLevelType.Normal
+    GrindTimer.SavedVariables.TargetLevelType = GrindTimer.SavedVariables.IsPlayerChampion and GrindTimer.Target.Champion or GrindTimer.Target.Normal
     GrindTimer.SetNewTargetLevel(targetLevel)
     GrindTimer.UpdateUIControls()
 end
@@ -526,7 +526,7 @@ function GrindTimer.NormalTypeButtonClicked(button)
 
     local targetLevel = GrindTimerWindowLevelTextBox:GetText()
 
-    GrindTimer.SavedVariables.TargetLevelType = GrindTimer.TargetLevelType.Normal
+    GrindTimer.SavedVariables.TargetLevelType = GrindTimer.Target.Normal
     GrindTimer.SetNewTargetLevel(targetLevel)
     GrindTimer.UpdateUIControls()
 end
@@ -538,7 +538,7 @@ function GrindTimer.ChampionTypeButtonClicked(button)
     local currentText = GrindTimerWindowLevelTextBox:GetText()
     local currentNumber = tonumber(currentText)
 
-    GrindTimer.SavedVariables.TargetLevelType = GrindTimer.TargetLevelType.Champion
+    GrindTimer.SavedVariables.TargetLevelType = GrindTimer.Target.Champion
 
     if currentNumber ~= nil and currentNumber <= GetPlayerChampionPointsEarned() then
         GrindTimerWindowLevelTextBox:SetText(GetPlayerChampionPointsEarned() + 1)
