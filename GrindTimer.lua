@@ -1,7 +1,7 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.11.1"
+GrindTimer.Version = "1.11.2"
 GrindTimer.SavedVariableVersion = "3"
 GrindTimer.AccountSavedVariablesVersion = "2"
 GrindTimer.UIInitialized = false
