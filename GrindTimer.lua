@@ -1,7 +1,7 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.11.2"
+GrindTimer.Version = "1.11.3"
 GrindTimer.SavedVariableVersion = "3"
 GrindTimer.AccountSavedVariablesVersion = "2"
 GrindTimer.UIInitialized = false
@@ -337,7 +337,7 @@ local function UpdateVars()
                 if expEvent.IsDolmen then
                     dolmenExpGained = dolmenExpGained + expEvent.ExpGained
 
-                    if expEvent.Reason == ExpEvent.Reason.Dolmen then
+                    if expEvent.Reason == ExpEvent.EventReason.Dolmen then
                         dolmensClosed = dolmensClosed + 1
                     end
                 end
