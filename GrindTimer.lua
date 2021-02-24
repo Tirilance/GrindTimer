@@ -462,7 +462,7 @@ local function Initialize(eventCode, addonName)
         GrindTimer.SavedVariables = ZO_SavedVars:NewCharacterIdSettings("GrindTimerVars", GrindTimer.SavedVariableVersion, "Character", Defaults)
         GrindTimer.AccountSavedVariables = ZO_SavedVars:NewAccountWide("GrindTimerVars", GrindTimer.AccountSavedVariablesVersion, "Account", AccountDefaults)
 
-        ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_DISPLAY", "Toggle Window")
+        ZO_CreateStringId("SI_BINDING_NAME_GRIND_TIMER_TOGGLE", "Show/Hide Window")
 
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_LEVEL_UPDATE, NormalLevelGained)
         EVENT_MANAGER:RegisterForEvent(GrindTimer.Name, EVENT_CHAMPION_POINT_GAINED, ChampionLevelGained)

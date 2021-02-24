@@ -1,7 +1,7 @@
 <Bindings>
     <Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
         <Category name="Grind Timer">
-            <Action name="TOGGLE_DISPLAY">
+            <Action name="GRIND_TIMER_TOGGLE">
                 <Down>GrindTimer.ToggleDisplay()</Down>
             </Action>
         </Category>
