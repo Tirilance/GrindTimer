@@ -5,29 +5,31 @@ local fontControls = {} -- UI controls modified when changing font size.
 local windowExtended = false
 local fontUpdateFlag = true
 
-local extendAnimationTimeline
+local animationTimeline
+local sizeAnimation
+local alphaAnimation
 local lastClickedLabel
 
 local function UpdateExtendAnimationDimensions(width, height)
-    extendAnimation:SetStartAndEndHeight(height, height * 2.5)
-    extendAnimation:SetStartAndEndWidth(width, width)
+    sizeAnimation:SetStartAndEndHeight(height, height * 2.5)
+    sizeAnimation:SetStartAndEndWidth(width, width)
 end
 
 local function InitializeAnimations()
-    extendAnimationTimeline = ANIMATION_MANAGER:CreateTimeline()
-    extendAnimationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
-    extendAnimation = extendAnimationTimeline:InsertAnimation(ANIMATION_SIZE, GrindTimerWindow)
+    animationTimeline = ANIMATION_MANAGER:CreateTimeline()
+    animationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
+
+    sizeAnimation = animationTimeline:InsertAnimation(ANIMATION_SIZE, GrindTimerWindow)
+    sizeAnimation:SetDuration(150)
+    sizeAnimation:SetEasingFunction(ZO_EaseInCubic)
 
     UpdateExtendAnimationDimensions(GrindTimerWindow:GetWidth(), GrindTimerWindow:GetHeight())
 
-    extendAnimation:SetDuration(500)
-    extendAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
-
     for key, control in pairs(extendedControls) do
-        local fadeAnimation = extendAnimationTimeline:InsertAnimation(ANIMATION_ALPHA, control)
-        fadeAnimation:SetAlphaValues(0, 1)
-        fadeAnimation:SetDuration(500)
-        fadeAnimation:SetEasingFunction(ZO_EaseInOutQuartic)
+        local alphaAnimation = animationTimeline:InsertAnimation(ANIMATION_ALPHA, control)
+        alphaAnimation:SetAlphaValues(0, 1)
+        alphaAnimation:SetDuration(300)
+        alphaAnimation:SetEasingFunction(ZO_EaseInCubic)
     end
 end
 
@@ -243,7 +245,6 @@ local function UpdateLabels()
 
     GrindTimerWindowModeLabel:SetHidden(isHidden)
     GrindTimerWindowLevelTextBoxLabel:SetHidden(isHidden)
-    GrindTimerWindow:SetHidden()
 
     if GrindTimer.SavedVariables.Mode == GrindTimer.Mode.Next or isHidden then
         GrindTimerWindowLevelTypeLabel:SetHidden(true)
@@ -415,9 +416,9 @@ end
 
 function GrindTimer.ExtendButtonClicked()
     if (windowExtended) then
-        extendAnimationTimeline:PlayBackward()
+        animationTimeline:PlayBackward()
     else
-        extendAnimationTimeline:PlayForward()
+        animationTimeline:PlayForward()
     end
 
     windowExtended = not windowExtended
