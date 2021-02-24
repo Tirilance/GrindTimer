@@ -10,7 +10,7 @@ UI/GrindTimerUI.lua
 UI/GrindTimerSettingsUI.lua
 UI/GrindTimerUI.xml
 UI/GrindTimerSettingsUI.xml
-bindings.xml
+Bindings.xml
 
 # Grind Timer is on GitHub at https://github.com/Tirilance/GrindTimer
 
