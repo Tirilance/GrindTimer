@@ -2,8 +2,8 @@ GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
 GrindTimer.Version = "1.12.0"
-GrindTimer.SavedVariableVersion = "3"
-GrindTimer.AccountSavedVariablesVersion = "2"
+GrindTimer.SavedVariableVersion = "4"
+GrindTimer.AccountSavedVariablesVersion = "3"
 GrindTimer.UIInitialized = false
 
 GrindTimer.Mode =
@@ -39,7 +39,8 @@ local AccountDefaults =
     OffsetY = 100,
     FirstLabelType = 10,
     SecondLabelType = 4,
-    SecondLabelEnabled = true
+    SecondLabelEnabled = true,
+    AbbreviateNumbers = false
 }
 
 local Defaults =
@@ -295,11 +296,6 @@ local function IncrementDungeonRuns()
     DungeonInfo[DungeonName] = { Experience = exp, RunCount = runCount, Average = average }
 end
 
--- Formats numbers to include separators every third digit.
-local function FormatNumber(num)
-    return zo_strformat("<<1>>", ZO_LocalizeDecimalNumber(num))
-end
-
 local function UpdateVars()
     local expNeeded = GetExpNeeded()
     local oldestEventTimestamp = math.huge
@@ -372,16 +368,16 @@ local function UpdateVars()
 
         GrindTimer.SavedVariables.TargetHours = hours
         GrindTimer.SavedVariables.TargetMinutes = minutes
-        GrindTimer.SavedVariables.RecentKills = FormatNumber(recentKillCount)
-        GrindTimer.SavedVariables.KillsNeeded = FormatNumber(killsNeeded)
-        GrindTimer.SavedVariables.ExpPerHour = FormatNumber(expGainPerHour)
-        GrindTimer.SavedVariables.LevelsPerHour = FormatNumber(levelsPerHour)
-        GrindTimer.SavedVariables.DolmensNeeded = FormatNumber(dolmensNeeded)
-        GrindTimer.SavedVariables.SessionKills = FormatNumber(CurrentSessionKills)
+        GrindTimer.SavedVariables.RecentKills = recentKillCount
+        GrindTimer.SavedVariables.KillsNeeded = killsNeeded
+        GrindTimer.SavedVariables.ExpPerHour = expGainPerHour
+        GrindTimer.SavedVariables.LevelsPerHour = levelsPerHour
+        GrindTimer.SavedVariables.DolmensNeeded = dolmensNeeded
+        GrindTimer.SavedVariables.SessionKills = CurrentSessionKills
     end
 
     -- Update these metrics even without any active ExpEvents
-    GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(expNeeded)
+    GrindTimer.SavedVariables.TargetExpRemaining = expNeeded
     GrindTimer.SavedVariables.SessionLevels = CurrentSessionLevels
 end
 
@@ -403,7 +399,7 @@ local function UpdateDungeonInfo()
         -- Check for INF
         dungeonRunsNeeded = (dungeonRunsNeeded == math.huge or dungeonRunsNeeded == -math.huge) and 0 or dungeonRunsNeeded
 
-        GrindTimer.SavedVariables.DungeonRunsNeeded = FormatNumber(dungeonRunsNeeded)
+        GrindTimer.SavedVariables.DungeonRunsNeeded = dungeonRunsNeeded
         GrindTimer.SavedVariables.LastDungeonName = DungeonName
     end
 end
@@ -494,7 +490,7 @@ function GrindTimer.Reset()
     GrindTimer.SavedVariables.LevelsPerHour = 0
     GrindTimer.SavedVariables.ExpPerHour = 0
     GrindTimer.SavedVariables.RecentKills = 0
-    GrindTimer.SavedVariables.TargetExpRemaining = FormatNumber(GetExpNeeded())
+    GrindTimer.SavedVariables.TargetExpRemaining = GetExpNeeded()
     GrindTimer.SavedVariables.LastDungeonName = nil
     GrindTimer.SavedVariables.DungeonRunsNeeded = 0
     GrindTimer.SavedVariables.DolmensNeeded = 0
