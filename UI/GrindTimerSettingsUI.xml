@@ -302,70 +302,33 @@
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="310"/>
                 </Label>
 
-                <Slider name="$(parent)FontSizeSlider" font="ZoFontGameShadowSettings" color="FFFFFF" orientation="1" step="1" dragFromThumb="true" mouseEnabled="true">
-                    <OnSliderReleased>
-                        GrindTimer.FontSizeValueChanged(self, value)
-                    </OnSliderReleased>
-
-                    <Limits min="18" max="24"/>
-                    <Dimensions x="175" y="25"/>
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="210" offsetY="310"/>
-
-                    <ThumbTexture name="$(parent)Texture" textureFile="EsoUI/Art/Miscellaneous/scrollbox_elevator.dds" thumbWidth="16" thumbHeight="32" flushWithSliderExtents="true"/>
-
+                <EditBox name="$(parent)FontSizeTextBox" font="ZoFontGameShadowSettings" text="18" color="FFFFFF" editEnabled="true" maxInputCharacters="2" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" horizontalAlignment="LEFT">
+                    <Dimensions x="30" y="30"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="167" offsetY="310"/>
+                    <OnMouseDown>
+                        self:TakeFocus()
+                    </OnMouseDown>
+                    <OnEnter>
+                        self:LoseFocus()
+                    </OnEnter>
+                    <OnEscape>
+                        self:LoseFocus()
+                    </OnEscape>
+                    <OnFocusLost>
+                        GrindTimer.FontSizeTextSubmitted(self, 14, 24)
+                    </OnFocusLost>
                     <Controls>
-                        <EditBox name="$(parent)TextBox" font="ZoFontGameShadowSettings" text="18" color="FFFFFF" editEnabled="true" maxInputCharacters="2" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" horizontalAlignment="LEFT">
-                        <OnMouseDown>
-                            self:TakeFocus()
-                        </OnMouseDown>
-                        <OnEnter>
-                            self:LoseFocus()
-                        </OnEnter>
-                        <OnEscape>
-                            self:LoseFocus()
-                        </OnEscape>
-                        <OnFocusLost>
-                            GrindTimer.FontSizeTextSubmitted(self, 18, 24)
-                        </OnFocusLost>
+                        <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
                             <Dimensions x="30" y="30"/>
-                            <Anchor point="LEFT" relativeTo="$(parent)" relativePoint="LEFT" offsetX="-45"/>
-                            <Controls>
-                                <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
-                                    <Dimensions x="30" y="30"/>
-                                    <Anchor point="CENTER" relativeTo="$(parent)" relativePoint="CENTER" offsetX="-5" offsetY="-2"/>
-                                </Backdrop>
-                            </Controls>
-                        </EditBox>
-
-                        <Label name="$(parent)FontSize18" font="ZoFontGameShadowSettings" text="18" color="FFFFFF">
-                            <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="30"/>
-                        </Label>
-
-                        <Label name="$(parent)FontSize19" font="ZoFontGameShadowSettings" text="19" color="FFFFFF">
-                            <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="27" offsetY="30"/>
-                        </Label>
-
-                        <Label name="$(parent)FontSize20" font="ZoFontGameShadowSettings" text="20" color="FFFFFF">
-                            <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="54" offsetY="30"/>
-                        </Label>
-
-                        <Label name="$(parent)FontSize21" font="ZoFontGameShadowSettings" text="21" color="FFFFFF">
-                            <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="81" offsetY="30"/>
-                        </Label>
-
-                        <Label name="$(parent)FontSize22" font="ZoFontGameShadowSettings" text="22" color="FFFFFF">
-                            <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="108" offsetY="30"/>
-                        </Label>
-
-                        <Label name="$(parent)FontSize23" font="ZoFontGameShadowSettings" text="23" color="FFFFFF">
-                            <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="135" offsetY="30"/>
-                        </Label>
-
-                        <Label name="$(parent)FontSize24" font="ZoFontGameShadowSettings" text="24" color="FFFFFF">
-                            <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="0" offsetY="30"/>
-                        </Label>
+                            <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="-5" offsetY="-2"/>
+                        </Backdrop>
                     </Controls>
-                </Slider>
+                </EditBox>
+
+                <Label name="$(parent)FontSizeTooltip" font="$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thin" color="A8A8A8" text="Min 14, Max 24">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="202" offsetY="312"/>
+                </Label>
 
                 <Button name="$(parent)CloseButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Close">
                     <Dimensions x="75" y="25"/>
