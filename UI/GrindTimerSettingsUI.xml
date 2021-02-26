@@ -2,7 +2,7 @@
     <Font name="ZoFontGameShadowSettings" font="$(BOLD_FONT)|$(KB_18)|soft-shadow-thin"/>
     <Controls>
         <TopLevelControl name="GrindTimerSettingsWindow" inheritsAlpha="false" hidden="true" mouseEnabled="true" clampedToScreen="true" layer="0">
-            <Dimensions x="400" y="464"/>
+            <Dimensions x="400" y="484"/>
             <Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER"/>
             <OnShow>
                 GrindTimer.SettingsWindowShown()
@@ -19,9 +19,47 @@
                     <Anchor point="TOP" relativeTo="($parent)" relativePoint="TOP" offsetY="40"/>
                 </Texture>
 
+                <!-- Option Labels -->
+
                 <Label name="$(parent)FirstMetricLabel" font="ZoFontGameShadowSettings" text="First Label" color="FFFFFF">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="55"/>
                 </Label>
+
+                <Label name="$(parent)SecondMetricLabel" font="ZoFontGameShadowSettings" text="Second Label" color="FFFFFF">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="105"/>
+                </Label>
+
+                <Label name="$(parent)OpacityLabel" font="ZoFontGameShadowSettings" text="Opacity" color="FFFFFF">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="160"/>
+                </Label>
+
+                <Label name="$(parent)OutlineLabel" font="ZoFontGameShadowSettings" text="Text Outline" color="FFFFFF">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="210"/>
+                </Label>
+
+                <Label name="$(parent)ColorSelectLabel" font="ZoFontGameShadowSettings" text="Text Color" color="FFFFFF">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="260"/>
+                </Label>
+
+                <Label name="$(parent)FontSizeLabel" font="ZoFontGameShadowSettings" text="Font Size" color="FFFFFF">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="310"/>
+                </Label>
+
+                <Label name="$(parent)AbbreviateNumbersCheckBoxLabel" font="ZoFontGameShadowSettings" text="Abbreviate numbers" color="FFFFFF">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT"  offsetX="10" offsetY="360"/>
+                </Label>
+
+                <Label name="$(parent)AbbreviateTimeCheckBoxLabel" font="ZoFontGameShadowSettings" text="Abbreviate time" color="FFFFFF">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT"  offsetX="10" offsetY="410"/>
+                </Label>
+
+                <!-- Option Controls -->
 
                 <Button name="$(parent)FirstLabelDropdownButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Time until goal" horizontalAlignment="LEFT">
                     <Dimensions x="200" y="30"/>
@@ -121,10 +159,6 @@
                             </OnClicked>
                         </Button>
                     </Controls>
-                </Label>
-
-                <Label name="$(parent)SecondMetricLabel" font="ZoFontGameShadowSettings" text="Second Label" color="FFFFFF">
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="105"/>
                 </Label>
 
                 <Button name="$(parent)SecondLabelCheckBox" font="ZoFontGameShadowSettings">
@@ -236,11 +270,6 @@
                     </Controls>
                 </Label>
 
-                <Label name="$(parent)OpacityLabel" font="ZoFontGameShadowSettings" text="Opacity" color="FFFFFF">
-                    <Dimensions x="200" y="25"/>
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="160"/>
-                </Label>
-
                 <EditBox name="$(parent)OpacityTextBox" font="ZoFontGameShadowSettings" text="100" color="FFFFFF" editEnabled="true" maxInputCharacters="3" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" horizontalAlignment="LEFT">
                     <Dimensions x="36" y="30"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="167" offsetY="160"/>
@@ -256,6 +285,9 @@
                     <OnFocusLost>
                         GrindTimer.OpacityTextBoxSubmitted(self, 0, 100)
                     </OnFocusLost>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
                     <Controls>
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
                             <Dimensions x="36" y="30"/>
@@ -264,11 +296,6 @@
                     </Controls>
                 </EditBox>
 
-                <Label name="$(parent)OutlineLabel" font="ZoFontGameShadowSettings" text="Text Outline" color="FFFFFF">
-                    <Dimensions x="200" y="25"/>
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="210"/>
-                </Label>
-
                 <Button name="$(parent)OutlineCheckBox" font="ZoFontGameShadowSettings">
                     <Dimensions x="35" y="35"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="155" offsetY="205"/>
@@ -276,12 +303,10 @@
                     <OnClicked>
                         GrindTimer.OutlineTextCheckBoxChecked(self)
                     </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
                 </Button>
-
-                <Label name="$(parent)ColorSelectLabel" font="ZoFontGameShadowSettings" text="Text Color" color="FFFFFF">
-                    <Dimensions x="200" y="25"/>
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="260"/>
-                </Label>
 
                 <Button name="$(parent)ColorSelectButton">
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="160" offsetY="260"/>
@@ -295,12 +320,10 @@
                     <OnClicked>
                         GrindTimer.ColorPickerOpen(self:GetNamedChild("ColorPickerTexture"))
                     </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
                 </Button>
-
-                <Label name="$(parent)FontSizeLabel" font="ZoFontGameShadowSettings" text="Font Size" color="FFFFFF">
-                    <Dimensions x="200" y="25"/>
-                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="310"/>
-                </Label>
 
                 <EditBox name="$(parent)FontSizeTextBox" font="ZoFontGameShadowSettings" text="18" color="FFFFFF" editEnabled="true" maxInputCharacters="2" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" horizontalAlignment="LEFT">
                     <Dimensions x="30" y="30"/>
@@ -317,6 +340,9 @@
                     <OnFocusLost>
                         GrindTimer.FontSizeTextSubmitted(self, 14, 24)
                     </OnFocusLost>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
                     <Controls>
                         <Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
                             <Dimensions x="30" y="30"/>
@@ -328,6 +354,49 @@
                 <Label name="$(parent)FontSizeTooltip" font="$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thin" color="A8A8A8" text="Min 14, Max 24">
                     <Dimensions x="200" y="25"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="202" offsetY="312"/>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
+                </Label>
+
+                <Button name="$(parent)AbbreviateNumbersCheckBox" font="ZoFontGameShadowSettings">
+                    <Dimensions x="35" y="35"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="155" offsetY="355"/>
+                    <Textures normal="esoui/art/cadwell/checkboxicon_unchecked.dds" pressed="esoui/art/cadwell/checkboxicon_checked.dds"/>
+                    <OnClicked>
+                        GrindTimer.AbbreviateNumbersCheckBoxChecked(self)
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
+                </Button>
+
+                <Label name="$(parent)AbbreviateNumbersTooltip" font="$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thin" color="A8A8A8" text="e.g. 10,000 as 10k">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="187" offsetY="360"/>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
+                </Label>
+
+                <Button name="$(parent)AbbreviateTimeCheckBox" font="ZoFontGameShadowSettings">
+                    <Dimensions x="35" y="35"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="155" offsetY="405"/>
+                    <Textures normal="esoui/art/cadwell/checkboxicon_unchecked.dds" pressed="esoui/art/cadwell/checkboxicon_checked.dds"/>
+                    <OnClicked>
+                        GrindTimer.AbbreviateTimeCheckBoxChecked(self)
+                    </OnClicked>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
+                </Button>
+
+                <Label name="$(parent)AbbreviateTimeTooltip" font="$(MEDIUM_FONT)|$(KB_16)|soft-shadow-thin" color="A8A8A8" text="e.g. 2h 30m">
+                    <Dimensions x="200" y="25"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="187" offsetY="410"/>
+                    <OnInitialized>
+                        GrindTimer.AddUIControlsToTable(self)
+                    </OnInitialized>
                 </Label>
 
                 <Button name="$(parent)CloseButton" inherits="ZO_ButtonBehaviorClickSound" font="ZoFontGameShadowSettings" text="Close">

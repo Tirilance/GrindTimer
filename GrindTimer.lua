@@ -3,7 +3,7 @@ GrindTimer = {}
 GrindTimer.Name = "GrindTimer"
 GrindTimer.Version = "1.12.0"
 GrindTimer.SavedVariableVersion = "4"
-GrindTimer.AccountSavedVariablesVersion = "3"
+GrindTimer.AccountSavedVariablesVersion = "4"
 GrindTimer.UIInitialized = false
 
 GrindTimer.Mode =
@@ -40,7 +40,8 @@ local AccountDefaults =
     FirstLabelType = 10,
     SecondLabelType = 4,
     SecondLabelEnabled = true,
-    AbbreviateNumbers = false
+    AbbreviateNumbers = false,
+    AbbreviateTime = false
 }
 
 local Defaults =
@@ -48,6 +49,7 @@ local Defaults =
     Mode = 1,
     TargetHours = 0,
     TargetMinutes = 0,
+    TargetSeconds = 0,
     TargetExpRemaining = IsUnitChampion("player") and GetNumChampionXPInChampionPoint(GetPlayerChampionPointsEarned()) - GetPlayerChampionXP() or
         GetUnitXPMax("player") - GetUnitXP("player"),
     KillsNeeded = 0,
@@ -304,7 +306,7 @@ local function UpdateVars()
     local expGainPerMinute = 0
     local expGainPerHour = 0
     local levelsPerHour = 0
-    local hours, minutes = 0, 0
+    local hours, minutes, seconds = 0, 0, 0
 
     local killExpGained = 0
     local averageKillExp = 0
@@ -348,6 +350,7 @@ local function UpdateVars()
         expGainPerHour = math.floor(expGainPerMinute * 60)
         levelsPerHour = GetLevelsPerHour(expGainPerHour)
         hours, minutes = GetLevelTimeRemaining(expGainPerMinute, expNeeded)
+        seconds = (hours * 60 * 60) + (minutes * 60)
 
         averageKillExp = killExpGained / recentKillCount
         killsNeeded = math.ceil(expNeeded / averageKillExp)
@@ -368,6 +371,7 @@ local function UpdateVars()
 
         GrindTimer.SavedVariables.TargetHours = hours
         GrindTimer.SavedVariables.TargetMinutes = minutes
+        GrindTimer.SavedVariables.TargetSeconds = seconds
         GrindTimer.SavedVariables.RecentKills = recentKillCount
         GrindTimer.SavedVariables.KillsNeeded = killsNeeded
         GrindTimer.SavedVariables.ExpPerHour = expGainPerHour

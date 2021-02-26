@@ -102,10 +102,18 @@ local function GetLabelStrings()
             labelStrings[i] = string.format("%s Levels gained per hour", FormatNumber(levelsPerHour))
 
         elseif labelValues[i] == 10 then
+            local abbreviateTime = GrindTimer.AccountSavedVariables.AbbreviateTime
             local hours = GrindTimer.SavedVariables.TargetHours
             local minutes = GrindTimer.SavedVariables.TargetMinutes
+            local seconds = GrindTimer.SavedVariables.TargetSeconds
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
-            labelStrings[i] = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
+
+            if abbreviateTime then
+                formattedTime = ZO_FormatTime(seconds, TIME_FORMAT_STYLE_COLONS, TIME_FORMAT_PRECISION_TWELVE_HOUR_NO_SECONDS)
+                labelStrings[i] = string.format("%s until level %s", formattedTime, targetLevel)
+            else
+                labelStrings[i] = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)
+            end
         end
     end
 
@@ -519,9 +527,7 @@ function GrindTimer.TargetModeButtonClicked(button)
 end
 
 function GrindTimer.NormalTypeButtonClicked(button)
-    if GrindTimer.SavedVariables.IsPlayerChampion then
-        return
-    end
+    if GrindTimer.SavedVariables.IsPlayerChampion then return end
 
     button:SetState(BSTATE_PRESSED)
     GrindTimerWindowChampionTypeButton:SetState(BSTATE_NORMAL)
