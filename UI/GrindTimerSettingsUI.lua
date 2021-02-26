@@ -17,27 +17,30 @@ function GrindTimer.UpdateSettingsWindowButtons()
             labelButtons[i]:SetText("Dungeon runs until goal")
 
         elseif labelValues[i] == 3 then
-            labelButtons[i]:SetText("Experience per hour")
+            labelButtons[i]:SetText("Experience per minute")
 
         elseif labelValues[i] == 4 then
-            labelButtons[i]:SetText("Experience until goal")
+            labelButtons[i]:SetText("Experience per hour")
 
         elseif labelValues[i] == 5 then
-            labelButtons[i]:SetText("Kills in current session")
+            labelButtons[i]:SetText("Experience until goal")
 
         elseif labelValues[i] == 6 then
-            labelButtons[i]:SetText("Kills in last 15 minutes")
+            labelButtons[i]:SetText("Kills in current session")
 
         elseif labelValues[i] == 7 then
-            labelButtons[i]:SetText("Kills until goal")
+            labelButtons[i]:SetText("Kills in last 15 minutes")
 
         elseif labelValues[i] == 8 then
-            labelButtons[i]:SetText("Levels in current session")
+            labelButtons[i]:SetText("Kills until goal")
 
         elseif labelValues[i] == 9 then
-            labelButtons[i]:SetText("Levels per hour")
+            labelButtons[i]:SetText("Levels in current session")
 
         elseif labelValues[i] == 10 then
+            labelButtons[i]:SetText("Levels per hour")
+
+        elseif labelValues[i] == 11 then
             labelButtons[i]:SetText("Time until goal")
 
         end
