@@ -18,6 +18,21 @@ GrindTimer.Target =
     Champion = 2
 }
 
+GrindTimer.Metric =
+{
+    Dolmens = 1,
+    Dungeons = 2,
+    ExpMinute = 3,
+    ExpHour = 4,
+    ExpGoal = 5,
+    KillsSession = 6,
+    KillsRecently = 7,
+    KillsGoal = 8,
+    LevelsSession = 9,
+    LevelsHour = 10,
+    GoalTime = 11
+}
+
 local DungeonInfo = {}
 local LastUpdateTimestamp = GetTimeStamp()
 local UpdateTimer = 5 -- Update every 5 seconds

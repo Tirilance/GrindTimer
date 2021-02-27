@@ -10,39 +10,38 @@ function GrindTimer.UpdateSettingsWindowButtons()
                           GrindTimer.AccountSavedVariables.SecondLabelType }
 
     for i in ipairs(labelButtons) do
-        if labelValues[i] == 1 then
+        if labelValues[i] == GrindTimer.Metric.Dolmens then
             labelButtons[i]:SetText("Dolmens until goal")
 
-        elseif labelValues[i] == 2 then
+        elseif labelValues[i] == GrindTimer.Metric.Dungeons then
             labelButtons[i]:SetText("Dungeon runs until goal")
 
-        elseif labelValues[i] == 3 then
+        elseif labelValues[i] == GrindTimer.Metric.ExpMinute then
             labelButtons[i]:SetText("Experience per minute")
 
-        elseif labelValues[i] == 4 then
+        elseif labelValues[i] == GrindTimer.Metric.ExpHour then
             labelButtons[i]:SetText("Experience per hour")
 
-        elseif labelValues[i] == 5 then
+        elseif labelValues[i] == GrindTimer.Metric.ExpGoal then
             labelButtons[i]:SetText("Experience until goal")
 
-        elseif labelValues[i] == 6 then
+        elseif labelValues[i] == GrindTimer.Metric.KillsSession then
             labelButtons[i]:SetText("Kills in current session")
 
-        elseif labelValues[i] == 7 then
+        elseif labelValues[i] == GrindTimer.Metric.KillsRecently then
             labelButtons[i]:SetText("Kills in last 15 minutes")
 
-        elseif labelValues[i] == 8 then
+        elseif labelValues[i] == GrindTimer.Metric.KillsGoal then
             labelButtons[i]:SetText("Kills until goal")
 
-        elseif labelValues[i] == 9 then
+        elseif labelValues[i] == GrindTimer.Metric.LevelsSession then
             labelButtons[i]:SetText("Levels in current session")
 
-        elseif labelValues[i] == 10 then
+        elseif labelValues[i] == GrindTimer.Metric.LevelsHour then
             labelButtons[i]:SetText("Levels per hour")
 
-        elseif labelValues[i] == 11 then
+        elseif labelValues[i] == GrindTimer.Metric.GoalTime then
             labelButtons[i]:SetText("Time until goal")
-
         end
     end
 end
