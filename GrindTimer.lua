@@ -1,7 +1,7 @@
 GrindTimer = {}
 
 GrindTimer.Name = "GrindTimer"
-GrindTimer.Version = "1.13.0"
+GrindTimer.Version = "1.13.1"
 GrindTimer.SavedVariableVersion = "5"
 GrindTimer.AccountSavedVariablesVersion = "5"
 GrindTimer.UIInitialized = false
@@ -441,6 +441,7 @@ local function NormalLevelGained(eventCode, unitTag, newLevel)
 
         if IsUnitChampion("player") then
             GrindTimer.SavedVariables.IsPlayerChampion = true
+            GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned() + 1)
         end
 
         SessionLevels = SessionLevels + 1
@@ -519,6 +520,7 @@ end
 function GrindTimer.SetNewTargetLevel(targetLevel)
     GrindTimer.SavedVariables.TargetLevel = targetLevel
     UpdateVars()
+    GrindTimer.UpdateMetricLabels()
 end
 
 function GrindTimer.HasGainedExpFromDungeon(dungeonName)
