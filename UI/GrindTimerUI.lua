@@ -113,7 +113,7 @@ local function GetLabelStrings()
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
 
             if abbreviateTime then
-                formattedTime = ZO_FormatTime(seconds, TIME_FORMAT_STYLE_COLONS, TIME_FORMAT_PRECISION_TWELVE_HOUR_NO_SECONDS)
+                local formattedTime = ZO_FormatTime(seconds, TIME_FORMAT_STYLE_COLONS, TIME_FORMAT_PRECISION_TWELVE_HOUR_NO_SECONDS)
                 labelStrings[i] = string.format("%s until level %s", formattedTime, targetLevel)
             else
                 labelStrings[i] = string.format("%s Hours %s Minutes until level %s", hours, minutes, targetLevel)

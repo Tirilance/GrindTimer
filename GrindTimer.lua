@@ -204,7 +204,7 @@ local function GetLevelsPerHour(expGainPerHour)
         for i = championPoints, championPoints + 1000 do
             local expInLevel = GetNumChampionXPInChampionPoint(i)
             if i == championPoints then
-                expNeeded = expInLevel - GetPlayerChampionXP()
+                local expNeeded = expInLevel - GetPlayerChampionXP()
                 expGainPerHour = expGainPerHour - expNeeded
             else
                 expGainPerHour = expGainPerHour - expInLevel
@@ -220,7 +220,7 @@ local function GetLevelsPerHour(expGainPerHour)
         for i = playerLevel, 49 do
             local expInLevel = GetNumExperiencePointsInLevel(i)
             if i == playerLevel then
-                expNeeded = expInLevel - GetUnitXP("player")
+                local expNeeded = expInLevel - GetUnitXP("player")
                 expGainPerHour = expGainPerHour - expNeeded
             else
                 expGainPerHour = expGainPerHour - expInLevel
@@ -296,7 +296,7 @@ end
 local function IncrementDungeonRuns()
     local dungeonInfo = DungeonInfo[DungeonName]
     local runExp = GetDungeonRunExp()
-    local runCount, exp, average = nil
+    local runCount, exp, average = nil, nil, nil
 
     if dungeonInfo ~= nil and runExp > 0 then
         runCount = dungeonInfo.RunCount + 1
