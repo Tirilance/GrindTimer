@@ -123,7 +123,7 @@
                     </OnInitialized>
                 </Label>
 
-                <EditBox name="$(parent)LevelTextBox" hidden="true" font="ZoFontGameShadow" color="1E90FF" editEnabled="true" horizontalAlignment="2" verticalAlignment="2" maxInputCharacters="4" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText">
+                <EditBox name="$(parent)LevelTextBox" inheritAlpha="false" hidden="true" font="ZoFontGameShadow" color="1E90FF" editEnabled="true" horizontalAlignment="2" verticalAlignment="2" maxInputCharacters="4" textType="TEXT_TYPE_NUMERIC" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText">
                     <Dimensions x="50" y="31"/>
                     <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="285" offsetY="80"/>
                     <OnMouseDown>
