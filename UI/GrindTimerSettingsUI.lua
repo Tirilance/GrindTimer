@@ -10,37 +10,37 @@ function GrindTimer.UpdateSettingsWindowButtons()
                           GrindTimer.AccountSavedVariables.SecondLabelType }
 
     for i in ipairs(labelButtons) do
-        if labelValues[i] == GrindTimer.Metric.Dolmens then
+        if labelValues[i] == GrindTimer.Metric.DolmensRemaining then
             labelButtons[i]:SetText("Dolmens until goal")
 
-        elseif labelValues[i] == GrindTimer.Metric.Dungeons then
+        elseif labelValues[i] == GrindTimer.Metric.DungeonRunsRemaining then
             labelButtons[i]:SetText("Dungeon runs until goal")
 
-        elseif labelValues[i] == GrindTimer.Metric.ExpMinute then
+        elseif labelValues[i] == GrindTimer.Metric.ExpPerMinute then
             labelButtons[i]:SetText("Experience per minute")
 
-        elseif labelValues[i] == GrindTimer.Metric.ExpHour then
+        elseif labelValues[i] == GrindTimer.Metric.ExpPerHour then
             labelButtons[i]:SetText("Experience per hour")
 
-        elseif labelValues[i] == GrindTimer.Metric.ExpGoal then
+        elseif labelValues[i] == GrindTimer.Metric.ExpRemaining then
             labelButtons[i]:SetText("Experience until goal")
 
-        elseif labelValues[i] == GrindTimer.Metric.KillsSession then
+        elseif labelValues[i] == GrindTimer.Metric.KillsInSession then
             labelButtons[i]:SetText("Kills in current session")
 
         elseif labelValues[i] == GrindTimer.Metric.KillsRecently then
             labelButtons[i]:SetText("Kills in last 15 minutes")
 
-        elseif labelValues[i] == GrindTimer.Metric.KillsGoal then
+        elseif labelValues[i] == GrindTimer.Metric.KillsRemaining then
             labelButtons[i]:SetText("Kills until goal")
 
-        elseif labelValues[i] == GrindTimer.Metric.LevelsSession then
+        elseif labelValues[i] == GrindTimer.Metric.LevelsInSession then
             labelButtons[i]:SetText("Levels in current session")
 
-        elseif labelValues[i] == GrindTimer.Metric.LevelsHour then
+        elseif labelValues[i] == GrindTimer.Metric.LevelsPerHour then
             labelButtons[i]:SetText("Levels per hour")
 
-        elseif labelValues[i] == GrindTimer.Metric.GoalTime then
+        elseif labelValues[i] == GrindTimer.Metric.TimeRemaining then
             labelButtons[i]:SetText("Time until goal")
         end
     end

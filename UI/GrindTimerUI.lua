@@ -50,7 +50,7 @@ local function GetLabelStrings()
                           GrindTimer.AccountSavedVariables.SecondLabelType }
 
     for i in ipairs(labelStrings) do
-        if labelValues[i] == GrindTimer.Metric.Dolmens then
+        if labelValues[i] == GrindTimer.Metric.DolmensRemaining then
             local dolmensNeeded = GrindTimer.SavedVariables.DolmensNeeded
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
 
@@ -60,7 +60,7 @@ local function GetLabelStrings()
                 labelStrings[i] = string.format("%s Dolmens until level %s", FormatNumber(dolmensNeeded), targetLevel)
             end
 
-        elseif labelValues[i] == GrindTimer.Metric.Dungeons then
+        elseif labelValues[i] == GrindTimer.Metric.DungeonRunsRemaining then
             local dungeonRunsNeeded = GrindTimer.SavedVariables.DungeonRunsNeeded
             local lastDungeonName = GrindTimer.SavedVariables.LastDungeonName
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
@@ -71,20 +71,20 @@ local function GetLabelStrings()
                 labelStrings[i] = "Label updates upon exiting a dungeon."
             end
 
-        elseif labelValues[i] == GrindTimer.Metric.ExpMinute then
+        elseif labelValues[i] == GrindTimer.Metric.ExpPerMinute then
             local averageExpPerMinute = math.floor(GrindTimer.SavedVariables.ExpPerHour / 60)
             labelStrings[i] = string.format("%s Experience gained per minute", FormatNumber(averageExpPerMinute))
 
-        elseif labelValues[i] == GrindTimer.Metric.ExpHour then
+        elseif labelValues[i] == GrindTimer.Metric.ExpPerHour then
             local averageExpPerHour = GrindTimer.SavedVariables.ExpPerHour
             labelStrings[i] = string.format("%s Experience gained per hour", FormatNumber(averageExpPerHour))
 
-        elseif labelValues[i] == GrindTimer.Metric.ExpGoal then
+        elseif labelValues[i] == GrindTimer.Metric.ExpRemaining then
             local expNeeded = GrindTimer.SavedVariables.TargetExpRemaining
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
             labelStrings[i] = string.format("%s Experience needed until level %s", FormatNumber(expNeeded), targetLevel)
 
-        elseif labelValues[i] == GrindTimer.Metric.KillsSession then
+        elseif labelValues[i] == GrindTimer.Metric.KillsInSession then
             local sessionKills = GrindTimer.SavedVariables.SessionKills
             labelStrings[i] = string.format("%s Enemies killed in the current session", FormatNumber(sessionKills))
 
@@ -92,20 +92,20 @@ local function GetLabelStrings()
             local recentKills = GrindTimer.SavedVariables.RecentKills
             labelStrings[i] = string.format("%s Kills in last 15 minutes", FormatNumber(recentKills))
 
-        elseif labelValues[i] == GrindTimer.Metric.KillsGoal then
+        elseif labelValues[i] == GrindTimer.Metric.KillsRemaining then
             local killsNeeded = GrindTimer.SavedVariables.KillsNeeded
             local targetLevel = GrindTimer.SavedVariables.TargetLevel
             labelStrings[i] = string.format("%s Kills needed until level %s", FormatNumber(killsNeeded), targetLevel)
 
-        elseif labelValues[i] == GrindTimer.Metric.LevelsSession then
+        elseif labelValues[i] == GrindTimer.Metric.LevelsInSession then
             local sessionLevels = GrindTimer.SavedVariables.SessionLevels
             labelStrings[i] = string.format("%s Levels gained in the current session", FormatNumber(sessionLevels))
 
-        elseif labelValues[i] == GrindTimer.Metric.LevelsHour then
+        elseif labelValues[i] == GrindTimer.Metric.LevelsPerHour then
             local levelsPerHour = GrindTimer.SavedVariables.LevelsPerHour
             labelStrings[i] = string.format("%s Levels gained per hour", FormatNumber(levelsPerHour))
 
-        elseif labelValues[i] == GrindTimer.Metric.GoalTime then
+        elseif labelValues[i] == GrindTimer.Metric.TimeRemaining then
             local abbreviateTime = GrindTimer.AccountSavedVariables.AbbreviateTime
             local hours = GrindTimer.SavedVariables.TargetHours
             local minutes = GrindTimer.SavedVariables.TargetMinutes

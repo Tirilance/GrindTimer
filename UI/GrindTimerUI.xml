@@ -215,7 +215,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="0"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.Dolmens)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.DolmensRemaining)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -226,7 +226,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="30"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.Dungeons)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.DungeonRunsRemaining)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -237,7 +237,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="60"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.ExpMinute)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.ExpPerMinute)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -248,7 +248,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="90"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.ExpHour)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.ExpPerHour)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -259,7 +259,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="120"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.ExpGoal)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.ExpRemaining)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -270,7 +270,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="150"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.KillsSession)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.KillsInSession)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -292,7 +292,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="210"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.KillsGoal)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.KillsRemaining)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -303,7 +303,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="240"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.LevelsSession)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.LevelsInSession)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -314,7 +314,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="270"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.LevelsHour)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.LevelsPerHour)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)
@@ -325,7 +325,7 @@
                             <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="300"/>
                             <FontColors normalColor="A8A8A8" mouseOverColor="FFFFFF" pressedColor="808080"/>
                             <OnClicked>
-                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.GoalTime)
+                                GrindTimer.MetricContextMenuButtonClicked(GrindTimer.Metric.TimeRemaining)
                             </OnClicked>
                             <OnInitialized>
                                 GrindTimer.AddControlsToTable(self, 2, true)

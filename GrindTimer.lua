@@ -20,17 +20,17 @@ GrindTimer.Target =
 
 GrindTimer.Metric =
 {
-    Dolmens = 1,
-    Dungeons = 2,
-    ExpMinute = 3,
-    ExpHour = 4,
-    ExpGoal = 5,
-    KillsSession = 6,
+    DolmensRemaining = 1,
+    DungeonRunsRemaining = 2,
+    ExpPerMinute = 3,
+    ExpPerHour = 4,
+    ExpRemaining = 5,
+    KillsInSession = 6,
     KillsRecently = 7,
-    KillsGoal = 8,
-    LevelsSession = 9,
-    LevelsHour = 10,
-    GoalTime = 11
+    KillsRemaining = 8,
+    LevelsInSession = 9,
+    LevelsPerHour = 10,
+    TimeRemaining = 11
 }
 
 local DungeonInfo = {}
@@ -52,8 +52,8 @@ local AccountDefaults =
     Locked = false,
     OffsetX = 400,
     OffsetY = 100,
-    FirstLabelType = GrindTimer.Metric.GoalTime,
-    SecondLabelType = GrindTimer.Metric.ExpGoal,
+    FirstLabelType = GrindTimer.Metric.TimeRemaining,
+    SecondLabelType = GrindTimer.Metric.ExpRemaining,
     SecondLabelEnabled = true,
     AbbreviateNumbers = false,
     AbbreviateTime = false
