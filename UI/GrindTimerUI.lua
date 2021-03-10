@@ -7,7 +7,6 @@ local fontUpdateFlag = true
 
 local animationTimeline
 local sizeAnimation
-local alphaAnimation
 local lastClickedLabel
 
 local function UpdateExtendAnimationDimensions(width, height)
