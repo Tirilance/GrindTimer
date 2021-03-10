@@ -379,6 +379,7 @@ local function UpdateVars()
         -- Check for INF / IND
         hours = (hours == math.huge or hours == -math.huge) and 0 or hours
         minutes = (minutes ~= minutes or minutes == math.huge or minutes == -math.huge) and 0 or minutes
+        seconds = (seconds ~= seconds or seconds == math.huge or seconds == -math.huge) and 0 or seconds
         averageKillExp = (averageKillExp ~= averageKillExp) and 0 or averageKillExp
         killsNeeded = (killsNeeded ~= killsNeeded) and 0 or killsNeeded
         expGainPerHour = (expGainPerHour ~= expGainPerHour) and 0 or expGainPerHour
@@ -506,6 +507,7 @@ function GrindTimer.Reset()
     GrindTimer.SavedVariables.TargetLevelType = isChamp and GrindTimer.Target.Champion or GrindTimer.Target.Normal
     GrindTimer.SavedVariables.TargetHours = 0
     GrindTimer.SavedVariables.TargetMinutes = 0
+    GrindTimer.SavedVariables.TargetSeconds = 0
     GrindTimer.SavedVariables.KillsNeeded = 0
     GrindTimer.SavedVariables.LevelsPerHour = 0
     GrindTimer.SavedVariables.ExpPerHour = 0
