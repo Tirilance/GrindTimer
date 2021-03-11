@@ -66,7 +66,7 @@ function GrindTimer.InitializeSettingsMenu()
 
     GrindTimer.UpdateSettingsWindowButtons()
 
-    local grindTimerSettingsFragment = ZO_HUDFadeSceneFragment:New(GrindTimerSettingsWindow, 0, 0)
+    local grindTimerSettingsFragment = ZO_SimpleSceneFragment:New(GrindTimerSettingsWindow, 0, 0)
     SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerSettingsFragment)
     SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerSettingsFragment)
 

@@ -355,7 +355,7 @@ function GrindTimer.InitializeUI()
     GrindTimerWindow:ClearAnchors()
     GrindTimerWindow:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, GrindTimer.AccountSavedVariables.OffsetX, GrindTimer.AccountSavedVariables.OffsetY)
 
-    local grindTimerFragment = ZO_HUDFadeSceneFragment:New(GrindTimerWindow, 0, 0)
+    local grindTimerFragment = ZO_SimpleSceneFragment:New(GrindTimerWindow, 0, 0)
     SCENE_MANAGER:GetScene("hud"):AddFragment(grindTimerFragment)
     SCENE_MANAGER:GetScene("hudui"):AddFragment(grindTimerFragment)
 
