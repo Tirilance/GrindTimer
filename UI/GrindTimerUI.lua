@@ -2,6 +2,7 @@ local extendedControls = {} -- UI controls modified by extending or retracting t
 local contextControls = {} -- Right click context menu buttons for selecting metrics.
 local fontControls = {} -- UI controls modified when changing font size.
 
+local isWindowHidden = false
 local windowExtended = false
 local fontUpdateFlag = true
 
@@ -382,6 +383,7 @@ function GrindTimer.AddControlsToTable(control, destTable, updateFont)
 end
 
 function GrindTimer.OnWindowShown()
+    GrindTimerWindow:SetHidden(isWindowHidden)
     UpdateUIOpacity()
 end
 
@@ -433,7 +435,8 @@ function GrindTimer.UpdateMetricLabels()
 end
 
 function GrindTimer.ToggleDisplay()
-    GrindTimerWindow:SetHidden(not GrindTimerWindow:IsHidden())
+    isWindowHidden = not isWindowHidden
+    GrindTimerWindow:SetHidden(isWindowHidden)
 end
 
 function GrindTimer.ExtendButtonClicked()
