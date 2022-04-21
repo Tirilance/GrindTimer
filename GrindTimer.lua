@@ -12,7 +12,7 @@ GrindTimer.Mode =
     Target = 2
 }
 
-GrindTimer.Target =
+GrindTimer.TargetType =
 {
     Normal = 1,
     Champion = 2
@@ -61,7 +61,7 @@ local AccountDefaults =
 
 local Defaults =
 {
-    Mode = 1,
+    Mode = GrindTimer.Mode.Next,
     TargetHours = 0,
     TargetMinutes = 0,
     TargetSeconds = 0,
@@ -77,7 +77,7 @@ local Defaults =
     SessionKills = 0,
     SessionLevels = 0,
     TargetLevel = IsUnitChampion("player") and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1,
-    TargetLevelType = IsUnitChampion("player") and 2 or 1,
+    TargetLevelType = IsUnitChampion("player") and GrindTimer.TargetType.Champion or GrindTimer.TargetType.Normal,
     IsPlayerChampion = IsUnitChampion("player")
 }
 
@@ -138,14 +138,14 @@ local function GetTargetLevelExp(championPoints, isChamp)
     local targetLevelType = GrindTimer.SavedVariables.TargetLevelType
     local totalExpRequired = 0
 
-    if not isChamp and targetLevelType == GrindTimer.Target.Normal then
+    if not isChamp and targetLevelType == GrindTimer.TargetType.Normal then
         for i = level, targetLevel - 1 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
         end
         totalExpRequired = totalExpRequired - GetUnitXP("player")
 
-    elseif not isChamp and targetLevelType == GrindTimer.Target.Champion then
+    elseif not isChamp and targetLevelType == GrindTimer.TargetType.Champion then
         for i = level, 49 do
             local levelExp = GetNumExperiencePointsInLevel(i)
             totalExpRequired = totalExpRequired + levelExp
@@ -505,7 +505,7 @@ function GrindTimer.Reset()
 
     GrindTimer.SavedVariables.Mode = GrindTimer.Mode.Next
     GrindTimer.SavedVariables.TargetLevel = isChamp and GetPlayerChampionPointsEarned() + 1 or GetUnitLevel("player") + 1
-    GrindTimer.SavedVariables.TargetLevelType = isChamp and GrindTimer.Target.Champion or GrindTimer.Target.Normal
+    GrindTimer.SavedVariables.TargetLevelType = isChamp and GrindTimer.TargetType.Champion or GrindTimer.TargetType.Normal
     GrindTimer.SavedVariables.TargetHours = 0
     GrindTimer.SavedVariables.TargetMinutes = 0
     GrindTimer.SavedVariables.TargetSeconds = 0
