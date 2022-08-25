@@ -1,5 +1,5 @@
 ## Title: Grind Timer
-## APIVersion: 101033 101034
+## APIVersion: 101035 101036
 ## Author: Tirilance
 ## Version: 1.13.6
 ## Description: An experience tracker for tracking leveling goals in a variety of metrics.
