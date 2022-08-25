@@ -524,7 +524,7 @@ end
 
 -- Updates Grind Timer every 5 seconds if no exp is gained within those 5 seconds.
 function GrindTimer.TimedUpdate()
-    if GrindTimer.UIInitialized then
+    if GrindTimer.UIInitialized and IsPlayerActivated() then
         local currentTimestamp = GetTimeStamp()
 
         if GetDiffBetweenTimeStamps(currentTimestamp, LastUpdateTimestamp) >= UpdateTimer then
