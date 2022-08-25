@@ -17,7 +17,7 @@ end
 
 local function InitializeAnimations()
     animationTimeline = ANIMATION_MANAGER:CreateTimeline()
-    animationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_PING_PONG)
+    animationTimeline:SetPlaybackType(ANIMATION_PLAYBACK_ONE_SHOT)
 
     sizeAnimation = animationTimeline:InsertAnimation(ANIMATION_SIZE, GrindTimerWindow)
     sizeAnimation:SetDuration(150)
