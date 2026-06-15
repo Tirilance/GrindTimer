@@ -373,7 +373,7 @@ local function UpdateVars()
 
         local playerLevel = GrindTimer.SavedVariables.IsPlayerChampion and GetPlayerChampionPointsEarned() or GetUnitLevel("player")
         if playerLevel ~= SessionStartLevel then
-            SessionLevels = playerLevel - SessionStartLevel
+            CurrentSessionLevels = playerLevel - SessionStartLevel
         end
 
         -- Check for INF / IND
@@ -460,7 +460,7 @@ local function NormalLevelGained(eventCode, unitTag, newLevel)
             GrindTimer.SetNewTargetLevel(GetPlayerChampionPointsEarned() + 1)
         end
 
-        SessionLevels = SessionLevels + 1
+        CurrentSessionLevels = CurrentSessionLevels + 1
     end
 end
 
@@ -471,7 +471,7 @@ local function ChampionLevelGained(eventCode, championPointsGained)
         GrindTimer.SetNewTargetLevel(currentChampionLevel + championPointsGained)
     end
 
-    SessionLevels = SessionLevels + 1
+    CurrentSessionLevels = CurrentSessionLevels + 1
 end
 
 local function Initialize(eventCode, addonName)
